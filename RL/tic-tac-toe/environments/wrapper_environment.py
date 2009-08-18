@@ -25,8 +25,9 @@ class WrapperEnvironment(Environment):
         lines = ((0,1,2), (3,4,5), (6,7,8), (0,3,6), (1,4,7), (2,5,8), \
                 (0,4,8), (2,4,6))
         for line in lines:
-            if(self.state[line[0]] == self.state[line[1]] == self.state[line[2]]):
+            if self.state[line[0]] == self.state[line[1]] == self.state[line[2]] != 0:
                 return True
+        
         return False
 
     def is_full(self):
@@ -46,14 +47,13 @@ class WrapperEnvironment(Environment):
         for i in range(len(self.state)):
             if(self.state[i] != actions.intArray[i] and self.state[i] != 0):
                 return False
-
+        
+        return True
 
     def env_start(self):
         """
         Get the state of the environment and return it.
         """
-        self.play()
-
         obs = Observation()
         obs.intArray = self.state
 
@@ -70,9 +70,9 @@ class WrapperEnvironment(Environment):
             raise Exception("Invalid Actions")
 
         #Change our current state to the new board
-        self.state = actions
+        self.state = actions.intArray
         #Check if the agent made a winning move
-        if(self.is_victory):
+        if self.is_victory():
             reward = 1
             terminal = 1
         #Otherwise keep on playing!
@@ -80,7 +80,7 @@ class WrapperEnvironment(Environment):
             self.play()
 
         #Check if we won
-        if(self.is_victory):
+        if self.is_victory():
             reward = 0
             terminal = 1
 
