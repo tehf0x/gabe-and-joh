@@ -73,6 +73,8 @@ class MenaceAgent(Agent):
     
     def play(self, state):
         """ Play from matchbox, returns next state """
+        print "play(", state, ")"
+        
         # Determine which actions we can take
         actions = []
         for i in range(len(state)):
@@ -80,8 +82,10 @@ class MenaceAgent(Agent):
                 actions.append(i)
         
         # Choose a random action from the possible actions
-        a = self.randGenerator.randint(0, len(actions))
+        a = self.randGenerator.randint(0, len(actions)-1)
         state[actions[a]] = 1
+        
+        print "=> ", state
         
         return state
     
@@ -104,7 +108,7 @@ class MenaceAgent(Agent):
         print "agent_start(", state.intArray, ")"
         return self.do_step(state.intArray)
     
-    def agent_step(self, reward, observation):
+    def agent_step(self, reward, state):
         print "agent_step(", reward, ",", state.intArray, ")"
         return self.do_step(state.intArray)
     
@@ -132,4 +136,4 @@ class MenaceAgent(Agent):
 
 
 if __name__=="__main__":
-    AgentLoader.loadAgent(menace_agent())
+    AgentLoader.loadAgent(MenaceAgent())

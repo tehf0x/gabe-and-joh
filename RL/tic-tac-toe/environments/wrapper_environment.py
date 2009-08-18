@@ -1,3 +1,5 @@
+from exceptions import Exception
+
 from rlglue.environment.Environment import Environment
 from rlglue.environment import EnvironmentLoader as EnvironmentLoader
 from rlglue.types import Observation
@@ -8,7 +10,7 @@ class WrapperEnvironment(Environment):
 
     def env_init(self):
         self.color = 2
-        self.board = [0 for i in range(9)]
+        self.state = [0 for i in range(9)]
         return "VERSION RL-Glue-3.0 PROBLEMTYPE episodic " + \
         "DISCOUNTFACTOR 1.0 OBSERVATIONS INTS (9 0 2)" +\
         "ACTIONS INTS (9 0 2) REWARDS (0 1) EXTRA"
@@ -41,8 +43,8 @@ class WrapperEnvironment(Environment):
         Take the last board, and make sure the new board has only
         added a piece where there was none before.
         """
-        for i in len(self.state):
-            if(self.state[i] != actions[i] and self.state[i] != 0):
+        for i in range(len(self.state)):
+            if(self.state[i] != actions.intArray[i] and self.state[i] != 0):
                 return False
 
 
@@ -65,7 +67,7 @@ class WrapperEnvironment(Environment):
         terminal = 0
         #Make sure the agent made a legal action
         if(not self.is_allowed(actions)):
-            raise Error("Invalid Actions")
+            raise Exception("Invalid Actions")
 
         #Change our current state to the new board
         self.state = actions

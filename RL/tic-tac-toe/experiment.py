@@ -18,12 +18,6 @@ taskSpec = RLGlue.RL_init()
 
 
 print "\n\n----------Running a few episodes----------"
-runEpisode(100)
-runEpisode(100)
-runEpisode(100)
-runEpisode(100)
-runEpisode(100)
-runEpisode(1)
-# Remember that stepLimit of 0 means there is no limit at all!*/
-runEpisode(0)
+runEpisode(10)
+
 RLGlue.RL_cleanup()
