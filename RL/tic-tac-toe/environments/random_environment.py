@@ -1,5 +1,5 @@
 from random
-import WrapperEnvironment
+from wrapper_environment import WrapperEnvironment
 
 class RandomEnvironment(WrapperEnvironment):
 

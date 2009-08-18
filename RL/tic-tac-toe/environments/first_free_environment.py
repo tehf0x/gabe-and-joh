@@ -1,4 +1,4 @@
-import WrapperEnvironment
+from wrapper_environment import WrapperEnvironment
 
 class FirstFreeEnvironment(WrapperEnvironment):
 
