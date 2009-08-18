@@ -1,15 +1,16 @@
-# TODO: Some info here...
+# 
+# Base MENACE agent
+#
 
-import random
 import sys
 import copy
 import re
+from random import Random
 from rlglue.agent.Agent import Agent
 from rlglue.agent import AgentLoader as AgentLoader
 from rlglue.types import Action
 from rlglue.types import Observation
 
-from random import Random
 
 class Matchbox:
     def __init__(self, state, marble_count):
@@ -34,6 +35,12 @@ def state_hash(state):
         r += 1
     
     return hash
+
+def state_print(state):
+    for row in range(3):
+        for col in range(3):
+            print state[3*row + col],
+        print
 
 
 class MenaceAgent(Agent):
@@ -73,8 +80,6 @@ class MenaceAgent(Agent):
     
     def play(self, state):
         """ Play from matchbox, returns next state """
-        print "play(", state, ")"
-        
         # Determine which actions we can take
         actions = []
         for i in range(len(state)):
@@ -85,7 +90,8 @@ class MenaceAgent(Agent):
         a = self.randGenerator.randint(0, len(actions)-1)
         state[actions[a]] = 1
         
-        print "=> ", state
+        print "play: "
+        state_print(state)
         
         return state
     

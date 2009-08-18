@@ -1,4 +1,5 @@
-from random
+import random
+from rlglue.environment import EnvironmentLoader
 from wrapper_environment import WrapperEnvironment
 
 class RandomEnvironment(WrapperEnvironment):

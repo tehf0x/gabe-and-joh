@@ -1,4 +1,4 @@
-from rlglue.environment import EnvironmentLoader as EnvironmentLoader
+from rlglue.environment import EnvironmentLoader
 from wrapper_environment import WrapperEnvironment
 
 class FirstFreeEnvironment(WrapperEnvironment):

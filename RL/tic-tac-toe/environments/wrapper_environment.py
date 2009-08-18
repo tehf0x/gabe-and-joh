@@ -66,7 +66,7 @@ class WrapperEnvironment(Environment):
         reward = 0
         terminal = 0
         #Make sure the agent made a legal action
-        if(not self.is_allowed(actions)):
+        if not self.is_allowed(actions):
             raise Exception("Invalid Actions")
 
         #Change our current state to the new board
@@ -77,12 +77,13 @@ class WrapperEnvironment(Environment):
             terminal = 1
         #Otherwise keep on playing!
         else:
-            self.play()
+            if not self.is_full():
+                self.play()
 
-        #Check if we won
-        if self.is_victory():
-            reward = 0
-            terminal = 1
+            #Check if we won
+            if self.is_victory() or self.is_full():
+                reward = 0
+                terminal = 1
 
         #Set up the observation object and return it
         obs = Observation()
