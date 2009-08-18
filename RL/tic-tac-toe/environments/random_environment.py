@@ -13,4 +13,5 @@ class RandomEnvironment(WrapperEnvironment):
                 open_spots.append[i]
         self.state[random.choice(open_spots)] = self.color
 
-
+if __name__ == "__main__":
+    EnvironmentLoader.loadEnvironment(SatelliteEnvironment())
