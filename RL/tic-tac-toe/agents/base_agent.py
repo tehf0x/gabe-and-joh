@@ -5,7 +5,8 @@
 import sys
 import copy
 import re
-from random import Random
+import random
+
 from rlglue.agent.Agent import Agent
 from rlglue.agent import AgentLoader as AgentLoader
 from rlglue.types import Action
@@ -13,30 +14,35 @@ from rlglue.types import Observation
 
 
 class Matchbox:
+    """ Matchbox class representing a matchbox for a state containing N marbles
+    of each color for every possible subsequent state """
+    
     def __init__(self, state, marble_count):
+        """ Create a matchbox for state with marble_count marbles per subsequent state """
         self.state = state
-        marble_colors = 0
-        for i in state:
-            if i == 0:
-                marble_colors += 1
-        
         self.marbles = []
-        for color in range(marble_colors):
+        
+        # Place initial marbles in the matchbox
+        for color in range(state.count(0)):
             self.marbles.extend([color for i in range(marble_count)])
-            
+    
+    def pick_marble(self):
+        """ Pick a random marble from matchbox """
+        i = random.randint(0, len(self.marbles) - 1)
+        marble = self.marbles[i]
+        self.marbles.remove(marble)
+        
+        return marble
+    
+    def put_marbles(self, color, count=1):
+        """ Place count marbles of color in matchbox """
+        self.marbles.extend([color for i in range(count)])
+    
     def __str__(self):
         return 'Matchbox state: %s with marbles: %s' % (self.state, self.marbles)
 
-def state_hash(state):
-    hash = 0
-    r = 0
-    for s in state:
-        hash += s * (10 ** r)
-        r += 1
-    
-    return hash
-
 def state_print(state):
+    """ Pretty-print a board state """
     for row in range(3):
         for col in range(3):
             print state[3*row + col],
@@ -50,20 +56,18 @@ class MenaceAgent(Agent):
     """ Marble increment for each step """
     marble_inc = -1
     
+    """ Marble win reward, i.e. number of marbles to place back into the matchboxes
+    that resulted in a positive reward """
+    marble_win_reward = 3
+    
     """ Matchbox collection """
     matchboxes = {}
     
-    """ List of moves we've done so far """
+    """ List of moves we've done so far - each element is a tuple (marble, matchbox) """
     moves = []
     
-    randGenerator=Random()
-    lastAction=Action()
-    lastObservation=Observation()
-    
-    def agent_init(self,taskSpec):
-        #See the sample_sarsa_agent in the mines-sarsa-example project for how to parse the task spec
-        self.lastAction=Action()
-        self.lastObservation=Observation()
+    def agent_init(self, taskSpec):
+        print "agent_init()"
     
     def state_hash(self, state):
         """ Create a unique hash for a state """
@@ -75,35 +79,48 @@ class MenaceAgent(Agent):
         if self.matchboxes.has_key(hash):
             return self.matchboxes[hash]
         else:
-            matchbox = Matchbox(state, self.marble_count)
+            # Determine which step we're taking, 0, 1, 2 or 3
+            step = int(4 - (state.count(0) - 1) / 2)
+            count = self.marble_count + self.marble_inc * step
+            matchbox = Matchbox(state, count)
             self.matchboxes[hash] = matchbox
+            return matchbox
     
-    def play(self, state):
-        """ Play from matchbox, returns next state """
+    def play(self, matchbox):
+        """ Play from matchbox, returns a tuple of (marble, new_state) """
+        state = copy.copy(matchbox.state)
+        
         # Determine which actions we can take
         actions = []
         for i in range(len(state)):
             if state[i] == 0:
                 actions.append(i)
         
-        # Choose a random action from the possible actions
-        a = self.randGenerator.randint(0, len(actions)-1)
-        state[actions[a]] = 1
+        # Pick a random marble from matchbox
+        marble = matchbox.pick_marble()
         
-        print "play: "
+        # Choose the corresponding action
+        state[actions[marble]] = 1
+        
+        print "play marble #%d: " % (marble)
         state_print(state)
         
-        return state
+        return (marble, state)
+    
     
     def do_step(self, state):
+        """ Do an agent step """
+        state = list(state)
+        
         # Get the matchbox for this state
         matchbox = self.get_matchbox(state)
         
         # Play
-        new_state = self.play(state)
+        marble, new_state = self.play(matchbox)
         
-        # Store this state for later
-        self.moves.append(matchbox)
+        # Get matchbox for next state and store this move
+        #new_matchbox = self.get_matchbox(new_state)
+        self.moves.append((marble, matchbox))
         
         # Return new state to environment
         action = Action()
@@ -112,6 +129,7 @@ class MenaceAgent(Agent):
     
     def agent_start(self, state):
         print "agent_start(", state.intArray, ")"
+        self.moves = []
         return self.do_step(state.intArray)
     
     def agent_step(self, reward, state):
@@ -120,6 +138,12 @@ class MenaceAgent(Agent):
     
     def agent_end(self, reward):
         print "agent_end(", str(reward), ")"
+        
+        if reward:
+            print "We won! Reward matchboxes..."
+            for color, matchbox in self.moves:
+                matchbox.put_marbles(color, self.marble_win_reward)
+                print "\t#", color, ":", matchbox.state, "+", self.marble_win_reward, "of color", color 
     
     def agent_cleanup(self):
         print "agent_cleanup()"

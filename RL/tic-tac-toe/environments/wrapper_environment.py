@@ -10,7 +10,6 @@ class WrapperEnvironment(Environment):
 
     def env_init(self):
         self.color = 2
-        self.state = [0 for i in range(9)]
         return "VERSION RL-Glue-3.0 PROBLEMTYPE episodic " + \
         "DISCOUNTFACTOR 1.0 OBSERVATIONS INTS (9 0 2)" +\
         "ACTIONS INTS (9 0 2) REWARDS (0 1) EXTRA"
@@ -54,6 +53,8 @@ class WrapperEnvironment(Environment):
         """
         Get the state of the environment and return it.
         """
+        self.state = [0 for i in range(9)]
+        
         obs = Observation()
         obs.intArray = self.state
 

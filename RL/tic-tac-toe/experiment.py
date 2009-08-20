@@ -18,6 +18,7 @@ taskSpec = RLGlue.RL_init()
 
 
 print "\n\n----------Running a few episodes----------"
-runEpisode(20)
+runEpisode(10)
+runEpisode(10)
 
 RLGlue.RL_cleanup()
