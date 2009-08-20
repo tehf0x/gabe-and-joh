@@ -1,7 +1,3 @@
-#Extended from source code found at
-#http://en.literateprograms.org/Tic_Tac_Toe_(Python)?oldid=13355
-#Gabe Arnold <gabe@squirrelsoup.net
-
 # Copyright (c) 2009 the authors listed at the following URL, and/or
 # the authors of referenced articles or incorporated external code:
 # http://en.literateprograms.org/Tic_Tac_Toe_(Python)?action=history&offset=20080515043713
@@ -36,28 +32,24 @@ def allEqual(list):
     return not list or list == [list[0]] * len(list)
 
 Empty = 0
-Player_X = 2
-Player_O = 1
+Player_X =  2
+Player_O =  1
 
-class MiniMaxEnvironment(WrapperEnvironment):
-    """Function for the computer player"""
-    opponent = { Player_O : Player_X, Player_X : Player_O }
-    player = 1
+class Board:
+    """This class represents a tic tac toe board state."""
+    def __init__(self, b = None):
+        """Initialize all members."""
+        if b != None:
+            self.pieces = b
+        else:
+            self.pieces = [Empty]*9
+        print self.pieces
+        self.field_names = '123456789'
 
-    def judge(self, winner):
-        if winner == self.player:
-            return +1
-        if winner == None:
-            return 0
-        return -1
-
-    def allEqual(self, list):
-        """returns True if all the elements in a list are equal, or if the list is empty."""
-        return not list or list == [list[0]] * len(list)
-
-    def gameOver(self):
-        """Returns true if one player has won or if there are no valid moves left."""
-        return self.winner() or not self.getValidMoves()
+    def output(self):
+        """Display the board on screen."""
+        for line in [self.pieces[0:3], self.pieces[3:6], self.pieces[6:9]]:
+            print line
 
     def winner(self):
         """Determine if one player has won the game. Returns Player_X, Player_O or None"""
@@ -65,24 +57,61 @@ class MiniMaxEnvironment(WrapperEnvironment):
                         [0,3,6],[1,4,7],[2,5,8], # horizontal
                         [0,4,8],[2,4,6]]         # diagonal
         for row in winning_rows:
-            if self.state[row[0]] != Empty and self.allEqual([self.state[i] for i in row]):
-                return self.state[row[0]]
+            if self.pieces[row[0]] != Empty and allEqual([self.pieces[i] for i in row]):
+                return self.pieces[row[0]]
 
     def getValidMoves(self):
         """Returns a list of valid moves. A move can be passed to getMoveName to
         retrieve a human-readable name or to makeMove/undoMove to play it."""
-        return [pos for pos in range(9) if self.state[pos] == Empty]
+        return [pos for pos in range(9) if self.pieces[pos] == Empty]
 
-    def evaluateMove(self, move, p=None):
-        if not p:
-            p = self.player
+    def gameOver(self):
+        """Returns true if one player has won or if there are no valid moves left."""
+        return self.winner() or not self.getValidMoves()
+
+    def getMoveName(self, move):
+        """Returns a human-readable name for a move"""
+        return self.field_names[move]
+
+    def makeMove(self, move, player):
+        """Plays a move. Note: this doesn't check if the move is legal!"""
+        self.pieces[move] = player
+
+    def undoMove(self, move):
+        """Undoes a move/removes a piece of the board."""
+        self.makeMove(move, Empty)
+
+def humanPlayer(board, player):
+    """Function for the human player"""
+    board.output()
+    possible_moves = dict([(board.getMoveName(move), move) for move in board.getValidMoves()])
+    move = raw_input("Enter your move (%s): " % (', '.join(sorted(possible_moves))))
+    while move not in possible_moves:
+        print "Sorry, '%s' is not a valid move. Please try again." % move
+        move = raw_input("Enter your move (%s): " % (', '.join(sorted(possible_moves))))
+    board.makeMove(possible_moves[move], player)
+
+def computerPlayer(board, player):
+    """Function for the computer player"""
+    t0 = time.time()
+    board.output()
+    opponent = { Player_O : Player_X, Player_X : Player_O }
+
+    def judge(winner):
+        if winner == player:
+            return +1
+        if winner == None:
+            return 0
+        return -1
+
+    def evaluateMove(move, p=player):
         try:
-            self.state[move] = self.color
-            if self.gameOver():
-                return self.judge(self.winner())
-            outcomes = (self.evaluateMove(next_move, self.opponent[p]) for next_move in self.getValidMoves())
+            board.makeMove(move, p)
+            if board.gameOver():
+                return judge(board.winner())
+            outcomes = (evaluateMove(next_move, opponent[p]) for next_move in board.getValidMoves())
 
-            if p == self.player:
+            if p == player:
                 #return min(outcomes)
                 min_element = 1
                 for o in outcomes:
@@ -100,13 +129,23 @@ class MiniMaxEnvironment(WrapperEnvironment):
                 return max_element
 
         finally:
-            self.state[move] = 0
+            board.undoMove(move)
+
+    moves = [(move, evaluateMove(move)) for move in board.getValidMoves()]
+    random.shuffle(moves)
+    moves.sort(key = lambda (move, winner): winner)
+    print moves
+    print moves[-1][0]
+    board.makeMove(moves[-1][0], player)
+
+class MiniMaxEnvironment(WrapperEnvironment):
 
     def play(self):
-        moves = [(move, self.evaluateMove(move)) for move in self.getValidMoves()]
-        random.shuffle(moves)
-        moves.sort(key = lambda (move, winner): winner)
-        self.state[moves[-1][0]] == self.player
+        b = Board(self.state)
+        computerPlayer(b, Player_X)
+        self.state = b.pieces
+
 
 if __name__ == "__main__":
+    #game()
     EnvironmentLoader.loadEnvironment(MiniMaxEnvironment())
