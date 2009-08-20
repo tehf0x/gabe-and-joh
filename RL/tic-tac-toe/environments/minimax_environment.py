@@ -42,16 +42,16 @@ Player_O = 1
 class MiniMaxEnvironment(WrapperEnvironment):
     """Function for the computer player"""
     opponent = { Player_O : Player_X, Player_X : Player_O }
-    player = WrapperEnvironment.color
+    player = 1
 
     def judge(self, winner):
-        if winner == player:
+        if winner == self.player:
             return +1
         if winner == None:
             return 0
         return -1
 
-    def allEqual(list):
+    def allEqual(self, list):
         """returns True if all the elements in a list are equal, or if the list is empty."""
         return not list or list == [list[0]] * len(list)
 
@@ -73,14 +73,16 @@ class MiniMaxEnvironment(WrapperEnvironment):
         retrieve a human-readable name or to makeMove/undoMove to play it."""
         return [pos for pos in range(9) if self.state[pos] == Empty]
 
-    def evaluateMove(self, move, p=player):
+    def evaluateMove(self, move, p=None):
+        if not p:
+            p = self.player
         try:
             self.state[move] = self.color
             if self.gameOver():
                 return self.judge(self.winner())
-            outcomes = (evaluateMove(next_move, opponent[p]) for next_move in self.getValidMoves())
+            outcomes = (self.evaluateMove(next_move, self.opponent[p]) for next_move in self.getValidMoves())
 
-            if p == player:
+            if p == self.player:
                 #return min(outcomes)
                 min_element = 1
                 for o in outcomes:
@@ -104,7 +106,7 @@ class MiniMaxEnvironment(WrapperEnvironment):
         moves = [(move, self.evaluateMove(move)) for move in self.getValidMoves()]
         random.shuffle(moves)
         moves.sort(key = lambda (move, winner): winner)
-        self.state[moves[-1][0]] == player
+        self.state[moves[-1][0]] == self.player
 
 if __name__ == "__main__":
     EnvironmentLoader.loadEnvironment(MiniMaxEnvironment())
