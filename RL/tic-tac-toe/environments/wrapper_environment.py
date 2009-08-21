@@ -1,3 +1,4 @@
+import os
 from exceptions import Exception
 
 from rlglue.environment.Environment import Environment
@@ -7,6 +8,8 @@ from rlglue.types import Action
 from rlglue.types import Reward_observation_terminal
 
 class WrapperEnvironment(Environment):
+
+    name = 'wrapper'
 
     def env_init(self):
         self.color = 2
@@ -98,8 +101,9 @@ class WrapperEnvironment(Environment):
 
     def env_cleanup(self):
         pass
-
+    
     def env_message(self, mesg):
-        cases = {'state' : self.get_state, \
-                 'ping' : lambda : 'pong'}
+        cases = {'ping' : lambda : 'pong',
+                 'name' : lambda : self.name}
+        
         return cases[mesg]()

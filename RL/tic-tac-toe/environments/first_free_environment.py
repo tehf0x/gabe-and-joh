@@ -2,7 +2,9 @@ from rlglue.environment import EnvironmentLoader
 from wrapper_environment import WrapperEnvironment
 
 class FirstFreeEnvironment(WrapperEnvironment):
-
+    
+    name = 'first_free'
+    
     def play(self):
         """
         Pick the first free spot, and play there.
