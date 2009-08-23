@@ -112,8 +112,8 @@ class MenaceAgent(Agent):
         # Choose the corresponding action
         state[actions[marble]] = 1
         
-        print "play marble #%d: " % (marble)
-        state_print(state)
+        #print "play marble #%d: " % (marble)
+        #state_print(state)
         
         return (marble, state)
     
@@ -139,8 +139,8 @@ class MenaceAgent(Agent):
             i = state.index(0)
             new_state[i] = 1
             
-            print "play #%d: " % (i)
-            state_print(new_state)
+            #print "play #%d: " % (i)
+            #state_print(new_state)
         
         # Return new state to environment
         action = Action()
@@ -148,25 +148,28 @@ class MenaceAgent(Agent):
         return action
     
     def agent_start(self, state):
-        print "agent_start(", state.intArray, ")"
+        #print "agent_start(", state.intArray, ")"
         self.moves = []
         return self.do_step(state.intArray)
     
     def agent_step(self, reward, state):
-        print "agent_step(", reward, ",", state.intArray, ")"
+        #print "agent_step(", reward, ",", state.intArray, ")"
         return self.do_step(state.intArray)
     
     def agent_end(self, reward):
         print "agent_end(", str(reward), ")"
+        state_print(self.moves[-1][1].state)
         
         if reward:
-            print "We won! Reward matchboxes..."
+            #print "We won! Reward matchboxes..."
             for color, matchbox in self.moves:
                 matchbox.put_marbles(color, self.marble_win_reward)
-                print "\t#", color, ":", matchbox.state, "+", self.marble_win_reward, "of color", color, "=", matchbox.marbles.count(color), "total"
+                #print "\t#", color, ":", matchbox.state, "+", self.marble_win_reward, "of color", color, "=", matchbox.marbles.count(color), "total"
     
     def agent_cleanup(self):
         print "agent_cleanup()"
+        self.matchboxes = {}
+        self.moves = []
     
     def agent_message(self, msg):
         """ Retrieve message from the environment in the form param=value """

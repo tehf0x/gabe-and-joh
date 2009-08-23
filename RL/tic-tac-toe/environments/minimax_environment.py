@@ -139,7 +139,9 @@ def computerPlayer(board, player):
     board.makeMove(moves[-1][0], player)
 
 class MiniMaxEnvironment(WrapperEnvironment):
-
+    
+    name = 'minimax'
+    
     def play(self):
         b = Board(self.state)
         computerPlayer(b, Player_X)
