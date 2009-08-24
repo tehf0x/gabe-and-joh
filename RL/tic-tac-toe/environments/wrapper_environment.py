@@ -84,9 +84,15 @@ class WrapperEnvironment(Environment):
                 self.play()
 
             #Check if we won
-            if self.is_victory() or self.is_full():
+            if self.is_full():
+                reward = 1
+                terminal = 1
+                
+            if self.is_victory():
                 reward = 0
                 terminal = 1
+            
+                
 
         #Set up the observation object and return it
         obs = Observation()
