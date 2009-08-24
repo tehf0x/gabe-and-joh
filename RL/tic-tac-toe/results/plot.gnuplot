@@ -5,14 +5,14 @@
 #
 
 # Input data file
-datafile = "first_free_2009-08-21_17:40:23.dat"
+datafile = "random_2009-08-24_17:13:53.dat"
 
-# Uncomment these two lines to output to PNG
-# set terminal png
-# set output "first_free_2009-08-20_17:45:10.png"
+# Uncomment these two lines to output to SVG
+#set terminal svg enhanced
+#set output "first_free_2009-08-24_16:53:12.svg"
 
 # Title of the plot
-set title "First Free Environment" font "Arial Bold,18"
+set title "Random Environment" font "Arial Bold,18"
 
 # Labels for x and y axis
 set xlabel "Plays"
@@ -32,3 +32,4 @@ set grid ytics
 
 # Plot!
 plot datafile every 10 lt rgb "#008800" lw 3 pt 6 with linespoints
+

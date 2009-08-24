@@ -1,6 +1,15 @@
-# 
-# Base MENACE agent
-#
+"""
+MENACE agent
+
+< Some description here >
+
+Authors:
+    Johannes H. Jensen <johannj@stud.ntnu.no>
+    Gabe Dulac-Arnold <gabe@squirrelsoup.net>
+
+Agent settings can be modified real-time by sending messages to the
+agent through RL-Glue. The format is <setting>=<value>
+"""
 
 import sys
 import copy
@@ -17,10 +26,15 @@ class Matchbox:
     """ Matchbox class representing a matchbox for a state containing N marbles
     of each color for every possible subsequent state """
     
-    def __init__(self, state, marble_count):
+    # Whether to enable negative rewards, i.e. if we should remove
+    # marbles in pick_marble()
+    remove_marbles = True
+    
+    def __init__(self, state, marble_count, remove_marbles=True):
         """ Create a matchbox for state with marble_count marbles per subsequent state """
         self.state = state
         self.marbles = []
+        self.remove_marbles = remove_marbles
         
         # Place initial marbles in the matchbox
         for color in range(state.count(0)):
@@ -28,24 +42,42 @@ class Matchbox:
     
     def pick_marble(self):
         """ Pick a random marble from matchbox """
-        i = random.randint(0, len(self.marbles) - 1)
-        marble = self.marbles[i]
-        self.marbles.remove(marble)
+        if self.marbles:
+           i = random.randint(0, len(self.marbles) - 1)
+           marble = self.marbles[i]
+            
+           if self.remove_marbles:
+               self.marbles.remove(marble)
+                
+        else:
+            # There are no marbles left in the box, so we choose a random one
+            print "Matchbox: No marbles left! Choosing random..."
+            marble = random.randint(0, self.state.count(0) - 1)
         
         return marble
     
     def put_marbles(self, color, count=1):
-        """ Place count marbles of color in matchbox """
+        """ Place 'count' marbles of a color in matchbox """
         self.marbles.extend([color for i in range(count)])
     
     def __str__(self):
         return 'Matchbox state: %s with marbles: %s' % (self.state, self.marbles)
 
+
 def state_str(state):
+    """ Pretty board string representation """
     s = ""
     for row in range(3):
         for col in range(3):
-            s += str(state[3*row + col]) + " "
+            v = int(state[3*row + col])
+            if v is 1:
+                s += 'x'
+            elif v is 2:
+                s += 'o'
+            else:
+                s += ' '
+            
+            s += " "
         s += "\n"
     
     return s
@@ -53,13 +85,13 @@ def state_str(state):
 def state_print(state):
     """ Pretty-print a board state """
     print state_str(state)
-'''    for row in range(3):
-        for col in range(3):
-            print state[3*row + col],
-        print
-'''
+
 
 class MenaceAgent(Agent):
+    """
+    The MENACE agent class
+    """
+    
     """ Initial marble count """
     marble_count = 4
     
@@ -70,14 +102,18 @@ class MenaceAgent(Agent):
     that resulted in a positive reward """
     marble_win_reward = 3
     
+    """ Whether to remove marbles from matchboxes """
+    marble_remove = True
+    
     """ Matchbox collection """
     matchboxes = {}
     
     """ List of moves we've done so far - each element is a tuple (marble, matchbox) """
     moves = []
     
+    
     def agent_init(self, taskSpec):
-        print "agent_init()"
+        pass
     
     def state_hash(self, state):
         """ Create a unique hash for a state """
@@ -92,7 +128,7 @@ class MenaceAgent(Agent):
             # Determine which step we're taking, 0, 1, 2 or 3
             step = int(4 - (state.count(0) - 1) / 2)
             count = self.marble_count + self.marble_inc * step
-            matchbox = Matchbox(state, count)
+            matchbox = Matchbox(state, count, self.marble_remove)
             self.matchboxes[hash] = matchbox
             return matchbox
     
@@ -112,9 +148,6 @@ class MenaceAgent(Agent):
         # Choose the corresponding action
         state[actions[marble]] = 1
         
-        #print "play marble #%d: " % (marble)
-        #state_print(state)
-        
         return (marble, state)
     
     
@@ -130,51 +163,47 @@ class MenaceAgent(Agent):
             # Play
             marble, new_state = self.play(matchbox)
             
-            # Get matchbox for next state and store this move
-            #new_matchbox = self.get_matchbox(new_state)
+            # Store this move for learning
             self.moves.append((marble, matchbox))
         else:
-            # Only one option left, play it
+            # Only one option left, play it but don't learn
             new_state = copy.copy(state)
             i = state.index(0)
             new_state[i] = 1
-            
-            #print "play #%d: " % (i)
-            #state_print(new_state)
         
         # Return new state to environment
         action = Action()
         action.intArray = new_state
+        
         return action
     
     def agent_start(self, state):
-        #print "agent_start(", state.intArray, ")"
+        """ Called every time a new game is started """
         self.moves = []
         return self.do_step(state.intArray)
     
     def agent_step(self, reward, state):
-        #print "agent_step(", reward, ",", state.intArray, ")"
+        """ Called for each game step """
         return self.do_step(state.intArray)
     
     def agent_end(self, reward):
+        """ Called when a game ends, this is where we learn """
         print "agent_end(", str(reward), ")"
+        
         state_print(self.moves[-1][1].state)
         
         if reward:
-            #print "We won! Reward matchboxes..."
+            # We won, reward matchboxes
             for color, matchbox in self.moves:
                 matchbox.put_marbles(color, self.marble_win_reward)
-                #print "\t#", color, ":", matchbox.state, "+", self.marble_win_reward, "of color", color, "=", matchbox.marbles.count(color), "total"
     
     def agent_cleanup(self):
-        print "agent_cleanup()"
+        """ Clean up for next run """
         self.matchboxes = {}
         self.moves = []
     
     def agent_message(self, msg):
         """ Retrieve message from the environment in the form param=value """
-        print "agent_message(", msg, ")"
-        
         result = re.match('(.+)=(.+)', msg)
         if result:
             param, value = result.groups()
@@ -182,18 +211,12 @@ class MenaceAgent(Agent):
                 self.marble_inc = int(value)
             elif param == 'marble_count':
                 self.marble_count = int(value)
+            elif param == 'marble_win_reward':
+                self.marble_win_reward = int(value)
+            elif param == 'marble_remove':
+                self.marble_remove = bool(value)
             else:
                 return "Unknown parameter: " + param
-            
-        elif msg == 'show matchboxes':
-            ret = ''
-            for k in self.matchboxes:
-                m = self.matchboxes[k]
-                ret += state_str(m.state)
-                ret += str(m.marbles)
-                ret += "\n"
-            
-            return ret
             
         else:
             return "Unknown command: " + msg;
