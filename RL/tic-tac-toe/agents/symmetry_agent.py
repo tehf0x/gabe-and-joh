@@ -7,80 +7,95 @@ class SymmetryAgent():
         """
         Create a unique hash that is the same regardless of board homomorphisms.
         """
-	board = [state[i:i+3] for i in range(0,9,3)]
-
-	paths = []
-	for dir_x in (-1,1):
-		for dir_y in (-1,1):
-			paths.append([[1 + dir_x, 1], [1 + dir_x, 1 + dir_y]])
-			paths.append([[1, 1+dir_y], [1 + dir_x, 1 + dir_y]])
-	hashes = []
-
-	for ((x1,y1),(x2,y2)) in paths:
-		hashes.append([board[1][1], board[x1][y1], board[x2][y2]])
-	print board
-
-	self.go_round(board)
-	return hashes
-
-    def go_round(self, board):
-		path = []
-		pos = [1,2]
-		dir = [-1,0] 
-		mod = -1
-		for step in range(8):
-			print pos
-			print dir
-			print board[pos[0]][pos[1]]
-			if pos[0] + dir[0] > 2:
-				dir = [0] * 2
-				dir[1] = -1 * mod
-			if pos[1] + dir[1] > 2:
-				dir = [0] * 2
-				dir[0] = 1 * mod
-			if pos[0] + dir[0] < 0:
-				dir = [0] * 2
-				dir[1] = 1 * mod
-			if pos[1] + dir[1] < 0:
-				dir = [0] * 2
-				dir[0] = -1 * mod
-			pos[0] += dir[0]
-			pos[1] += dir[1]
-		
-		
-
-""" 
-        sym_hash = [0]*9
-        sym_hash[0] = state[4] #Start with the middle of the board
-        sequences = [[1, 2], [1, 0], [3, 0], [3, 6], [5, 2], [5, 8], [7, 8], [7, 6]]
-
-        tmp_paths = [(state[i[0]]*10 + state[i[1]], i) for i in sequences]
-        max_val = max(tmp_choices)[0]
-        #Add the middle of the board to the paths
-        [path[1].insert(0,4) for path in tmp_paths]
-        paths = [path[1] for path in tmp_paths if path[0] == max_val]
-
-        def construct_path(state, paths):
-            path = []
-            for path in paths:
-                #Build out the first 3 steps of the path
-                for step in path:
-                    path.append(state[step])
-                #And now go 'round the board
-
-                step = path[-1]
-                for i in range(6):
-                    if(direction == 1):
-
-                    if(step == 0):
-                        step = 1
-                    if(step ):
-                        step = 7
-                    if(step in (
-"""
+        self.board = [state[i:i+3] for i in range(0,9,3)]
+        
+        paths = []
+        for dir_x in (-1,1):
+            for dir_y in (-1,1):
+                paths.append([[1 + dir_x, 1], [1 + dir_x, 1 + dir_y]])
+                paths.append([[1, 1+dir_y], [1 + dir_x, 1 + dir_y]])
+        
+        pre_hashes = []
+        for path in paths:
+            pre_hashes.append(self.go_around(path))
+            
+        hashes = [int(''.join(map(str,pre))) for pre in pre_hashes]
+            
+        hashes.sort()
+        
+        return hashes[-1]
+        
+    def get_direction(self, path):
+        """
+        Figures out the initial direction vector that we need to go to continue the hash.
+        """
+        cur = path[1]
+        #Hop once in every non-diagonal direction.  If it's not 
+        #where we came from (but on the board), then it's where we're going.
+        for i in (-1,0,1):
+            for t in (-1,0,1):
+                if abs(i) == abs(t): continue
+                x_p = cur[0] + i
+                y_p = cur[1] + t
+                if (0 <= x_p <= 2 and 0 <= y_p <=2 and [x_p, y_p] != path[0]):
+                    return [i, t]
+        
+    def get_rotation(self, path, dir):
+        """
+        Figure out the direction in which we are rotating to get the hash.
+        Return 1 if counter-clockwise, -1 if clockwise.
+        """
+        if path[1] == [0,0]:
+            if dir[0] == 1:
+                return -1
+            if dir[1] == 1:
+                return 1
+            
+        if path[1] == [2,2]:
+            #If we're going up
+            if dir[0] == -1:
+                return -1
+            #If we're going left
+            if dir[1] == -1:
+                return 1
+            
+        if path[1] in [[2,0], [0,2]]:
+            #If we'r going sideways
+            if dir[0] == 0:
+                return -1
+            #If we're going up/down
+            if dir[1] == 0:
+                return 1
+         
+    def go_around(self, path):
+        pos = path[1]
+        dir = self.get_direction(path)
+        mod = self.get_rotation(path, dir)
+        #Start off in the middle:
+        values = [self.board[1][1]]
+        #And manually add the second element
+        values.append(self.board[path[0][0]][path[0][1]])
+        
+        for step in range(7):
+            values.append(self.board[pos[0]][pos[1]])
+            if pos[0] + dir[0] > 2:
+                dir = [0] * 2
+                dir[1] = -1 * mod
+            if pos[1] + dir[1] > 2:
+                dir = [0] * 2
+                dir[0] = 1 * mod
+            if pos[0] + dir[0] < 0:
+                dir = [0] * 2
+                dir[1] = 1 * mod
+            if pos[1] + dir[1] < 0:
+                dir = [0] * 2
+                dir[0] = -1 * mod
+            pos[0] += dir[0]
+            pos[1] += dir[1]
+            
+        return values
 
 if __name__ == "__main__":
-	sym = SymmetryAgent()
-	print sym.state_hash([0,1,2,3,4,5,6,7,8])
-
+    sym = SymmetryAgent()
+    sym.state_hash([0,1,2,3,4,5,6,7,8])
 
