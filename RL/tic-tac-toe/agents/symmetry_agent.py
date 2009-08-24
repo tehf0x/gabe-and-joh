@@ -1,4 +1,4 @@
-from base_agent import MenaceAgent
+from menace_agent import MenaceAgent
 
 
 class SymmetryAgent():
