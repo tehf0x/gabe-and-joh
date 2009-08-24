@@ -1,4 +1,3 @@
-import os
 from exceptions import Exception
 
 from rlglue.environment.Environment import Environment
@@ -29,7 +28,7 @@ class WrapperEnvironment(Environment):
         for line in lines:
             if self.state[line[0]] == self.state[line[1]] == self.state[line[2]] != 0:
                 return True
-        
+
         return False
 
     def is_full(self):
@@ -49,7 +48,7 @@ class WrapperEnvironment(Environment):
         for i in range(len(self.state)):
             if(self.state[i] != actions.intArray[i] and self.state[i] != 0):
                 return False
-        
+
         return True
 
     def env_start(self):
@@ -57,7 +56,7 @@ class WrapperEnvironment(Environment):
         Get the state of the environment and return it.
         """
         self.state = [0 for i in range(9)]
-        
+
         obs = Observation()
         obs.intArray = self.state
 
