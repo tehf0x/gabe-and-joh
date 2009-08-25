@@ -7,7 +7,7 @@
 #
 
 # Number of instances to run
-instances = 30
+instances = 1
 
 # Number of episodes (i.e. games) to run for each instance
 episodes = 1000
