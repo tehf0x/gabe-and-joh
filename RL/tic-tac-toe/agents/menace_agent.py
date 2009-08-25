@@ -101,6 +101,9 @@ class MenaceAgent(Agent):
     The MENACE agent class
     """
     
+    """ Which player are we? 1 or 2 """
+    player = 1
+    
     """ Initial marble count """
     marble_count = 4
     
@@ -155,7 +158,7 @@ class MenaceAgent(Agent):
         marble = matchbox.pick_marble()
         
         # Choose the corresponding action
-        state[actions[marble]] = 1
+        state[actions[marble]] = self.player
         
         return (marble, state)
     
@@ -164,21 +167,14 @@ class MenaceAgent(Agent):
         """ Do an agent step """
         state = list(state)
         
-        # Only keep matchboxes for non-terminal states
-        if state.count(0) > 1:
-            # Get the matchbox for this state
-            matchbox = self.get_matchbox(state)
-            
-            # Play
-            marble, new_state = self.play(matchbox)
-            
-            # Store this move for learning
-            self.moves.append((marble, matchbox))
-        else:
-            # Only one option left, play it but don't learn
-            new_state = copy.copy(state)
-            i = state.index(0)
-            new_state[i] = 1
+        # Get the matchbox for this state
+        matchbox = self.get_matchbox(state)
+        
+        # Play
+        marble, new_state = self.play(matchbox)
+        
+        # Store this move for learning
+        self.moves.append((marble, matchbox))
         
         # Some debugging output
         for i in 0, 3, 6:
@@ -187,7 +183,6 @@ class MenaceAgent(Agent):
                 d = " => "
             
             print pos_str(state[i:i+3]), d, pos_str(new_state[i:i+3])
-        
         print
         
         # Return new state to environment
@@ -195,6 +190,19 @@ class MenaceAgent(Agent):
         action.intArray = new_state
         
         return action
+    
+    def print_moves(self):
+        """ Print the agent's moves so far """
+        marbles = [("(%d)" % (m[0])).center(5) for m in self.moves]
+        print "      ".join(marbles)
+        
+        for i in 0, 3, 6:
+            d = "      "
+            if i is 3:
+                d = "  =>  "
+            
+            print d.join([pos_str(m[1].state[i:i+3]) for m in self.moves])
+    
     
     def agent_start(self, state):
         """ Called every time a new game is started """
@@ -205,17 +213,6 @@ class MenaceAgent(Agent):
     def agent_step(self, reward, state):
         """ Called for each game step """
         return self.do_step(state.intArray)
-    
-    def print_moves(self):
-        marbles = [("(%d)" % (m[0])).center(5) for m in self.moves]
-        print "      ".join(marbles)
-        
-        for i in 0, 3, 6:
-            d = "      "
-            if i is 3:
-                d = "  =>  "
-            
-            print d.join([pos_str(m[1].state[i:i+3]) for m in self.moves])
     
     def agent_end(self, reward):
         """ Called when a game ends, this is where we learn """

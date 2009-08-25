@@ -5,7 +5,7 @@
 #
 
 # Input data file
-datafile = "random_2009-08-24_17:38:48.dat"
+datafile = "minimax_2009-08-25_17:08:53.dat"
 
 # Uncomment these two lines to output to SVG
 #set terminal svg enhanced
@@ -31,5 +31,5 @@ set xtics nomirror
 set grid ytics
 
 # Plot!
-plot datafile every 10 lt rgb "#008800" lw 3 pt 6 with linespoints
+plot datafile every 1 lt rgb "#008800" lw 3 pt 6 with linespoints
 
