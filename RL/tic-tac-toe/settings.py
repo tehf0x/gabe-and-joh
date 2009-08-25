@@ -7,10 +7,10 @@
 #
 
 # Number of instances to run
-instances = 30
+instances = 5
 
 # Number of episodes (i.e. games) to run for each instance
-episodes = 1000
+episodes = 100
 
 # Where to store results
 results_dir = 'results'
