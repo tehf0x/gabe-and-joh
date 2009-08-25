@@ -21,6 +21,11 @@ from rlglue.agent import AgentLoader as AgentLoader
 from rlglue.types import Action
 from rlglue.types import Observation
 
+# Ugly:
+sys.path.append('../')
+
+from util import print_state
+
 
 class Matchbox:
     """ Matchbox class representing a matchbox for a state containing N marbles
@@ -62,39 +67,6 @@ class Matchbox:
     
     def __str__(self):
         return 'Matchbox state: %s with marbles: %s' % (self.state, self.marbles)
-
-
-def pos_str(pos):
-    """ Convert numerical board positions to strings """
-    values = ['_', 'x', 'o']
-    if isinstance(pos, list):
-        return ' '.join([pos_str(i) for i in pos])
-    else:
-        return values[pos]
-
-def state_str(state):
-    """ Pretty board string representation """
-    s = ""
-    for row in range(3):
-        for col in range(3):
-            v = int(state[3*row + col])
-            if v is 1:
-                s += 'x'
-            elif v is 2:
-                s += 'o'
-            else:
-                s += ' '
-            
-            s += " "
-        s += "\n"
-    
-    return s
-
-def state_print(state):
-    """ Pretty-print a board state """
-    for i in 0, 3, 6:
-        print pos_str(state[i,i+3])
-
 
 class MenaceAgent(Agent):
     """
@@ -177,12 +149,14 @@ class MenaceAgent(Agent):
         self.moves.append((marble, matchbox))
         
         # Some debugging output
-        for i in 0, 3, 6:
+        '''for i in 0, 3, 6:
             d = "    "
             if i is 3:
                 d = " => "
             
             print pos_str(state[i:i+3]), d, pos_str(new_state[i:i+3])
+        '''
+        print_state([state, new_state])
         print
         
         # Return new state to environment
@@ -196,13 +170,8 @@ class MenaceAgent(Agent):
         marbles = [("(%d)" % (m[0])).center(5) for m in self.moves]
         print "      ".join(marbles)
         
-        for i in 0, 3, 6:
-            d = "      "
-            if i is 3:
-                d = "  =>  "
-            
-            print d.join([pos_str(m[1].state[i:i+3]) for m in self.moves])
-    
+        print_state([m[1].state for m in self.moves])
+        
     
     def agent_start(self, state):
         """ Called every time a new game is started """
