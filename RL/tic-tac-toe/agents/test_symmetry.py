@@ -1,6 +1,9 @@
 from symmetry_agent import SymmetryAgent
 
 class TestSymmetry():
+    """
+    A couple of tests to make sure our symmetry hash function are working.
+    """
     
     def setup(self):
         self.state = [0,1,2,3,4,5,6,7,8]
@@ -61,7 +64,7 @@ class TestSymmetry():
         #Simple hash test
         hash = self.sym_a.state_hash([0,1,2,3,4,5,6,7,8])
         print hash
-        assert hash == 478521036
+        assert hash == '478521036'
         #Test symmetry
         hash1 = self.sym_a.state_hash([0,1,0,1,1,2,2,1,2])
         hash2 = self.sym_a.state_hash([0,1,0,2,1,1,2,1,2])

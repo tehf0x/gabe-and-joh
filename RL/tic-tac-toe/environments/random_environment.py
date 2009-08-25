@@ -6,7 +6,7 @@ class RandomEnvironment(WrapperEnvironment):
     
     name = 'random'
     
-    def play(self):
+    def env_play(self):
         """
         Pick the first free spot, and play there.
         """

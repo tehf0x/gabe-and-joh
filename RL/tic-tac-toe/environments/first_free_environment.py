@@ -5,7 +5,7 @@ class FirstFreeEnvironment(WrapperEnvironment):
     
     name = 'first_free'
     
-    def play(self):
+    def env_play(self):
         """
         Pick the first free spot, and play there.
         """

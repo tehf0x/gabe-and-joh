@@ -16,7 +16,7 @@ class WrapperEnvironment(Environment):
         "DISCOUNTFACTOR 1.0 OBSERVATIONS INTS (9 0 2)" +\
         "ACTIONS INTS (9 0 2) REWARDS (0 1) EXTRA"
 
-    def play(self):
+    def env_play(self):
         pass
 
     def is_victory(self):
@@ -35,20 +35,10 @@ class WrapperEnvironment(Environment):
         """
         Check if the board is full.
         """
+        print "Checking full:", self.state
         for i in self.state:
             if(i == 0):
                 return False
-        return True
-
-    def is_allowed(self, actions):
-        """
-        Take the last board, and make sure the new board has only
-        added a piece where there was none before.
-        """
-        for i in range(len(self.state)):
-            if(self.state[i] != actions.intArray[i] and self.state[i] != 0):
-                return False
-
         return True
 
     def env_start(self):
@@ -68,27 +58,32 @@ class WrapperEnvironment(Environment):
         """
         reward = 0
         terminal = 0
-        #Make sure the agent made a legal action
-        if not self.is_allowed(actions):
-            raise Exception("Invalid Actions")
 
         #Change our current state to the new board
         self.state = actions.intArray
         #Check if the agent made a winning move
         if self.is_victory():
+            print "WE LOST"
             reward = 1
             terminal = 1
         #Otherwise keep on playing!
-        else:
-            if not self.is_full():
-                self.play()
+        elif self.is_full():
+            "AGENT FILLED"
+            reward = 1
+            terminal = 1
+
+        elif not self.is_full():
+            print "PLAY"
+            self.env_play()
 
             #Check if we won
             if self.is_full():
+                print "WE FILLED"
                 reward = 1
                 terminal = 1
                 
             if self.is_victory():
+                print "WE WON"
                 reward = 0
                 terminal = 1
             

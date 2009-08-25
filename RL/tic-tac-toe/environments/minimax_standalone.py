@@ -24,26 +24,21 @@
 # Retrieved from: http://en.literateprograms.org/Tic_Tac_Toe_(Python)?oldid=13355
 
 import operator, sys, random, time
-from rlglue.environment import EnvironmentLoader
-from wrapper_environment import WrapperEnvironment
 
 def allEqual(list):
     """returns True if all the elements in a list are equal, or if the list is empty."""
     return not list or list == [list[0]] * len(list)
 
-Empty = 0
-Player_X =  2
-Player_O =  1
+Empty = ' '
+Player_X =  'x'
+Player_O =  'o'
 
 class Board:
     """This class represents a tic tac toe board state."""
-    def __init__(self, b = None):
+    def __init__(self):
         """Initialize all members."""
-        if b != None:
-            self.pieces = b
-        else:
-            self.pieces = [Empty]*9
-        
+        self.pieces = [Empty]*9
+        print self.pieces
         self.field_names = '123456789'
 
     def output(self):
@@ -81,10 +76,20 @@ class Board:
         """Undoes a move/removes a piece of the board."""
         self.makeMove(move, Empty)
 
+def humanPlayer(board, player):
+    """Function for the human player"""
+    board.output()
+    possible_moves = dict([(board.getMoveName(move), move) for move in board.getValidMoves()])
+    move = raw_input("Enter your move (%s): " % (', '.join(sorted(possible_moves))))
+    while move not in possible_moves:
+        print "Sorry, '%s' is not a valid move. Please try again." % move
+        move = raw_input("Enter your move (%s): " % (', '.join(sorted(possible_moves))))
+    board.makeMove(possible_moves[move], player)
 
 def computerPlayer(board, player):
     """Function for the computer player"""
     t0 = time.time()
+    board.output()
     opponent = { Player_O : Player_X, Player_X : Player_O }
 
     def judge(winner):
@@ -124,19 +129,30 @@ def computerPlayer(board, player):
     moves = [(move, evaluateMove(move)) for move in board.getValidMoves()]
     random.shuffle(moves)
     moves.sort(key = lambda (move, winner): winner)
+    print "computer move: %0.3f ms" % ((time.time()-t0)*1000)
+    print moves
     board.makeMove(moves[-1][0], player)
 
-class MiniMaxEnvironment(WrapperEnvironment):
-    
-    name = 'minimax'
-    
-    def env_play(self):
-        b = Board(self.state)
+def game():
+    """The game function"""
+    b = Board()
+    turn = 1
+    while True:
+        print "%i. turn" % turn
+        humanPlayer(b, Player_O)
+        if b.gameOver():
+            break
         computerPlayer(b, Player_X)
-        b.output()
-        self.state = b.pieces
+        if b.gameOver():
+            break
+        turn += 1
 
+    b.output()
+    if b.winner():
+        print 'Player "%s" wins' % b.winner()
+    else:
+        print 'Game over'
 
 if __name__ == "__main__":
-    #game()
-    EnvironmentLoader.loadEnvironment(MiniMaxEnvironment())
+    game()
+

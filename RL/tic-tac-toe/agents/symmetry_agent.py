@@ -1,7 +1,10 @@
-from menace_agent import MenaceAgent
+"""
+Symmetry Agent that takes advantage of symmetries on the playing board.
+"""
 
+from menace_agent import *
 
-class SymmetryAgent():
+class SymmetryAgent(MenaceAgent):
 
     def state_hash(self, state):
         """
@@ -23,7 +26,7 @@ class SymmetryAgent():
             
         hashes.sort()
         
-        return hashes[-1]
+        return str(hashes[-1])
         
     def get_direction(self, path):
         """
@@ -95,7 +98,5 @@ class SymmetryAgent():
             
         return values
 
-if __name__ == "__main__":
-    sym = SymmetryAgent()
-    sym.state_hash([0,1,2,3,4,5,6,7,8])
-
+if __name__=="__main__":
+    AgentLoader.loadAgent(SymmetryAgent())
