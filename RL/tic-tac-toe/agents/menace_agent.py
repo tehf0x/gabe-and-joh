@@ -64,6 +64,14 @@ class Matchbox:
         return 'Matchbox state: %s with marbles: %s' % (self.state, self.marbles)
 
 
+def pos_str(pos):
+    """ Convert numerical board positions to strings """
+    values = ['_', 'x', 'o']
+    if isinstance(pos, list):
+        return ' '.join([pos_str(i) for i in pos])
+    else:
+        return values[pos]
+
 def state_str(state):
     """ Pretty board string representation """
     s = ""
@@ -84,7 +92,8 @@ def state_str(state):
 
 def state_print(state):
     """ Pretty-print a board state """
-    print state_str(state)
+    for i in 0, 3, 6:
+        print pos_str(state[i,i+3])
 
 
 class MenaceAgent(Agent):
@@ -171,6 +180,16 @@ class MenaceAgent(Agent):
             i = state.index(0)
             new_state[i] = 1
         
+        # Some debugging output
+        for i in 0, 3, 6:
+            d = "    "
+            if i is 3:
+                d = " => "
+            
+            print pos_str(state[i:i+3]), d, pos_str(new_state[i:i+3])
+        
+        print
+        
         # Return new state to environment
         action = Action()
         action.intArray = new_state
@@ -179,6 +198,7 @@ class MenaceAgent(Agent):
     
     def agent_start(self, state):
         """ Called every time a new game is started """
+        print "GAME START!"
         self.moves = []
         return self.do_step(state.intArray)
     
@@ -186,11 +206,23 @@ class MenaceAgent(Agent):
         """ Called for each game step """
         return self.do_step(state.intArray)
     
+    def print_moves(self):
+        marbles = [("(%d)" % (m[0])).center(5) for m in self.moves]
+        print "      ".join(marbles)
+        
+        for i in 0, 3, 6:
+            d = "      "
+            if i is 3:
+                d = "  =>  "
+            
+            print d.join([pos_str(m[1].state[i:i+3]) for m in self.moves])
+    
     def agent_end(self, reward):
         """ Called when a game ends, this is where we learn """
-        print "agent_end(", str(reward), ")"
-        
-        state_print(self.moves[-1][1].state)
+        print "GAME END, REWARD: ", str(reward)
+        print "*************************************************"
+        self.print_moves()
+        print "\n*************************************************\n"
         
         if reward:
             # We won, reward matchboxes
