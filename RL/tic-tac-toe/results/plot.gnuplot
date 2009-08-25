@@ -1,7 +1,7 @@
 #
 # gnuplot script for creating the graphs!
 # 
-# NB: Do not rnu this file directly! Use plot.sh instead.
+# NB: Do not run this file directly! Use plot.sh instead.
 #
 # plot.sh sets the variables datafile and title
 #
