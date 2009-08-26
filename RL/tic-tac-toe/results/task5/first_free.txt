@@ -1,0 +1,11 @@
+Agent settings:
+	marble_count=4
+	marble_inc=-1
+	marble_win_reward=3
+	marble_win_inc=0
+	marble_remove=True
+	save_to=None
+	load_from=learned.matchboxes
+Running experiment #1 with 30 episodes... Done!
+Experiment #1: 30/30 episodes completed. Accumulated reward: 21 (70%)
+
