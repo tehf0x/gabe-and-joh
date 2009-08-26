@@ -17,8 +17,8 @@ This Reinforcement Learning system consists of three parts:
 
 There are multiple environments and agents available.
 
-This Reinforcement Learning system uses the RL-Glue framework for 
-communication between the different components.
+The system uses the RL-Glue framework for communication
+between the different components.
 
 See http://glue.rl-community.org/ for details.
 
