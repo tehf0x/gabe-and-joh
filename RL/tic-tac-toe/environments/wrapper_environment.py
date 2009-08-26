@@ -46,7 +46,7 @@ class WrapperEnvironment(Environment):
         Get the state of the environment and return it.
         """
         self.state = [0 for i in range(9)]
-        self.env_play()
+        #self.env_play()
         obs = Observation()
         obs.intArray = self.state
 

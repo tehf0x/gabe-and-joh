@@ -4,6 +4,8 @@ from rlglue.environment import EnvironmentLoader
 
 class SymmetryEnvironment(WrapperEnvironment, SymmetryAgent):
     
+    name = 'symmetry_agent'
+    
     player = 2
     def env_play(self): 
         action = self.do_step(self.state)
