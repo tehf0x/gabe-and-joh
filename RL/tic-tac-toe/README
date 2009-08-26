@@ -40,23 +40,28 @@ To run an experiment, four programs must be executed:
    for multiple experiments:
    
    $ while true; do rl_glue ; done
+
+2. Start the desired environment from the environments/ folder:
    
+   $ python first_free_environment.py
+
+3. Start the desired agent from the agents/ folder:
+   
+   $ python menace_agent.py
+
 2. After reviewing the settings (see above), start the experiment:
 
    $ python experiment.py
 
-3. Start the desired environment from the environments/ folder:
-   
-   $ python first_free_environment.py
 
-4. Start the desired agent from the agents/ folder:
-   
-   $ python menace_agent.py
+The experiment will run a number of episodes (games) and report the results.
+Because there is probability involved in the agent, the results will differ
+from run to run. Therefore the experiment will run the episodes multiple
+times (specified by the 'instances' setting) and calculate the average. 
 
-
-The experiment will save the results in to the results/ folder in the form of
-a .dat-file. It can be displayed graphically using gnuplot and the `plot.sh' 
-script:
+The experiment will save the results in the results/ folder in the form 
+of a .dat-file. It can be displayed graphically with gnuplot and the
+`plot.sh' script:
 
    $ ./plot.sh first_free_2009-08-25_17\:41\:17.dat
 
