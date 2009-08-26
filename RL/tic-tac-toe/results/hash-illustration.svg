@@ -15,7 +15,10 @@
    sodipodi:version="0.32"
    inkscape:version="0.46"
    sodipodi:docname="hash-illustration.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/joh/workspace/gabe-and-joh/RL/tic-tac-toe/results/hash-illustration.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <marker
@@ -127,7 +130,9 @@
        height="308"
        width="308"
        sodipodi:absref="/home/joh/Pictures/pastedpic_08262009_163914.png"
-       xlink:href="/home/joh/Pictures/pastedpic_08262009_163914.png" />
+       xlink:href="/home/joh/Pictures/pastedpic_08262009_163914.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:type="arc"
        id="path2404"
@@ -137,11 +142,6 @@
        sodipodi:rx="1.5"
        sodipodi:ry="1.5"
        d="M 427.21429,296.64789 A 1.5,1.5 0 1 1 424.21429,296.64789 A 1.5,1.5 0 1 1 427.21429,296.64789 z" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#26b500;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.78431373"
-       d="M 322.85714,405.21933 L 322.85714,305.21933 L 424.28571,305.21933 L 424.28571,510.93361 L 221.14286,510.93361 L 221.14286,324.6479"
-       id="path2408"
-       sodipodi:nodetypes="cccccc" />
     <path
        sodipodi:type="star"
        style="fill:none;fill-opacity:0.58823529;stroke:#26b500;stroke-width:34.04291153;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.78431373"
@@ -157,6 +157,11 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="M 133,190.36218 L 73.911544,188.47692 L 105.08846,138.24745 L 133,190.36218 z"
-       transform="matrix(0.5046252,-1.2629208e-2,1.2904868e-2,0.493846,166.447,225.26847)" />
+       transform="matrix(1.2629208e-2,0.5046252,-0.493846,1.2904868e-2,521.73566,452.25549)" />
+    <path
+       style="fill:none;fill-rule:nonzero;stroke:#26b500;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.78431373000000004;opacity:1;color:#000000;fill-opacity:0.58823528999999997;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 325,404.36218 L 426,404.36218 L 426,298.36218 L 221,298.36218 L 221,506.36218 L 421,506.36218"
+       id="path6132"
+       sodipodi:nodetypes="cccccc" />
   </g>
 </svg>
