@@ -121,7 +121,7 @@ if __name__ == "__main__":
 	
 	# Set up agent
 	print "Agent settings:"
-	keys = ['marble_count', 'marble_inc', 'marble_win_reward', 'marble_remove']
+	keys = ['marble_count', 'marble_inc', 'marble_win_reward', 'marble_win_inc', 'marble_remove']
 	for k in keys:
 		msg = '%s=%s' % (k, getattr(settings, k))
 		print "\t", msg 

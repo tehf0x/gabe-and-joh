@@ -83,6 +83,9 @@ class MenaceAgent(Agent):
     that resulted in a positive reward """
     marble_win_reward = 3
     
+    """ Marble win reward increment. Will be applied starting from the first move. """
+    marble_win_inc = 0
+    
     """ Whether to remove marbles from matchboxes """
     marble_remove = True
     
@@ -143,13 +146,6 @@ class MenaceAgent(Agent):
         self.moves.append((marble, matchbox))
         
         # Some debugging output
-        '''for i in 0, 3, 6:
-            d = "    "
-            if i is 3:
-                d = " => "
-            
-            print pos_str(state[i:i+3]), d, pos_str(new_state[i:i+3])
-        '''
         print_state([state, new_state])
         print
         
@@ -165,7 +161,15 @@ class MenaceAgent(Agent):
         print "      ".join(marbles)
         
         print_state([m[1].state for m in self.moves])
-        
+    
+    def learn(self):
+        """ Learn from our moves """
+        i = 0
+        for color, matchbox in self.moves:
+            reward = self.marble_win_reward + self.marble_win_inc * i
+            matchbox.put_marbles(color, reward)
+            print "LEARN: REWARD MOVE #%d with %d of (%d)-marbles" % (i, reward, color)
+            i += 1
     
     def agent_init(self, taskSpec):
         pass
@@ -188,10 +192,9 @@ class MenaceAgent(Agent):
         print "*************************************************\n"
         
         if reward:
-            # We won, reward matchboxes
-            for color, matchbox in self.moves:
-                matchbox.put_marbles(color, self.marble_win_reward)
-    
+            # We won or it was a draw, do some learning!
+            self.learn()
+                
     def agent_cleanup(self):
         """ Clean up for next run """
         print
@@ -212,6 +215,8 @@ class MenaceAgent(Agent):
                 self.marble_count = int(value)
             elif param == 'marble_win_reward':
                 self.marble_win_reward = int(value)
+            elif param == 'marble_win_inc':
+                self.marble_win_inc = int(value)
             elif param == 'marble_remove':
                 self.marble_remove = bool(value)
             else:

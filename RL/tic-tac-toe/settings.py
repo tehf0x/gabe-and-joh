@@ -20,7 +20,7 @@ results_dir = 'results'
 # Agent settings
 #
 # Initial marble count
-marble_count = 4
+marble_count = 10
 
 # Marble increment for each step
 marble_inc = -1
@@ -28,6 +28,9 @@ marble_inc = -1
 # Marble win reward, i.e. number of marbles to place back into the matchboxes
 # that resulted in a positive reward
 marble_win_reward = 3
+
+# Marble win reward increment. Will be applied starting from the first move.
+marble_win_inc = 0
 
 # Whether to remove marbles from matchboxes
 marble_remove = True
