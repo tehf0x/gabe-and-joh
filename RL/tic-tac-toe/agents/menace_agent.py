@@ -1,7 +1,7 @@
 """
 MENACE agent
 
-< Some description here >
+See the README for details
 
 Authors:
     Johannes H. Jensen <johannj@stud.ntnu.no>

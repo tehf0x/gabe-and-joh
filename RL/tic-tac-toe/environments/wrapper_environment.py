@@ -1,3 +1,7 @@
+"""
+Base environment -- all other environments extend this class
+"""
+
 from exceptions import Exception
 
 from rlglue.environment.Environment import Environment

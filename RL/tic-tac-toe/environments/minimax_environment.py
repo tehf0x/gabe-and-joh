@@ -1,3 +1,7 @@
+"""
+Optimal player environment
+"""
+
 # Copyright (c) 2009 the authors listed at the following URL, and/or
 # the authors of referenced articles or incorporated external code:
 # http://en.literateprograms.org/Tic_Tac_Toe_(Python)?action=history&offset=20080515043713

@@ -1,3 +1,7 @@
+"""
+Environment which always plays the first free spot available on the board.
+"""
+
 from rlglue.environment import EnvironmentLoader
 from wrapper_environment import WrapperEnvironment
 

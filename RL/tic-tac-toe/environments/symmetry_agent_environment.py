@@ -1,3 +1,12 @@
+"""
+MENACE agent environment wrapper
+"""
+
+import sys
+
+# Ugly!
+sys.path.append('../')
+
 from agents.symmetry_agent import SymmetryAgent
 from wrapper_environment import WrapperEnvironment
 from rlglue.environment import EnvironmentLoader

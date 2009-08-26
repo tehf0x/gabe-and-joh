@@ -1,3 +1,7 @@
+"""
+Random player environment
+"""
+
 import random
 from rlglue.environment import EnvironmentLoader
 from wrapper_environment import WrapperEnvironment
