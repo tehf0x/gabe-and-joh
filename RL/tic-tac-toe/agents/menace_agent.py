@@ -21,9 +21,6 @@ from rlglue.agent import AgentLoader as AgentLoader
 from rlglue.types import Action
 from rlglue.types import Observation
 
-# Ugly:
-sys.path.append('../')
-
 from util import print_state
 
 
@@ -95,9 +92,6 @@ class MenaceAgent(Agent):
     """ List of moves we've done so far - each element is a tuple (marble, matchbox) """
     moves = []
     
-    
-    def agent_init(self, taskSpec):
-        pass
     
     def state_hash(self, state):
         """ Create a unique hash for a state """
@@ -173,6 +167,9 @@ class MenaceAgent(Agent):
         print_state([m[1].state for m in self.moves])
         
     
+    def agent_init(self, taskSpec):
+        pass
+    
     def agent_start(self, state):
         """ Called every time a new game is started """
         print "GAME START!"
@@ -188,7 +185,7 @@ class MenaceAgent(Agent):
         print "GAME END, REWARD: ", str(reward)
         print "*************************************************"
         self.print_moves()
-        print "\n*************************************************\n"
+        print "*************************************************\n"
         
         if reward:
             # We won, reward matchboxes
@@ -197,6 +194,10 @@ class MenaceAgent(Agent):
     
     def agent_cleanup(self):
         """ Clean up for next run """
+        print
+        print "RESET AGENT"
+        print
+        
         self.matchboxes = {}
         self.moves = []
     
