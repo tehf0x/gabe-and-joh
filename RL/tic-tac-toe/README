@@ -1,0 +1,6 @@
+MENACE Simulation by
+Gabe Dulac-Arnold <gabe@squirrelsoup.net>
+Johannes H. Jensen <johannj@stud.ntnu.no>
+
+This MENACE simulation uses the RL-Glue framework for communication between
+the different components.
