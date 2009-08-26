@@ -20,7 +20,7 @@ results_dir = 'results'
 # Agent settings
 #
 # Initial marble count
-marble_count = 10
+marble_count = 4
 
 # Marble increment for each step
 marble_inc = -1
@@ -34,3 +34,12 @@ marble_win_inc = 0
 
 # Whether to remove marbles from matchboxes
 marble_remove = True
+
+# Set this to a filename to save the learned matchboxes
+#save_to = 'learned.matchboxes'
+save_to = None
+
+# Set this to a filename to load learned matchboxes
+#load_from = 'learned.matchboxes'
+load_from = None
+

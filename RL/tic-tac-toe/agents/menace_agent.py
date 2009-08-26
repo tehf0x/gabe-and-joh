@@ -15,6 +15,7 @@ import sys
 import copy
 import re
 import random
+import pickle
 
 from rlglue.agent.Agent import Agent
 from rlglue.agent import AgentLoader as AgentLoader
@@ -89,6 +90,12 @@ class MenaceAgent(Agent):
     """ Whether to remove marbles from matchboxes """
     marble_remove = True
     
+    """ Set this to a filename to save the learned matchboxes """
+    save_to = None
+    
+    """ Set this to a filename to load learned matchboxes """
+    load_from = None
+    
     """ Matchbox collection """
     matchboxes = {}
     
@@ -112,6 +119,20 @@ class MenaceAgent(Agent):
             matchbox = Matchbox(state, count, self.marble_remove)
             self.matchboxes[hash] = matchbox
             return matchbox
+    
+    def save_matchboxes(self, filename):
+        """ Save matchboxes to file """
+        print "SAVING TO", filename
+        fh = open(filename, 'w')
+        pickle.dump(self.matchboxes, fh)
+        fh.close()
+    
+    def load_matchboxes(self, filename):
+        """ Load matchboxes from file """
+        print "LOADING FROM", filename
+        fh = open(filename, 'r')
+        self.matchboxes = pickle.load(fh)
+        fh.close()
     
     def play(self, matchbox):
         """ Play from matchbox, returns a tuple of (marble, new_state) """
@@ -201,8 +222,16 @@ class MenaceAgent(Agent):
         print "RESET AGENT"
         print
         
+        if self.save_to:
+            # Save matchboxes to file
+            self.save_matchboxes(self.save_to)
+        
         self.matchboxes = {}
         self.moves = []
+        
+        if self.load_from:
+            # Load matchboxes from file
+            self.load_matchboxes(self.load_from)
     
     def agent_message(self, msg):
         """ Retrieve message from the environment in the form param=value """
@@ -219,6 +248,10 @@ class MenaceAgent(Agent):
                 self.marble_win_inc = int(value)
             elif param == 'marble_remove':
                 self.marble_remove = bool(value)
+            elif param == 'save_to' and value != 'None':
+                self.save_to = str(value)
+            elif param == 'load_from' and value != 'None':
+                self.load_from = str(value)
             else:
                 return "Unknown parameter: " + param
             
