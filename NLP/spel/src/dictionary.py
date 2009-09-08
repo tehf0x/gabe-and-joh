@@ -8,13 +8,13 @@ Created on Sep 7, 2009
 @author: Gabe Arnold <gabe@squirrelsoup.net>
 '''
 
-class DictLookup():
+class Dictionary():
     
-    def __init__(self, dict_path):
+    def __init__(self, dict_path = '/etc/dictionaries-common/words'):
         f = open(dict_path)
         self.words = f.read().split()
         
-    def is_word(self, word):
+    def has_word(self, word):
         return self.words.count(word) == 1
     
 
