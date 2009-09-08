@@ -8,8 +8,8 @@ Created on 8 Sep 2009
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
-def edits1(word):
-    """ Get a set of all possible edits of word of distance 1 """
+def permutate(word):
+    """ Get a set of all possible edits of word of distance 1"""
     # Split word into two in all possible ways
     split = [(word[:i], word[i:]) for i in range(len(word) + 1)]
     
@@ -29,6 +29,6 @@ def edits1(word):
     return set(deletes + transposes + replaces + inserts)
 
 
-def edits2(word):
+def permutate_2(word):
     """ Get a set of all possible edits of word of distance 2 """
-    return set(e2 for e1 in edits1(word) for e2 in edits1(e1))
+    return set(e2 for e1 in permutate(word) for e2 in permutate(e1))
