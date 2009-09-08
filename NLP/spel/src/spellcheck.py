@@ -10,7 +10,8 @@ import nltk
 from nltk import sent_tokenize, word_tokenize
 
 from dictionary import Dictionary
-#import corpus 
+from permutate import permutate
+import corpus 
 
 # Our dictionary
 dictionary = Dictionary()
@@ -67,8 +68,9 @@ class Spellcheck(object):
                     continue
                 
                 # Create permutations of word
+                permutations = permutate(word.lower())
                 
-                candidates = []
+                candidates = corpus.freq_sort(corpus.known(permutations))
                 result = SpellcheckResult(sentence, word_pos, candidates)
                 self.stored_results.append(result)
                 #print 'Misspelled:', word

@@ -10,10 +10,15 @@ from nltk import FreqDist
 from nltk.corpus import brown
 
 """ Lowercased brown corpus """
+# TODO: This takes forever. Consider smaller corpus?
 words = [w.lower() for w in brown.words()]
 
 """ Frequency distribution of words """
+# TODO: This takes forever. Consider smaller corpus?
 freq = FreqDist(words)
+
+def known(word_list):
+    return set(w for w in word_list if w in words)
 
 def freq_cmp(w1, w2):
     f1 = freq[w1]
