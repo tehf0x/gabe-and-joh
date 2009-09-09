@@ -17,19 +17,19 @@ def permutate_meta(word):
     split = [(word[:i], word[i:]) for i in range(len(word) + 1)]
     
     # Deletes one character
-    deletes = [('delete', (a[-1] if len(a)>0 else '@', b[0]), a + b[1:]) 
+    deletes = [(a + b[1:], ('delete', a[-1] if len(a)>0 else '@', b[0])) 
                for a, b in split if b]
     
     # Swaps two characters
-    transposes = [('transpose', (b[0], b[1]), a + b[1] + b[0] + b[2:]) 
+    transposes = [(a + b[1] + b[0] + b[2:], ('transpose', b[0], b[1])) 
                   for a, b in split if len(b) > 1]
     
     # Replace character
-    replaces = [('replace', (b[0], c), a + c + b[1:]) 
+    replaces = [(a + c + b[1:], ('replace', b[0], c)) 
                 for a, b in split for c in alphabet if b]
     
     # Insert character
-    inserts = [('insert', (a[-1] if len(a)>0 else '@', c), a + c + b) 
+    inserts = [ (a + c + b, ('insert', a[-1] if len(a)>0 else '@', c)) 
                for a, b in split for c in alphabet]
     
     # Remove duplicates by creating a set
