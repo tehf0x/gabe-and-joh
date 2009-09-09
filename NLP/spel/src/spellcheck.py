@@ -68,12 +68,12 @@ class Spellcheck(object):
                     continue
                 
                 # Create permutations of word
-                permutations = permutate(word.lower())
+                permutations = permutate(word)
+                known = corpus.known(permutations)
+                candidates = corpus.freq_sort(known)
                 
-                candidates = corpus.freq_sort(corpus.known(permutations))
                 result = SpellcheckResult(sentence, word_pos, candidates)
                 self.stored_results.append(result)
-                #print 'Misspelled:', word
         
         return self.stored_results
         
