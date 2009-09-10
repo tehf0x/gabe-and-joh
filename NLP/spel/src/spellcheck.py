@@ -11,6 +11,7 @@ from nltk import sent_tokenize, word_tokenize
 
 from dictionary import Dictionary
 from permutate import permutate
+from util import CaseMask
 import corpus 
 
 # Our dictionary
@@ -40,6 +41,7 @@ class SpellcheckResult(object):
     
     def __repr__(self):
         return '<SpellcheckResult: word "%s", #%d in "%s", candidates: %s>' % (self.word, self.word_pos, ' '.join(self.context()), self.candidates)
+ 
 
 class Spellcheck(object):
     '''
@@ -52,30 +54,46 @@ class Spellcheck(object):
         self.sents = [nltk.Text(word_tokenize(sent)) for sent in sent_tokenize(text)]
         self.words = nltk.Text(word_tokenize(text))
     
-    def results(self):
-        if self.stored_results:
-            return self.stored_results
-        
-        self.stored_results = []
-        for sentence in self.sents:
+    
+    
+    def results(self):    
+        sent_results = {}
+        for i, sentence in enumerate(self.sents):
             for word_pos, word in enumerate(sentence):
                 # Skip non-alphanumeric characters -- TODO: how to deal with this?
                 if not word.isalpha():
                     continue
                 
+                # Keep case mask and lowercase word
+                mask = CaseMask(word)
+                word = word.lower()
+                
                 # Check if word is in our dictionary
-                if dictionary.has_word(word.lower()):
+                if dictionary.has_word(word):
                     continue
                 
                 # Create permutations of word
                 permutations = permutate(word)
-                known = corpus.known(permutations)
-                candidates = corpus.freq_sort(known)
+                
+                # Find permutations in dictionary
+                dict_cands = set([w for w in permutations if dictionary.has_word(w)])
+                dict_cands = corpus.freq_sort(dict_cands)
+                
+                # Find permutations in corpus
+                corpus_cands = corpus.known(permutations - set(dict_cands))
+                corpus_cands = corpus.freq_sort(corpus_cands)
+                
+                candidates = map(mask.apply, list(dict_cands) + list(corpus_cands))
                 
                 result = SpellcheckResult(sentence, word_pos, candidates)
-                self.stored_results.append(result)
+                
+                if not sent_results.has_key(i):
+                    sent_results[i] = []
+                
+                sent_results[i].append(result)
         
-        return self.stored_results
+        return sent_results
+        #return self.stored_results
         
         
         

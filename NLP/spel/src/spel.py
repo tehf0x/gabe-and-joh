@@ -18,8 +18,10 @@ if __name__ == '__main__':
             from spellcheck import Spellcheck
             sc = Spellcheck(s)
             results = sc.results()
-            for r in results:
-                print r
+            for sid in results:
+                print 'In sentence "%s":' % (sc.sents[sid])
+                for r in results[sid]:
+                    print '\t%s: %s' % (r.word, ' '.join(r.candidates))
             
         except (EOFError, KeyboardInterrupt):
             running = False
