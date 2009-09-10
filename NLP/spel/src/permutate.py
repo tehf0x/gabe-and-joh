@@ -4,13 +4,13 @@ Word permutations
 Created on 8 Sep 2009
 
 @author: Johannes H. Jensen <joh@pseudoberries.com>
+@author: Gabriel Arnold <gabe@squirrelsoup.net>
 '''
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
-def permutate_meta(word):
-    """
-    Get a set of all possible edits of word of distance 1, and return the
+def edits1_meta(word):
+    """ Get a set of all possible word edits of distance 1, and return the
     edit type along with the word.
     """
     # Split word into two in all possible ways
@@ -33,10 +33,22 @@ def permutate_meta(word):
                for a, b in split for c in alphabet]
     
     # Remove duplicates by creating a set
+    # TODO: This is currently bugged and does not remove duplicates
+    # properly because set() does not consider ('aa', ('insert', '@', 'a')) 
+    # and ('aa', ('insert', 'a', 'a')) to be equal.
     return set(deletes + transposes + replaces + inserts)
 
-def permutate(word, meta = False):
-    """ Get a set of all possible edits of word of distance 1"""
+def edits2_meta(word):
+    """ Get a set of all possible word edits of distance 2, and return the
+    edit type along with the word.
+    """
+    # TODO: Implement?
+    raise NotImplementedError
+    #return set(e2 for e1 in edits1_meta(word[0]) for e2 in edits1_meta(e1[0]))
+ 
+
+def edits1(word):
+    """ Get a set of all possible word edits of distance 1 """
     # Split word into two in all possible ways
     split = [(word[:i], word[i:]) for i in range(len(word) + 1)]
     
@@ -55,7 +67,15 @@ def permutate(word, meta = False):
     # Remove duplicates by creating a set
     return set(deletes + transposes + replaces + inserts)
 
+def edits2(word):
+    """ Get a set of all possible word edits of distance 2 """
+    return set(e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-def permutate_2(word):
-    """ Get a set of all possible edits of word of distance 2 """
-    return set(e2 for e1 in permutate(word) for e2 in permutate(e1))
+def edits(n, word):
+    """ Get a set of all possible word edits of distance n """
+    if n < 1:
+        raise AttributeError('n >= 1')
+    if n == 1:
+        return edits1(word)
+    else:
+        return set(e2 for e1 in edits(n-1, word) for e2 in edits(n-1, e1))

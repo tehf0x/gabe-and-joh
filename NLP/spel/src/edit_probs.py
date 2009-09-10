@@ -49,7 +49,7 @@ def update_cmatrix(edit):
 unusual = ('zoomd',)
 
 for word in get_unusual():
-    perms = dict((perm, meta) for (perm,meta) in permutate.permutate_meta(word))
+    perms = dict((perm, meta) for (perm,meta) in permutate.edits1_meta(word))
     edits = {}
     print word
     for perm in perms:

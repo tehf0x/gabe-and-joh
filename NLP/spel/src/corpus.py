@@ -19,12 +19,12 @@ def load(filename='corpus.pickle'):
     """ Attempt to load corpus data from pickle """
     try:
         fh = open(filename, 'r')
-        print 'Loading corpus from "%s"...' % (filename) 
+        #print 'Loading corpus from "%s"...' % (filename) 
         return pickle.load(fh)
         
     except IOError:
         # File not found, generate
-        print 'Generating corpus to "%s"... This can take some time...' % (filename)
+        #print 'Generating corpus to "%s"... This can take some time...' % (filename)
         
         # Lowercase the first words in sentences
         '''sents = brown.sents()
