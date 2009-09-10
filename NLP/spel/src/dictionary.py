@@ -15,8 +15,13 @@ from nltk.corpus import words
 class Dictionary():
     
     def __init__(self, dict_path = '/etc/dictionaries-common/words'):
-         f= open(dict_path)
-         self.words = set(f.read().split()).union(words.words())
+         f = open(dict_path)
+         
+         # We use two dictionaries for better coverage
+         d1 = set([w.lower() for w in f.read().split()])
+         d2 = set([w.lower() for w in words.words()])
+         
+         self.words = set(d1.union(d2))
         
     def has_word(self, word):
         return word in self.words
