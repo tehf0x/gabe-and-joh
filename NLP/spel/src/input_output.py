@@ -32,7 +32,7 @@ class OutputGenerator(deque):
                 self.fh.write(output)
                 continue
             for c in case[2]:
-                candidates =  ', '.join(c.candidates)
+                candidates =  ', '.join(c.candidates[:5])
                 output = "Case %s, %s, %s\n" % (case[0], c.word, candidates)
                 self.fh.write(output)
             
