@@ -26,7 +26,7 @@ class Spellchecker(object):
     
     
     def __init__(self, max_edit_distance=2, dictionary=Dictionary(), 
-                 word_counts="data/count_brown.txt", bigram_counts="data/count_2w_brown.txt"):
+                 word_counts="data/count_brown.txt", bigram_counts="data/count_2w_brown_reuters.txt"):
         """ Create a new Spellchecker
         
         Keyword arguments:
@@ -48,25 +48,23 @@ class Spellchecker(object):
         self.cmatrix = ConfusionMatrix()
     
     def prob(self, word, edit, context=None):
+        """ Calculate probability of candidate word given edit info
+        and context = (word_before, None) | (None, word_after) | (word_before, word_after)
+        """
         p_word = self.freq.freq(word)
         p_edit = self.cmatrix.get_prob(edit)
+        p_context = 1
         
-        return p_word * p_edit
-    
-    def cand_cmp(self, w1, w2):
-        """ Candidate compare of words w1 and w2
+        if context:
+            word_before, word_after = context
+            
+            if word_before or word_after:
+                if word_before:
+                    p_context += self.bfreq[(word_before, word)]
+                if word_after:
+                    p_context += self.bfreq[(word, word_after)]
         
-        Takes into account the word frequency, edit probability
-        and bigrams
-        """
-        p1 = self.freq.freq(w1[0]) * self.cmatrix.get_prob(w1[1])
-        p2 = self.freq.freq(w2[0]) * self.cmatrix.get_prob(w2[1])
-        if p1 < p2:
-            return -1
-        elif p1 == p2:
-            return 0
-        else: # p1 < p2
-            return 1
+        return p_word * p_edit * p_context
     
     def check(self, text):
         """ Check a text for spelling errors
@@ -93,6 +91,14 @@ class Spellchecker(object):
                 if self.dictionary.has_word(word):
                     continue
                 
+                # Determine context
+                word_before = word_after = None
+                if word_pos > 0:
+                    word_before = sentence[word_pos - 1]
+                if word_pos < len(sentence) - 1:
+                    word_after = sentence[word_pos + 1]
+                context = (word_before, word_after)
+                
                 for n in range(1, self.max_edit_distance + 1):
                     # Make a list of candidates of distance N
                     # edits_meta -> (word, (meta))
@@ -113,7 +119,7 @@ class Spellchecker(object):
                     probs = {}
                     for cand in cands:
                         w, edit = cand
-                        p = self.prob(w, edit)
+                        p = self.prob(w, edit, context)
                         if probs.has_key(w):
                             probs[w] += p
                         else:

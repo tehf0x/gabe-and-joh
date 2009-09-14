@@ -7,9 +7,9 @@ Count word bigrams in corpus and output to stdout
 
 if __name__ == '__main__':
     from nltk import bigrams
-    from nltk.corpus import brown
+    from nltk.corpus import brown, reuters
     from corpus import FreqDist
     
-    bs = bigrams(word.lower() for word in brown.words() if word.isalpha())
+    bs = bigrams(word.lower() for word in brown.words()+reuters.words() if word.isalpha())
     fdist = FreqDist(bs)
     print fdist.dumps()
