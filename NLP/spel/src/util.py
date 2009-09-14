@@ -61,4 +61,28 @@ class CaseMask(object):
                 word2[i] = word2[i].lower()
         
         return ''.join(word2)
+
+def normalize(l, target = 1.0):
+    """ Returns a normalized list from l so that 
+    a(l[0] + l[1] + ... + l[n]) = target
+    """
+    if isinstance(l, dict):
+        s = sum(l.values())
+        if not s:
+            return l
+        
+        a = target / s
+        return dict((k, a * v) for k, v in l.items())
+    else:
+        s = sum(l)
+        if not s:
+            return l
+        
+        a = target / s
+        return [a * e for e in l]
+    
+    
+    
+    
+    
     

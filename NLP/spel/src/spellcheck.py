@@ -11,10 +11,11 @@ import nltk
 from nltk import sent_tokenize, word_tokenize
 
 from dictionary import Dictionary
-from permutate import edits
-from util import CaseMask
+from permutate import edits_meta
+from util import CaseMask, normalize
 import corpus 
 from corpus import FreqDist
+from edit_probs import ConfusionMatrix
 
 # Our dictionary
 #dictionary = Dictionary()
@@ -24,7 +25,8 @@ class Spellchecker(object):
     """ Spellchecker which can process an arbitrary text """
     
     
-    def __init__(self, max_edit_distance=2, dictionary=Dictionary(), word_counts="data/count_brown.txt"):
+    def __init__(self, max_edit_distance=2, dictionary=Dictionary(), 
+                 word_counts="data/count_brown.txt", bigram_counts="data/count_2w_brown.txt"):
         """ Create a new Spellchecker
         
         Keyword arguments:
@@ -36,8 +38,35 @@ class Spellchecker(object):
         """
         self.max_edit_distance = max_edit_distance
         self.dictionary = dictionary
+        
         self.freq = FreqDist()
         self.freq.load(open(word_counts))
+        
+        self.bfreq = FreqDist()
+        self.bfreq.load(open(bigram_counts))
+        
+        self.cmatrix = ConfusionMatrix()
+    
+    def prob(self, word, edit, context=None):
+        p_word = self.freq.freq(word)
+        p_edit = self.cmatrix.get_prob(edit)
+        
+        return p_word * p_edit
+    
+    def cand_cmp(self, w1, w2):
+        """ Candidate compare of words w1 and w2
+        
+        Takes into account the word frequency, edit probability
+        and bigrams
+        """
+        p1 = self.freq.freq(w1[0]) * self.cmatrix.get_prob(w1[1])
+        p2 = self.freq.freq(w2[0]) * self.cmatrix.get_prob(w2[1])
+        if p1 < p2:
+            return -1
+        elif p1 == p2:
+            return 0
+        else: # p1 < p2
+            return 1
     
     def check(self, text):
         """ Check a text for spelling errors
@@ -66,18 +95,38 @@ class Spellchecker(object):
                 
                 for n in range(1, self.max_edit_distance + 1):
                     # Make a list of candidates of distance N
-                    word_edits = edits(n, word)
+                    # edits_meta -> (word, (meta))
+                    word_edits = edits_meta(n, word)
                     
                     # Find words that are in dictionary
-                    dict_cands = set([w for w in word_edits if self.dictionary.has_word(w)])
-                    dict_cands = self.freq.sort_samples(dict_cands)
+                    dict_cands = set([w for w in word_edits if self.dictionary.has_word(w[0])])
                     
                     # Find unknown words from corpus
-                    corpus_cands = self.freq.known(word_edits - set(dict_cands))
-                    corpus_cands = self.freq.sort_samples(corpus_cands)
+                    non_words = word_edits - dict_cands
+                    #non_words = set([w for w in word_edits if not w[0] in cands])
+                    corpus_cands = set([w for w in non_words if self.freq.has_key(w[0])])
                     
-                    # Candidates in dictionary get favored
-                    candidates = list(dict_cands) + list(corpus_cands)
+                    cands = dict_cands.union(corpus_cands)
+                    
+                    # Calculate probabilities for each candidate
+                    # dict_cands: word -> probability
+                    probs = {}
+                    for cand in cands:
+                        w, edit = cand
+                        p = self.prob(w, edit)
+                        if probs.has_key(w):
+                            probs[w] += p
+                        else:
+                            probs[w] = p
+                    
+                    # Normalize probabilities
+                    if probs:
+                        probs = normalize(probs)
+                    
+                    # Sort candidates
+                    candidates = sorted(probs.keys(), 
+                                        cmp = lambda c1, c2: cmp(probs[c1], probs[c2]),
+                                        reverse = True)
                     
                     if candidates:
                         # Found candidates, don't try any larger edit distance
@@ -88,7 +137,7 @@ class Spellchecker(object):
                 candidates = map(mask.apply, candidates)
                 
                 # Add result
-                result = Correction(mask.apply(word), candidates, sentence_pos, word_pos)
+                result = Correction(mask.apply(word), candidates, probs, sentence_pos, word_pos)
                 results.append(result)
         
         return results
@@ -126,7 +175,7 @@ class SpellcheckResult(list):
 class Correction(object):
     """ Contains information about a single spelling correction """
     
-    def __init__(self, word, candidates=[], sentence_pos=0, word_pos=0):
+    def __init__(self, word, candidates=[], candidate_probs={}, sentence_pos=0, word_pos=0):
         """ Create a word correction.
         
         Keyword arguments:
@@ -135,9 +184,11 @@ class Correction(object):
                       by likeliness.
         sentence_pos -- the position of the sentence in the text
         word_pos -- the position of the word in the sentence
+        cand_meta -- meta-information about each candidate
         """
         self.word = word
         self.candidates = candidates
+        self.candidate_probs = candidate_probs
         self.sentence_pos = sentence_pos
         self.word_pos = word_pos
     
