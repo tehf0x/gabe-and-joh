@@ -71,6 +71,15 @@ def edits2(word):
     """ Get a set of all possible word edits of distance 2 """
     return set(e2 for e1 in edits1(word) for e2 in edits1(e1))
 
+def edits_meta(n, word):
+    """ Get a set of all possible word edits of distance n """
+    if n < 1:
+        raise AttributeError('n >= 1')
+    if n == 1:
+        return edits1_meta(word)
+    else:
+        return set(e2 for e1 in edits_meta(n-1, word) for e2 in edits_meta(n-1, e1[0]))
+
 def edits(n, word):
     """ Get a set of all possible word edits of distance n """
     if n < 1:
