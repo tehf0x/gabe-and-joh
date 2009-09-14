@@ -6,66 +6,120 @@ Created on Sep 8, 2009
 
 import nltk
 import permutate
-import corpus
 import pickle
+import corpus
 
-from copy import copy
+#Dictionary for lookups.
 from dictionary import Dictionary
 from nltk.corpus import reuters
 
-#This comes in handy:
-alphabet = 'abcdefghijklmnopqrstuvwxyz@'
-#Dictionary for lookups.
-dt = Dictionary()
-
-"""
-Confusion matrices for various edits.
-It's necessary to keep the 'types' var around to re-iterate through the
-dictionary while editing it.
-"""
-types = ('delete', 'transpose', 'replace', 'insert')
-container = dict((type, {}) for type in types)
-
-#Default occurrences to 0
-for type in types:
-    container[type] = dict((i, dict((c,0) for c in alphabet)) for i in alphabet)
-
-def get_unusual():
-    dict_path = '/etc/dictionaries-common/words'
-    f= open(dict_path)
-    dict_words = f.read().split()
-             
-    text_vocab = set(w.lower() for w in reuters.words() if w.isalpha())
-    #print sorted(text_vocab)
-    english_vocab = set(w.lower() for w in dict_words if w.isalpha())
-    english_vocab = english_vocab.union(set(w.lower() for w in nltk.corpus.words.words()))
-    #print sorted(english_vocab)
-    unusual = text_vocab.difference(english_vocab)
-    return unusual
-
-def update_cmatrix(edit):
-    container[edit[0]][edit[1]][edit[2]] += 1
+class ConfusionMatrix():
+    """
+    Confusion matrices for various edits.
+    It's necessary to keep the 'types' var around to re-iterate through the
+    dictionary while editing it.
+    """
     
-unusual = ('zoomd',)
+    types = ('delete', 'transpose', 'replace', 'insert')
+    alphabet = 'abcdefghijklmnopqrstuvwxyz@'
 
-for word in get_unusual():
-    perms = dict((perm, meta) for (perm,meta) in permutate.permutate_meta(word))
-    edits = {}
-    print word
-    for perm in perms:
-        if dt.has_word(perm):
-            edits[perm] = perms[perm]
-    if len(edits) == 0:
-        continue
-    print edits
-    just_words = edits.keys()
-    c_word = corpus.freq_sort(just_words)[0]
-    correction = c_word, edits[c_word]
-    print correction
-    update_cmatrix(edits[c_word])
+    def __init__(self, pickle_name = 'conf_matrix.pickle', no_load = False):
+        '''
+        Load the confusion matrices from pickle_name, and if no pickle is found,
+        generate the confusion matrices.
+        '''
+        self.dt = Dictionary()
+        self.container = dict()
+        self.letter_freq = dict()
+        
+        #Don't load the pickle, in case we want to run some tests, debug etc.
+        if no_load:
+            return None
 
-print container['insert']['m']
-#print get_unusual()
+        try:
+            fh = open(pickle_name, 'r')
+            print 'Loading confusion matrix from "%s"...' % (pickle_name) 
+            self.container, self.letter_freq = pickle.load(fh)
+        
+        except IOError:
+            # File not found, generate
+            print 'Generating corpus to "%s"... This can take some time...' % (pickle_name)
+            self.container = dict((type, {}) for type in self.types)
+            for type in self.types:
+                self.container[type] = dict((i, dict((c,0) for c in self.alphabet)) 
+                                            for i in self.alphabet)
+            self.construct_matrix()
+            self.construct_freq()
+            pickle.dump((self.container, self.letter_freq), open(pickle_name, 'w'))
+            
+    def get_unusual(self):
+        #List of words in the text
+        text_vocab = set(w.lower() for w in reuters.words() if w.isalpha())
+        #List of words in the dictionary
+        english_vocab = set(w.lower() for w in self.dt.words if w.isalpha())
+        #(text_vocab - english_vocab) = misspelled words
+        return text_vocab.difference(english_vocab)
+    
+    def update_cmatrix(self,edit):
+        self.container[edit[0]][edit[1]][edit[2]] += 1
+    
+    def construct_freq(self, text = None):
+        if text == None:
+            from nltk.corpus import reuters
+            text = reuters.raw()
+        #Get rid of \n
+        c_text = text.replace('\n','')
+        self.letter_freq = nltk.FreqDist(c_text)
+        for bigram in nltk.bigrams(c_text):
+            self.letter_freq.inc(''.join(bigram))
+        
+    def construct_matrix(self, word_list = None, dictionary = None):
+        if word_list == None:
+            word_list = self.get_unusual()
+        if dictionary == None:
+            dictionary = self.dt
+        
+        for word in word_list:
+            perms = dict((perm, meta) for (perm,meta) in permutate.permutate_meta(word))
+            edits = {}
+            print word
+            for perm in perms:
+                if dictionary.has_word(perm):
+                    edits[perm] = perms[perm]
+            if len(edits) == 0:
+                continue
+            print edits
+            just_words = edits.keys()
+            c_word = corpus.freq_sort(just_words)[0]
+            correction = c_word, edits[c_word]
+            print correction
+            self.update_cmatrix(edits[c_word])
 
-pickle.dump(container, open('conf_matrix.pickle', 'w'))
+    def get_prob(self, permutation):
+        '''
+        These differ slightly from the paper describing the probability
+        calculations.  Here we have have 'insert' as calculated 'from a typo to
+        a correct word', which is equivalent to a delete 'from a correct word to
+        a typo'.  The paper considered all the mutations to be from a correct 
+        word to a typo.
+        '''
+        try:
+            if permutation[0] in ('insert', 'transpose'):
+                return (float(self.container[permutation[0]][permutation[1]][permutation[2]]) /
+                        float(self.letter_freq[permutation[1] if permutation[1] != '@' 
+                                               else '' + permutation[2]]))
+            elif permutation[0] == 'delete':
+                return (float(self.container[permutation[0]][permutation[1]][permutation[2]]) /
+                        float(self.letter_freq[permutation[1] if permutation[1] != '@' 
+                                               else permutation[2]]))
+            elif permutation[0] == 'replace':
+                return (float(self.container[permutation[0]][permutation[1]][permutation[2]]) /
+                        float(self.letter_freq[permutation[2]]))
+        
+        except ZeroDivisionError:
+            return 0.0  
 
+
+if __name__ == '__main__':
+    CM = ConfusionMatrix()
+    print CM.letter_freq['az']
