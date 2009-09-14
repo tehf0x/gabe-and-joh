@@ -6,8 +6,8 @@ Count words in corpus and output to stdout
 """
 
 if __name__ == '__main__':
-    from nltk.corpus import brown
+    from nltk.corpus import brown, reuters
     from corpus import FreqDist
     
-    fdist = FreqDist(word.lower() for word in brown.words() if word.isalpha())
+    fdist = FreqDist(word.lower() for word in brown.words() + reuters.words() if word.isalpha())
     print fdist.dumps()

@@ -17,16 +17,15 @@ import corpus
 from corpus import FreqDist
 from edit_probs import ConfusionMatrix
 
-# Our dictionary
-#dictionary = Dictionary()
-
 
 class Spellchecker(object):
     """ Spellchecker which can process an arbitrary text """
     
     
     def __init__(self, max_edit_distance=2, dictionary=Dictionary(), 
-                 word_counts="data/count_brown.txt", bigram_counts="data/count_2w_brown_reuters.txt"):
+                 word_counts="data/count_brown_reuters.txt", 
+                 bigram_counts="data/count_2w_brown_reuters.txt"):
+        
         """ Create a new Spellchecker
         
         Keyword arguments:
@@ -52,8 +51,8 @@ class Spellchecker(object):
         and context = (word_before, None) | (None, word_after) | (word_before, word_after)
         """
         p_word = self.freq.freq(word)
-        p_edit = self.cmatrix.get_prob(edit)
-        p_context = 1
+        p_edit = self.cmatrix.get_prob(edit) + 0.5
+        p_context = 0.5
         
         if context:
             word_before, word_after = context
@@ -72,7 +71,7 @@ class Spellchecker(object):
         Returns a SpellcheckResult with information about misspelled words
         and candidates.
         """
-        sents = [word_tokenize(sent) for sent in sent_tokenize(text)]
+        sents = [[w for w in word_tokenize(sent) if w.isalpha()] for sent in sent_tokenize(text)]
         
         results = SpellcheckResult(sents)
         
