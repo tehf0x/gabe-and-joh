@@ -1,28 +1,47 @@
 #!/usr/bin/env python
-'''
+"""
 The Spel spellchecker
 
-Spel reads sentences from standard input and highlights the
-misspelled words and provides weighted candidate suggestions.
+Spel reads sentences from standard input and prints a list
+of misspelled words and provides weighted candidate suggestions.
 
 @author: Johannes H. Jensen <joh@pseudoberries.com>
-'''
+"""
 
 if __name__ == '__main__':
+    # Import and create spellchecker
+    from spellcheck import Spellchecker
     
-    running = True
-    while running:
+    spellchecker = Spellchecker()
+    
+    lines = []
+    while True:
         try:
-            s = raw_input()
-            
-            from spellcheck import Spellcheck
-            sc = Spellcheck(s)
-            results = sc.results()
-            for sid in results:
-                print 'In sentence "%s":' % (sc.sents[sid])
-                for r in results[sid]:
-                    print '\t%s: %s' % (r.word, ' '.join(r.candidates))
-            
-        except (EOFError, KeyboardInterrupt):
-            running = False
-        
+            lines.append(raw_input())
+        except EOFError:
+            break
+    
+    text = ' '.join(lines)
+    
+    
+    results = spellchecker.check(text)
+    for r in results:
+        print r.word + ':', ' '.join(r.candidates[:5])
+    
+    print
+    print results.corrected()
+    print 'Corrected text:'
+    
+    words = []
+    i = 0
+    for sent in results.corrected():
+        for word in sent:
+            # Improve this?
+            if i > 0 and not word.isalpha():
+                words[i-1] = words[i-1] + word
+            else:
+                words.append(word)
+                i += 1
+    
+    print ' '.join(words)
+    

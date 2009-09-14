@@ -95,7 +95,6 @@ class ConfusionMatrix():
             print correction
             self.update_cmatrix(edits[c_word])
 
-
     def get_prob(self, permutation):
         '''
         These differ slightly from the paper describing the probability

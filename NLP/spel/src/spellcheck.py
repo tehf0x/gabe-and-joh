@@ -6,59 +6,51 @@ Created on 8 Sep 2009
 @author: Johannes H. Jensen <joh@pseudoberries.com>
 '''
 
+import copy
 import nltk
 from nltk import sent_tokenize, word_tokenize
 
 from dictionary import Dictionary
-from permutate import permutate
+from permutate import edits
 from util import CaseMask
 import corpus 
+from corpus import FreqDist
 
 # Our dictionary
-dictionary = Dictionary()
+#dictionary = Dictionary()
 
-class SpellcheckResult(object):
-    ''' Spelling error result '''
-    
-    def __init__(self, sentence, word_pos, candidates = []):
-        self.sentence = sentence
-        self.word_pos = word_pos
-        self.word = sentence[word_pos]
-        self.candidates = candidates
-    
-    def context(self, before = 2, after = 2):
-        ''' Get the context around the word '''
-        before = abs(before)
-        after = abs(after)
-        
-        if self.word_pos - before < 0:
-            before = self.word_pos
-        
-        if self.word_pos + after >= len(self.sentence):
-            after = len(self.sentence) - self.word_pos
-        
-        return self.sentence.tokens[self.word_pos - before : self.word_pos + after + 1]
-    
-    def __repr__(self):
-        return '<SpellcheckResult: word "%s", #%d in "%s", candidates: %s>' % (self.word, self.word_pos, ' '.join(self.context()), self.candidates)
- 
 
-class Spellcheck(object):
-    '''
-    Spellchecker class which can process an abritrary text
-    '''
-    stored_results = None
-    
-    def __init__(self, text):
-        self.raw = text
-        self.sents = [nltk.Text(word_tokenize(sent)) for sent in sent_tokenize(text)]
-        self.words = nltk.Text(word_tokenize(text))
+class Spellchecker(object):
+    """ Spellchecker which can process an arbitrary text """
     
     
+    def __init__(self, max_edit_distance=2, dictionary=Dictionary(), word_counts="data/count_brown.txt"):
+        """ Create a new Spellchecker
+        
+        Keyword arguments:
+        max_edit_distance -- Maximum edit distance we should consider for words.
+                             Anything above 2 is too computationally intensive for most systems.
+        
+        dictionary -- Dictionary to use
+        word_counts -- Filename of word counts file
+        """
+        self.max_edit_distance = max_edit_distance
+        self.dictionary = dictionary
+        self.freq = FreqDist()
+        self.freq.load(open(word_counts))
     
-    def results(self):    
-        sent_results = {}
-        for i, sentence in enumerate(self.sents):
+    def check(self, text):
+        """ Check a text for spelling errors
+        
+        Returns a SpellcheckResult with information about misspelled words
+        and candidates.
+        """
+        sents = [word_tokenize(sent) for sent in sent_tokenize(text)]
+        
+        results = SpellcheckResult(sents)
+        
+        # Loop through sentences, words
+        for sentence_pos, sentence in enumerate(sents):
             for word_pos, word in enumerate(sentence):
                 # Skip non-alphanumeric characters -- TODO: how to deal with this?
                 if not word.isalpha():
@@ -69,33 +61,87 @@ class Spellcheck(object):
                 word = word.lower()
                 
                 # Check if word is in our dictionary
-                if dictionary.has_word(word):
+                if self.dictionary.has_word(word):
                     continue
                 
-                # Create permutations of word
-                permutations = permutate(word)
+                for n in range(1, self.max_edit_distance + 1):
+                    # Make a list of candidates of distance N
+                    word_edits = edits(n, word)
+                    
+                    # Find words that are in dictionary
+                    dict_cands = set([w for w in word_edits if self.dictionary.has_word(w)])
+                    dict_cands = self.freq.sort_words(dict_cands)
+                    
+                    # Find unknown words from corpus
+                    corpus_cands = self.freq.known(word_edits - set(dict_cands))
+                    corpus_cands = self.freq.sort_words(corpus_cands)
+                    
+                    # Candidates in dictionary get favored
+                    candidates = list(dict_cands) + list(corpus_cands)
+                    
+                    if candidates:
+                        # Found candidates, don't try any larger edit distance
+                        break
                 
-                # Find permutations in dictionary
-                dict_cands = set([w for w in permutations if dictionary.has_word(w)])
-                dict_cands = corpus.freq_sort(dict_cands)
                 
-                # Find permutations in corpus
-                corpus_cands = corpus.known(permutations - set(dict_cands))
-                corpus_cands = corpus.freq_sort(corpus_cands)
+                # Apply case mask to candidates
+                candidates = map(mask.apply, candidates)
                 
-                candidates = map(mask.apply, list(dict_cands) + list(corpus_cands))
-                
-                result = SpellcheckResult(sentence, word_pos, candidates)
-                
-                if not sent_results.has_key(i):
-                    sent_results[i] = []
-                
-                sent_results[i].append(result)
+                # Add result
+                result = Correction(mask.apply(word), candidates, sentence_pos, word_pos)
+                results.append(result)
         
-        return sent_results
-        #return self.stored_results
+        return results
+    
+    def correct(self, text):
+        """ Correct misspelled word in text.
+        Returns the corrected text. """
+        raise NotImplementedError
+    
+
+
+
+
+class SpellcheckResult(list):
+    """ Result of a spellcheck. """
+    
+    def __init__(self, sents=None, corrections=[]):
+        self.sents = sents
+        self.extend(corrections)
+    
+    def __repr__(self):
+        return '<SpellcheckResult: %d sentences with %d corrections>' % (len(self.sents), len(self))
+    
+    def corrected(self):
+        """ Get the corrected text sentences """
+        sents = copy.deepcopy(self.sents)
         
+        for c in self:
+            if c.candidates:
+                sents[c.sentence_pos][c.word_pos] = c.candidates[0]
         
+        return sents
+
+
+class Correction(object):
+    """ Contains information about a single spelling correction """
+    
+    def __init__(self, word, candidates=[], sentence_pos=0, word_pos=0):
+        """ Create a word correction.
         
-        
-        
+        Keyword arguments:
+        word -- the original word
+        candidates -- a list of candidate corrections of word, ordered
+                      by likeliness.
+        sentence_pos -- the position of the sentence in the text
+        word_pos -- the position of the word in the sentence
+        """
+        self.word = word
+        self.candidates = candidates
+        self.sentence_pos = sentence_pos
+        self.word_pos = word_pos
+    
+    def __repr__(self):
+        return '<Correction: %s: %s>' % (self.word, ' '.join(self.candidates))
+
+
