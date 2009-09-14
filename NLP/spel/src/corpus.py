@@ -48,6 +48,10 @@ class FreqDist(nltk.FreqDist):
         """ Return a subset of sample_list where each element is known """
         return set(s for s in sample_list if self.has_key(s))
     
+    def freq(self, sample):
+        """ Get the smoothed frequency of a sample """
+        return float(self[sample]) + 0.5
+    
     def freq_cmp(self, s1, s2):
         f1 = self[s1]
         f2 = self[s2]
