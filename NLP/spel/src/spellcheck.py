@@ -70,11 +70,11 @@ class Spellchecker(object):
                     
                     # Find words that are in dictionary
                     dict_cands = set([w for w in word_edits if self.dictionary.has_word(w)])
-                    dict_cands = self.freq.sort_words(dict_cands)
+                    dict_cands = self.freq.sort_samples(dict_cands)
                     
                     # Find unknown words from corpus
                     corpus_cands = self.freq.known(word_edits - set(dict_cands))
-                    corpus_cands = self.freq.sort_words(corpus_cands)
+                    corpus_cands = self.freq.sort_samples(corpus_cands)
                     
                     # Candidates in dictionary get favored
                     candidates = list(dict_cands) + list(corpus_cands)

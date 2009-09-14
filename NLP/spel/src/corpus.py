@@ -19,13 +19,24 @@ class FreqDist(nltk.FreqDist):
         for line in s.split("\n"):
             if not line:
                 continue
-            word, count = line.split()
-            self[word] = int(count)
+            
+            parts = line.split()
+            
+            sample = tuple(parts[:-1])
+            if len(sample) == 1:
+                sample = sample[0]
+            
+            count = parts[-1]
+            
+            self[sample] = int(count)
     
     def dumps(self):
         s = ""
-        for word, count in self.items():
-            s += "%s\t%d\n" % (word, count)
+        for sample, count in self.items():
+            if isinstance(sample, tuple):
+                sample = ' '.join(sample)
+                
+            s += "%s\t%d\n" % (sample, count)
             
         return s
     
@@ -33,13 +44,17 @@ class FreqDist(nltk.FreqDist):
         """ Save frequency counts from file """
         file.write(self.dumps())
     
-    def known(self, word_list):
-        """ Return a subset of word_list where each element is known """
-        return set(w for w in word_list if self.has_key(w))
+    def known(self, sample_list):
+        """ Return a subset of sample_list where each element is known """
+        return set(s for s in sample_list if self.has_key(s))
     
-    def freq_cmp(self, w1, w2):
-        f1 = self[w1]
-        f2 = self[w2]
+    def freq(self, sample):
+        """ Get the smoothed frequency of a sample """
+        return float(self[sample]) + 0.5
+    
+    def freq_cmp(self, s1, s2):
+        f1 = self[s1]
+        f2 = self[s2]
         if f1 < f2:
             return -1
         elif f1 == f2:
@@ -47,6 +62,6 @@ class FreqDist(nltk.FreqDist):
         else: # f1 < f2
             return 1
     
-    def sort_words(self, words, reverse=True):
+    def sort_samples(self, samples, reverse=True):
         """ Sort list of words by frequency in the corpus """
-        return sorted(words, cmp=self.freq_cmp, reverse=reverse)
+        return sorted(samples, cmp=self.freq_cmp, reverse=reverse)
