@@ -60,6 +60,7 @@ class ConfusionMatrix():
         #(text_vocab - english_vocab) = misspelled words
         return text_vocab.difference(english_vocab)
     
+<<<<<<< HEAD:NLP/spel/src/edit_probs.py
     def update_cmatrix(self,edit):
         self.container[edit[0]][edit[1]][edit[2]] += 1
     
@@ -94,6 +95,25 @@ class ConfusionMatrix():
             correction = c_word, edits[c_word]
             print correction
             self.update_cmatrix(edits[c_word])
+=======
+unusual = ('zoomd',)
+
+for word in get_unusual():
+    perms = dict((perm, meta) for (perm,meta) in permutate.edits1_meta(word))
+    edits = {}
+    print word
+    for perm in perms:
+        if dt.has_word(perm):
+            edits[perm] = perms[perm]
+    if len(edits) == 0:
+        continue
+    print edits
+    just_words = edits.keys()
+    c_word = corpus.freq_sort(just_words)[0]
+    correction = c_word, edits[c_word]
+    print correction
+    update_cmatrix(edits[c_word])
+>>>>>>> 6080a5e863a9f5d1e325a75781be0db4eceb421f:NLP/spel/src/edit_probs.py
 
     def get_prob(self, permutation):
         '''
