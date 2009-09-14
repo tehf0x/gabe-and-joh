@@ -1,7 +1,7 @@
 '''
 Created on Sep 8, 2009
 
-@author: garnold
+@author: Gabe Arnold <gabe@squirrelsoup.net>
 '''
 
 import nltk
@@ -14,11 +14,11 @@ from dictionary import Dictionary
 from nltk.corpus import reuters
 
 class ConfusionMatrix():
-    """
+    '''
     Confusion matrices for various edits.
     It's necessary to keep the 'types' var around to re-iterate through the
     dictionary while editing it.
-    """
+    '''
     
     types = ('delete', 'transpose', 'replace', 'insert')
     alphabet = 'abcdefghijklmnopqrstuvwxyz@'
@@ -74,6 +74,8 @@ class ConfusionMatrix():
             self.letter_freq.inc(''.join(bigram))
         
     def construct_matrix(self, word_list = None, dictionary = None):
+        freq_dist = corpus.FreqDist()
+        freq_dist.load(open('data/count_brown.txt')
         if word_list == None:
             word_list = self.get_unusual()
         if dictionary == None:
@@ -90,7 +92,7 @@ class ConfusionMatrix():
                 continue
             print edits
             just_words = edits.keys()
-            c_word = corpus.freq_sort(just_words)[0]
+            c_word = freq_dist.sort_samples(just_words)[0]
             correction = c_word, edits[c_word]
             print correction
             self.update_cmatrix(edits[c_word])
@@ -119,7 +121,3 @@ class ConfusionMatrix():
         except ZeroDivisionError:
             return 0.0  
 
-
-if __name__ == '__main__':
-    CM = ConfusionMatrix()
-    print CM.letter_freq['az']
