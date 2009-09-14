@@ -23,7 +23,7 @@ class ConfusionMatrix():
     types = ('delete', 'transpose', 'replace', 'insert')
     alphabet = 'abcdefghijklmnopqrstuvwxyz@'
 
-    def __init__(self, pickle_name = 'conf_matrix.pickle', no_load = False):
+    def __init__(self, pickle_name = 'data/conf_matrix.pickle', no_load = False):
         '''
         Load the confusion matrices from pickle_name, and if no pickle is found,
         generate the confusion matrices.
@@ -75,7 +75,7 @@ class ConfusionMatrix():
         
     def construct_matrix(self, word_list = None, dictionary = None):
         freq_dist = corpus.FreqDist()
-        freq_dist.load(open('data/count_brown.txt')
+        freq_dist.load(open('data/count_brown.txt'))
         if word_list == None:
             word_list = self.get_unusual()
         if dictionary == None:
