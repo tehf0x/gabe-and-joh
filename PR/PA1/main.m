@@ -17,8 +17,19 @@ t2 = c2(1:375,:);
 t3 = c3(1:375,:);
 
 % Use 25% of data for testing
-test_data = [c1(376:end,:); c2(376:end,:); c3(376:end,:)];
+test_data = {c1(376:end,:), c2(376:end,:), c3(376:end,:)}
 
+% Set up the means cells.
+M = { mean(t1)', mean(t2)', mean(t3)' }
+
+% Set up the covariance matrix cells
+C  = { cov(t1), cov(t2), cov(t3) }
+% Set up an average covariance matrix needed for some of the problems
+C_avg = zeros(2)
+for i=1:4
+    C_avg(i) = mean([C{1}(i), C{2}(i), C{3}(i)])
+end
+C_a = {C_avg, C_avg, C_avg}
 
 
 
