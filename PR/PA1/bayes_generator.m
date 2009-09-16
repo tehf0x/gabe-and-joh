@@ -1,4 +1,4 @@
-function [ g_funcs ] = bayes_b(D,M,C)
+function [ g_funcs ] = bayes_generator(M,C)
     %Classify data based on some discriminant functions.
     %
     %Check that stuff corresponds.
