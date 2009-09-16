@@ -2,7 +2,7 @@
 % Parameters:
 %   dataset - the dataset
 %   class_offsets - offsets of class data in dataset
-function [your_mom] = run_tests(dataset, class_offsets)
+function [some_result] = run_tests(dataset, class_offsets)
     %plot(dataset(:,1), dataset(:,2), '.r')
 
     % Split data into 3 classes
@@ -14,7 +14,7 @@ function [your_mom] = run_tests(dataset, class_offsets)
         offset = 1 + class_offsets(i);
     end
     
-    %plot(class_data{1}(:,1), class_data{1}(:,2), '.r', class_data{2}(:,1), class_data{2}(:,2), '.g' , class_data{3}(:,1), class_data{3}(:,2), '.b')
+    plot(class_data{1}(:,1), class_data{1}(:,2), '.r', class_data{2}(:,1), class_data{2}(:,2), '.g' , class_data{3}(:,1), class_data{3}(:,2), '.b')
     
     % Grab the lower 75% of each class for training data
     training_data = {};
@@ -25,6 +25,7 @@ function [your_mom] = run_tests(dataset, class_offsets)
     end
     
     %plot(training_data{1}(:,1), training_data{1}(:,2), '.r', training_data{2}(:,1), training_data{2}(:,2), '.g' , training_data{3}(:,1), training_data{3}(:,2), '.b')
+    %plot(training_data{1}(:,1), training_data{1}(:,2), '.r', training_data{2}(:,1), training_data{2}(:,2), '.g')
 
     % Use 25% of data for testing
     test_data = {};
@@ -72,7 +73,7 @@ function [your_mom] = run_tests(dataset, class_offsets)
     % We estimate σ^2 by the average of the diagonal of C_avg
     C_2a = {};
     for i=1:n_classes
-        C_2a{i} = mean(diag(C_avg)) * eye(n_classes);
+        C_2a{i} = mean(diag(C_avg)) * eye(2);
     end
     
     % C is same and is C (2b)
@@ -91,8 +92,43 @@ function [your_mom] = run_tests(dataset, class_offsets)
     %
     % Start tests
     %
+    
+    % 1a
     G_1a = bayes_generator(M, C_1a);
-    classify(test_data{3}(1,:)', G_1a)
+    accuracy_1a = test_datasets(test_data, G_1a)
+    
+    % 1b
+    G_1b = bayes_generator(M, C);
+    accuracy_1b = test_datasets(test_data, G_1b)
+    
+    % 2a
+    G_2a = bayes_generator(M, C_2a);
+    accuracy_2a = test_datasets(test_data, G_2a)
+    
+    % 2b
+    G_2b = bayes_generator(M, C_2b);
+    accuracy_2b = test_datasets(test_data, G_2b)
+    
+    % 2c
+    G_2c = bayes_generator(M, C_2c);
+    accuracy_2c = test_datasets(test_data, G_2c)
+    
+    %hold
+    %plot(result{1}(:,1), result{1}(:,2), '.y', result{2}(:,1), result{2}(:,2), '.m')
+    
+    %classify(test_data{3}(1,:)', G_1a)
     
     
+end
+
+
+function [accuracy] = test_datasets(datasets, g_funcs)
+    n_classes = size(g_funcs, 2);
+    accuracy = zeros(1, n_classes);
+    
+    for i=1:n_classes
+        result = categorize(datasets{i}, g_funcs);
+        %plot(result{i}(:,1), result{i}(:,2), '.y')
+        accuracy(i) = size(result{i}, 1) / size(datasets{i}, 1);
+    end
 end
