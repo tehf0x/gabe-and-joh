@@ -1,0 +1,64 @@
+accuracy_1a =
+
+    0.9973
+
+
+confusion_1a =
+
+   124     1     0
+     0   125     0
+     0     0   125
+
+
+
+     
+accuracy_1b =
+
+     1
+
+
+confusion_1b =
+
+   125     0     0
+     0   125     0
+     0     0   125
+     
+     
+     
+accuracy_2a =
+
+    0.9973
+
+
+confusion_2a =
+
+   124     1     0
+     0   125     0
+     0     0   125
+     
+     
+accuracy_2b =
+
+    0.9973
+
+
+confusion_2b =
+
+   124     1     0
+     0   125     0
+     0     0   125
+     
+     
+accuracy_2c =
+
+    0.9973
+
+
+confusion_2c =
+
+   124     1     0
+     0   125     0
+     0     0   125
+     
+     
+

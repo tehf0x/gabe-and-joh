@@ -1,6 +1,5 @@
 function [ ind ] = classify( x, g_funcs )
-    %Classify the various features and return the percentage error for each
-    %class.
+    % Classify the feature vector x and return the class number
     num_classes = size(g_funcs);
     num_classes = num_classes(2);
     results = zeros(1,num_classes);

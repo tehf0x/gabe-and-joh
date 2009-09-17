@@ -14,7 +14,7 @@ function [some_result] = run_tests(dataset, class_offsets)
         offset = 1 + class_offsets(i);
     end
     
-    plot(class_data{1}(:,1), class_data{1}(:,2), '.r', class_data{2}(:,1), class_data{2}(:,2), '.g' , class_data{3}(:,1), class_data{3}(:,2), '.b')
+    %plot(class_data{1}(:,1), class_data{1}(:,2), '.r', class_data{2}(:,1), class_data{2}(:,2), '.g' , class_data{3}(:,1), class_data{3}(:,2), '.b')
     
     % Grab the lower 75% of each class for training data
     training_data = {};
@@ -95,23 +95,33 @@ function [some_result] = run_tests(dataset, class_offsets)
     
     % 1a
     G_1a = bayes_generator(M, C_1a);
-    accuracy_1a = test_datasets(test_data, G_1a)
+    [accuracy_1a, confusion_1a] = test_datasets(test_data, G_1a)
+    plot_decision_region(training_data, G_1a);
+    input('Hit ENTER to continue');
     
     % 1b
     G_1b = bayes_generator(M, C);
-    accuracy_1b = test_datasets(test_data, G_1b)
+    [accuracy_1b, confusion_1b] = test_datasets(test_data, G_1b)
+    plot_decision_region(training_data, G_1b);
+    input('Hit ENTER to continue');
     
     % 2a
     G_2a = bayes_generator(M, C_2a);
-    accuracy_2a = test_datasets(test_data, G_2a)
+    [accuracy_2a, confusion_2a] = test_datasets(test_data, G_2a)
+    plot_decision_region(training_data, G_2a);
+    input('Hit ENTER to continue');
     
     % 2b
     G_2b = bayes_generator(M, C_2b);
-    accuracy_2b = test_datasets(test_data, G_2b)
+    [accuracy_2b, confusion_2b] = test_datasets(test_data, G_2b)
+    plot_decision_region(training_data, G_2b);
+    input('Hit ENTER to continue');
     
     % 2c
     G_2c = bayes_generator(M, C_2c);
-    accuracy_2c = test_datasets(test_data, G_2c)
+    [accuracy_2c, confusion_2c] = test_datasets(test_data, G_2c)
+    plot_decision_region(training_data, G_2c);
+    input('Hit ENTER to continue');
     
     %hold
     %plot(result{1}(:,1), result{1}(:,2), '.y', result{2}(:,1), result{2}(:,2), '.m')
@@ -122,13 +132,62 @@ function [some_result] = run_tests(dataset, class_offsets)
 end
 
 
-function [accuracy] = test_datasets(datasets, g_funcs)
+function [accuracy, confusion] = test_datasets(datasets, g_funcs)
     n_classes = size(g_funcs, 2);
-    accuracy = zeros(1, n_classes);
+    
+    confusion = zeros(n_classes, n_classes);
+    accuracy = zeros(n_classes, 1);
     
     for i=1:n_classes
         result = categorize(datasets{i}, g_funcs);
+        for j=1:n_classes
+            confusion(i, j) = size(result{j}, 1);
+        end
+        
         %plot(result{i}(:,1), result{i}(:,2), '.y')
         accuracy(i) = size(result{i}, 1) / size(datasets{i}, 1);
     end
+    
+    accuracy = mean(accuracy);
+end
+
+function [] = plot_decision_region(training_data, g_funcs)
+    d = cat(1, training_data{:});
+    mins = min(d);
+    maxs = max(d);
+    xmin = mins(1);
+    ymin = mins(2);
+    xmax = maxs(1);
+    ymax = maxs(2);
+    
+    dim = 200;
+    xstep = (xmax - xmin) / dim;
+    ystep = (ymax - ymin) / dim;
+    img = zeros(dim);
+    
+    for i=1:dim
+        for j=1:dim
+            x = [xmin + i * xstep; ymin + j * ystep];
+            img(j, i) = classify(x, g_funcs);
+            %img(i, j) = classify([1; 1], g_funcs);
+        end
+    end
+    
+    %img
+    %cmap = (1/255)*[237 212 0; 52 101 164; 204 0 0];
+    %cmap = (1/255)*[252 233 79; 144 159 207; 239 41 41];
+    cmap = [0.8510 0.3647 0.2549; ...
+            0.5647 0.6235 0.8118; ...
+            0.4000 1.0000 0.4000];
+    pmap = [0.6 0 0; 0 0 0.6; 0 0.7 0];
+    colormap(cmap)
+    image([xmin xmax], [ymin ymax], img);
+    axis xy
+    hold
+    for i=1:size(training_data, 2)
+        plot(training_data{i}(:,1), training_data{i}(:,2), ...
+            '.', 'MarkerEdgeColor', pmap(i,:));
+    end
+    hold
+    
 end
