@@ -3,9 +3,12 @@
 %   dataset - the dataset
 %   class_offsets - offsets of class data in dataset
 function [some_result] = run_tests(dataset, class_offsets)
-    %plot(dataset(:,1), dataset(:,2), '.r')
-
-    % Split data into 3 classes
+    
+    %
+    % Set up data set
+    %
+    
+    % Split data into N classes
     n_classes = size(class_offsets, 2);
     class_data = {};
     offset = 1;
@@ -37,7 +40,12 @@ function [some_result] = run_tests(dataset, class_offsets)
     
     %plot(test_data{1}(:,1), test_data{1}(:,2), '.r', test_data{2}(:,1), test_data{2}(:,2), '.g' , test_data{3}(:,1), test_data{3}(:,2), '.b')
 
-    % Set up the means cells.
+    
+    %
+    % Set up mean and covariance matrices
+    %
+    
+    % Set up the mean cells.
     M = {};
     for i=1:n_classes
         % Get the mean of the class
@@ -66,6 +74,7 @@ function [some_result] = run_tests(dataset, class_offsets)
     for i=1:n_classes
         C_1a{i} = C_avg;
     end
+    
     
     % Naive Bayes -> features independent
     
@@ -124,15 +133,13 @@ function [some_result] = run_tests(dataset, class_offsets)
     input('Hit ENTER to continue');
     
     %hold
-    %plot(result{1}(:,1), result{1}(:,2), '.y', result{2}(:,1), result{2}(:,2), '.m')
-    
-    %classify(test_data{3}(1,:)', G_1a)
-    
-    
+    %plot(result{1}(:,1), result{1}(:,2), '.y', result{2}(:,1),
+    %result{2}(:,2), '.m')
 end
 
 
 function [accuracy, confusion] = test_datasets(datasets, g_funcs)
+% TEST_DATASETS returns accuracy and confusion matrix
     n_classes = size(g_funcs, 2);
     
     confusion = zeros(n_classes, n_classes);
@@ -152,7 +159,12 @@ function [accuracy, confusion] = test_datasets(datasets, g_funcs)
 end
 
 function [] = plot_decision_region(training_data, g_funcs)
+% PLOT_DECISION_REGION of g_funcs with training_data superposed
+    
+    % Concatenate all training data
     d = cat(1, training_data{:});
+    
+    % Calculate min and max for x and y
     mins = min(d);
     maxs = max(d);
     xmin = mins(1);
@@ -160,30 +172,37 @@ function [] = plot_decision_region(training_data, g_funcs)
     xmax = maxs(1);
     ymax = maxs(2);
     
+    % Set up dimension of decision region image
     dim = 200;
     xstep = (xmax - xmin) / dim;
     ystep = (ymax - ymin) / dim;
+    
+    % Initialize decision region image
     img = zeros(dim);
     
+    % Classify each point in img
     for i=1:dim
         for j=1:dim
             x = [xmin + i * xstep; ymin + j * ystep];
             img(j, i) = classify(x, g_funcs);
-            %img(i, j) = classify([1; 1], g_funcs);
         end
     end
     
-    %img
-    %cmap = (1/255)*[237 212 0; 52 101 164; 204 0 0];
-    %cmap = (1/255)*[252 233 79; 144 159 207; 239 41 41];
+    % Set up color map for class 1, 2 and 3
     cmap = [0.8510 0.3647 0.2549; ...
             0.5647 0.6235 0.8118; ...
             0.4000 1.0000 0.4000];
+    
+    % Set up plot map for training data
     pmap = [0.6 0 0; 0 0 0.6; 0 0.7 0];
+    
+    % Apply color map and display image
     colormap(cmap)
     image([xmin xmax], [ymin ymax], img);
     axis xy
     hold
+    
+    % Plot training data
     for i=1:size(training_data, 2)
         plot(training_data{i}(:,1), training_data{i}(:,2), ...
             '.', 'MarkerEdgeColor', pmap(i,:));

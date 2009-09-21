@@ -1,3 +1,5 @@
+% RUN tests for REAL WORLD data set
+
 % Load the dataset
 dataset = load('Datasets/real_world/class.txt');
 

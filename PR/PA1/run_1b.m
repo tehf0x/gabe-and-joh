@@ -1,3 +1,5 @@
+% RUN tests for NONLINEARLY SEPARABLE data set
+
 % Load the dataset
 dataset = load('Datasets/nls_group14.fixed.txt');
 

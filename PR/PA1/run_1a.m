@@ -1,3 +1,5 @@
+% RUN tests for LINEARLY SEPARABLE data set
+
 % Load the dataset
 dataset = load('Datasets/ls_group14.txt');
 

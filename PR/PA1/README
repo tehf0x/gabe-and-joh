@@ -1,0 +1,30 @@
+CS669: Pattern Recognition
+
+PROGRAMMING ASSIGNMENT I
+
+Johannes H. Jensen      <johannj@stud.ntnu.no>  [CS09F005]
+Gabriel Dulac-Arnold    <gabe@squirrelsoup.net> [CS09F004]
+
+-------------------------------------------------------------------------------
+
+The final report will results can be found in the Reports/ folder.
+
+For running the tests in MATLAB, execute the corresponding run_*.m file.
+
+Each dataset has its own run_*.m file which sets up the environment and
+starts the tests by executing run_tests() from run_tests.m
+
+A short description of each file follows:
+
+bayes_generator.m       Generates discriminant functions
+categorize.m            Categorize a dataset
+classify.m              Classify a feature
+
+run_1a.m                Run-file for linearly separable data set
+run_1b.m                Run-file for nonlinearly separable data set
+run_1c.m                Run-file for overlapping data set
+run_2.m                 Run-file for real world data set
+
+run_tests.m             Run tests against given dataset
+
+
