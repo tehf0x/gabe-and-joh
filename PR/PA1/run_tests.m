@@ -173,6 +173,8 @@ function [] = plot_decision_region(training_data, g_funcs)
     ymax = maxs(2);
     
     % Set up dimension of decision region image
+    % Increasing dim will give a smoother image result but will take
+    % significantly longer to generate.
     dim = 200;
     xstep = (xmax - xmin) / dim;
     ystep = (ymax - ymin) / dim;
