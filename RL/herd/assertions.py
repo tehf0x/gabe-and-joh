@@ -6,7 +6,7 @@ Useful assertions
 
 import params
 
-def is_state(*args):
+def is_state(s):
     return len(s) == len(params.r) == len(params.c) and \
            is_positive(s) and \
            (sum(s) <= params.H)

@@ -23,7 +23,7 @@ def reward(s, a):
     
     # Some sanity checks
     assert is_state(s) and is_state(a)
-    assert is_state(s[i] - a[i] for i in range(len(s)))
+    assert is_state(tuple(s[i] - a[i] for i in range(len(s))))
     
     return sum([(s[i] - a[i]) * r[i] + a[i] * c[i] for i in range(len(s))])
 
@@ -33,7 +33,7 @@ def prob(s, sp, a):
     return 1
 
 def actions(s):
-    """ Generate all possible actions from state s
+    """ Get all possible actions from state s
     
     A valid action from s is a tuple (y, b, o) for how many young, breedable
     and old cows to sell, respectively. The number of cows to sell cannot
@@ -41,23 +41,31 @@ def actions(s):
     """
     assert is_state(s)
     
+    actions = []
+    
     for y in range(s[0] + 1):
         for b in range(s[1] + 1):
             for o in range(s[2] + 1):
-                yield (y, b, o)
+                actions.append((y, b, o))
+    
+    return actions
                 
 
 def states():
-    """ Generate all possible states
+    """ Get all possible states
     
     A valid state is a tuple (y, b, o) for how many young, breedable
     and old cows are in the herd, respectively. The total number of cows
     can not exceed the limit of H cows.
     """
+    states = []
+    
     for y in range(H + 1):
         for b in range(H - y + 1):
             for o in range(H - y - b + 1):
-                yield (y, b, o)
+                states.append((y, b, o))
+    
+    return states
 
 
 def afterstate(s, a):
