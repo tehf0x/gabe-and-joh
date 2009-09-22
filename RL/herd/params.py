@@ -24,3 +24,26 @@ def reward(s, a):
     assert sum(s) <= H,                                 "Herd size too big (H=%d) " % (H)
     
     return sum([(s[i] - a[i]) * r[i] + a[i] * c[i] for i in range(len(s))])
+
+def prob(s, sn, a):
+    """ Calculate the probability from state s to sa when doing action a """
+    # TODO: Write Me!
+    return 1
+
+def actions(s):
+    """ Generate all possible actions from state s
+    
+    A valid action from s is a tuple (y, b, o) for how many young, breedable
+    and old cows to sell, respectively. The number of cows to sell cannot
+    exceed the number of cows in the given category of the state s.  
+    """
+    
+    for y in range(s[0] + 1):
+        for b in range(s[1] + 1):
+            for o in range(s[2] + 1):
+                yield (y, b, o)
+                
+                
+                
+                
+                
