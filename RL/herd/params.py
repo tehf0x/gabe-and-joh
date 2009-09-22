@@ -37,13 +37,24 @@ def actions(s):
     and old cows to sell, respectively. The number of cows to sell cannot
     exceed the number of cows in the given category of the state s.  
     """
+    assert len(s) is 3
     
     for y in range(s[0] + 1):
         for b in range(s[1] + 1):
             for o in range(s[2] + 1):
                 yield (y, b, o)
                 
-                
-                
-                
-                
+
+def possible_states():
+    """ Generate all possible states
+    
+    A valid state is a tuple (y, b, o) for how many young, breedable
+    and old cows are in the herd, respectively. The total number of cows
+    can not exceed the limit of H cows.
+    """
+    for y in range(H + 1):
+        for b in range(H - y + 1):
+            for o in range(H - y - b + 1):
+                yield (y, b, o)
+
+
