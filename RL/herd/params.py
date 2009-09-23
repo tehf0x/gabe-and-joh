@@ -22,13 +22,11 @@ t_probs = ((0.9, 0.1, 0),
            (0, 0.75, 0.25),
            (0, 0.15, 0.85))
 
-<<<<<<< HEAD:RL/herd/params.py
+
 '''Birth probabilities for breedable cows.'''
 birth_prob = (0.050, 0.80, 0.150)
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-=======
->>>>>>> 0705c5c23254296c659a70397265642216bc263d:RL/herd/params.py
+
 class memoized(object):
     """Decorator that caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned, and
@@ -221,7 +219,6 @@ def states():
 def afterstate(s, a):
     """ Get the afterstate of state s after doing action a """
     assert is_state(s) and is_state(a)
-    
     sa = tuple(s[i] - a[i] for i in range(len(s)))
     
     assert is_state(sa)
