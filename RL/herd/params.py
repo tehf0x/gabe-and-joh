@@ -22,6 +22,9 @@ t_probs = ((0.9, 0.1, 0),
            (0, 0.75, 0.25),
            (0, 0.15, 0.85))
 
+'''Birth probabilities for breedable cows.'''
+birth_prob = (0.050, 0.80, 0.150)
+
 class memoized(object):
     """Decorator that caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned, and
@@ -83,13 +86,37 @@ def cartesian_product(lists):
         for el in lists[0]:
             for x in cartesian_product(lists[1:]):
                 yield (el,) + x
-                
+
+def breed(cows, offspring = [(0,1)]):
+    '''
+    Recursive function that finds out the probabilities for the 
+    resulting number of offspring from breeding 'cows' cows.
+    Do not pass 'offspring' parameter, just cows = #breedable cows
+    '''
+    if cows == 0:
+        concat_children = {}
+        for children in offspring:
+            try:
+                concat_children[children[0]] += children[1]
+            except KeyError, e:
+                concat_children[children[0]] = children[1]
+        return concat_children
+    
+    old_offspring = offspring[:]
+    offspring = []
+    for off in old_offspring:
+        offspring.append((off[0], off[1] * birth_prob[0]))
+        offspring.append((off[0] + 1, off[1] * birth_prob[1]))
+        offspring.append((off[0] + 2, off[1] * birth_prob[2]))
+    return breed(cows-1, offspring)
+
+              
 @memoized
 def probs(post_state):
     """ Get all possible sub-states from post_state and their probabilities """
+
+#    print 'not cached'
     
-    #print 'not cached'
-    ret_states = {}
     s_prime= set()
     sub_states = [0]*len(post_state)
     '''
@@ -127,7 +154,16 @@ def probs(post_state):
                     sub_states[pos].add((s, prob))
     #Now for combine all the sub_states together in every possible way
     new_states = [join_states(states) for states in cartesian_product(sub_states)]
+    postbirth = list()
+    #Now calculate birth probabilities:
     for state in new_states:
+        offspring = breed(state[0][1])
+        for off in offspring:
+            print 'i'
+            postbirth.append(((state[0][0] + off, state[0][1], state[0][2]), 
+                              state[1] * offspring[off]))
+    ret_states = {}
+    for state in postbirth:
         try:
             ret_states[state[0]] += state[1]
         except KeyError,e:
@@ -189,3 +225,12 @@ def afterstate(s, a):
     
     return sa
 
+if __name__ == '__main__':
+    import params
+    import sys
+    for state in params.states():
+        print state
+        probs = calc_prob(state)
+        s = sum(probs.values())
+        assert sum(probs.values()) - 1 <= 1e-15, sum(probs.values())
+        
