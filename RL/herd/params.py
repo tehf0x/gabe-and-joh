@@ -20,7 +20,7 @@ c = (2, 6, 4)
 t_probs = ((0.9, 0.1, 0),
            (0, 0.75, 0.25),
            (0, 0.15, 0.85))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
 class memoized(object):
     """Decorator that caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned, and
@@ -84,7 +84,9 @@ def cartesian_product(lists):
                 yield (el,) + x
                 
 @memoized
-def calc_prob(post_state):
+def probs(post_state):
+    """ Get all possible sub-states from post_state and their probabilities """
+    
     print 'not cached'
     ret_states = {}
     s_prime= set()
@@ -137,11 +139,6 @@ def reward(s, a):
     assert is_state(tuple(s[i] - a[i] for i in range(len(s))))
     
     return sum([(s[i] - a[i]) * r[i] + a[i] * c[i] for i in range(len(s))])
-
-def prob(s, sp, a):
-    """ Calculate the probability from state s to sa when doing action a """
-    # TODO: Write Me!
-    return 1
 
 def actions(s):
     """ Get all possible actions from state s
