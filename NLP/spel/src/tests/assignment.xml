@@ -1,0 +1,38 @@
+<tests>
+<!-- Type 1 -->
+<case id='1'>hwere</case> <!-- where -->
+<case id='2'>taht</case> <!-- that -->
+<case id='3'>convnvcing</case> <!-- convincing -->
+<case id='4'>teh</case> <!-- teh -->
+<case id='5'>ocrrect</case> <!-- correct -->
+
+<!-- Type 2 -->
+<case id='6'>Securities and Echane Commission</case>
+<!-- Securities and Exchange Commission-->
+<case id='7'>international capitan markets</case>
+<!-- international capital markets -->
+<case id='8'>educational nsitutions</case>
+<!-- educational institutions -->
+<case id='9'>mewn and women</case>
+<!-- men and women -->
+<case id='10'>United tates</case>
+<!-- United States-->
+
+<!-- Type 3 -->
+<case id='11'>The impending takeover bid increased the stock value of the bak.</case>
+<!-- The impending takeover bid increased the stock value of the bank. -->
+<case id='12'>The fugitive oldiers from the military were finally arrested today.</case>
+<!-- The fugitive soldiers from the military were finally arrested today. -->
+<case id='13'>The fisherman went fishing close to the river bak.</case>
+<!-- The fisherman went fishing close to the river bank. -->
+<case id='14'>All divisions of the ramed forces participated in the parade.</case>
+<!-- All divisions of the armed forces participated in the parade. -->
+<case id='15'>The departments of the institute offer corses, conducted by highly qualified staff.</case>
+<!-- The departments of the institute offer courses, conducted by highly qualified staff. -->
+
+<!-- Type 4 -->
+<case id='16'>
+       Two opinins about programming date from those days.
+       I mentin them now, I shall return to them later.
+</case>
+</tests>

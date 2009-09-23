@@ -22,10 +22,13 @@ t_probs = ((0.9, 0.1, 0),
            (0, 0.75, 0.25),
            (0, 0.15, 0.85))
 
+<<<<<<< HEAD:RL/herd/params.py
 '''Birth probabilities for breedable cows.'''
 birth_prob = (0.050, 0.80, 0.150)
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+=======
+>>>>>>> 0705c5c23254296c659a70397265642216bc263d:RL/herd/params.py
 class memoized(object):
     """Decorator that caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned, and
@@ -113,7 +116,9 @@ def breed(cows, offspring = [(0,1)]):
 
               
 @memoized
-def calc_prob(post_state):
+def probs(post_state):
+    """ Get all possible sub-states from post_state and their probabilities """
+    
     print 'not cached'
     s_prime= set()
     sub_states = [0]*len(post_state)
@@ -176,11 +181,6 @@ def reward(s, a):
     assert is_state(tuple(s[i] - a[i] for i in range(len(s))))
     
     return sum([(s[i] - a[i]) * r[i] + a[i] * c[i] for i in range(len(s))])
-
-def prob(s, sp, a):
-    """ Calculate the probability from state s to sa when doing action a """
-    # TODO: Write Me!
-    return 1
 
 def actions(s):
     """ Get all possible actions from state s

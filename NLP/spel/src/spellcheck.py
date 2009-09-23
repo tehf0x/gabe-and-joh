@@ -1,10 +1,10 @@
-'''
-Spellcheck module
+"""
+Spellchecker module. 
 
-Created on 8 Sep 2009
+See the Spellchecker class for details.
 
 @author: Johannes H. Jensen <joh@pseudoberries.com>
-'''
+"""
 
 import copy
 import nltk
@@ -34,6 +34,7 @@ class Spellchecker(object):
         
         dictionary -- Dictionary to use
         word_counts -- Filename of word counts file
+        bigram_counts -- Filename of bigram counts file
         """
         self.max_edit_distance = max_edit_distance
         self.dictionary = dictionary
@@ -47,8 +48,10 @@ class Spellchecker(object):
         self.cmatrix = ConfusionMatrix()
     
     def prob(self, word, edit, context=None):
-        """ Calculate probability of candidate word given edit info
-        and context = (word_before, None) | (None, word_after) | (word_before, word_after)
+        """ Calculate probability of candidate word given edit info and context.
+        
+        Context can be one of (word_before, None), (None, word_after), 
+        (word_before, word_after) or None.
         """
         p_word = self.freq.freq(word)
         p_edit = self.cmatrix.get_prob(edit) + 0.5

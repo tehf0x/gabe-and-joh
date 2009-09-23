@@ -5,6 +5,8 @@ The Spel spellchecker
 Spel reads sentences from standard input and prints a list
 of misspelled words and provides weighted candidate suggestions.
 
+Useful for testing the spellchecker.
+
 @author: Johannes H. Jensen <joh@pseudoberries.com>
 """
 
