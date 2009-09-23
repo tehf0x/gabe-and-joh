@@ -89,7 +89,7 @@ class ConfusionMatrix():
         
         for word in word_list:
             #Load up all the permutations possible, along with what permutation took place:
-            perms = dict((perm, meta) for (perm,meta) in permutate.permutate_meta(word))
+            perms = dict((perm, meta) for (perm,meta) in permutate.edits1_meta(word))
             edits = {}
             for perm in perms:
                 if dictionary.has_word(perm):
@@ -101,6 +101,12 @@ class ConfusionMatrix():
             c_word = freq_dist.sort_samples(just_words)[0]
             correction = c_word, edits[c_word]
             self.update_cmatrix(edits[c_word])
+
+        for type in self.container.keys():
+            for letter in self.container[type].keys():
+                for letter2 in self.container[type][letter].keys():
+                    self.container[type][letter][letter2] += 1
+                    
 
     def get_prob(self, permutation):
         '''
@@ -126,3 +132,5 @@ class ConfusionMatrix():
         except ZeroDivisionError:
             return 0.0  
 
+if __name__ == '__main__':
+    cm = ConfusionMatrix()
