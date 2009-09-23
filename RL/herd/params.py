@@ -2,10 +2,11 @@
 Basic parameter calculations
 
 @author: Johannes H. Jensen <johannj@stud.ntnu.no>
+@author: Gabe Arnold <gabe@squirrelsoup.net>
 """
 
 from assertions import *
-
+from gmpy import comb
 
 """ Maximum size of the herd """
 H = 12
@@ -119,6 +120,8 @@ def probs(post_state):
                 p = t_probs[pos]
                 #Calculate the probability of this state happening
                 prob = (p[0]**s[0])*(p[1]**s[1])*(p[2]**s[2])
+                #Correct the probability for states that can occur multiple ways
+                prob *= comb(el, max(s)) #Uses combinations
                 #If it's possible, save it
                 if(prob > 0):
                     sub_states[pos].add((s, prob))
