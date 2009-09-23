@@ -1,10 +1,8 @@
-'''
+"""
 Utilities for spellchecker
 
-Created on 10 Sep 2009
-
 @author: Johannes H. Jensen <joh@pseudoberries.com
-'''
+"""
 
 from copy import copy
 
@@ -33,8 +31,8 @@ class memoized(object):
 
 
 class CaseMask(object):
-    ''' A CaseMask is a mask for which letters of a word is of what case.
-    It can be stored from one word and applied to another word '''
+    ''' A CaseMask is a mask for keeping track of which case the letters in
+    a word are. It can be stored from one word and applied to another word '''
     
     def __init__(self, word):
         ''' Create a CaseMask of word '''

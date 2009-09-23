@@ -1,11 +1,9 @@
-'''
-Word permutations
-
-Created on 8 Sep 2009
+"""
+Word permutations based on n-edits
 
 @author: Johannes H. Jensen <joh@pseudoberries.com>
 @author: Gabriel Arnold <gabe@squirrelsoup.net>
-'''
+"""
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -39,8 +37,9 @@ def edits1_meta(word):
     return set(deletes + transposes + replaces + inserts)
 
 def edits2_meta(word):
-    """ Get a set of all possible word edits of distance 2, and return the
-    edit type along with the word.
+    """ Get a set of all possible word edits of distance 2.
+    
+    Return the edit type along with the word.
     """
     # TODO: Implement?
     raise NotImplementedError

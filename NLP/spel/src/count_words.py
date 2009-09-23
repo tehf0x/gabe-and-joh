@@ -2,6 +2,8 @@
 """
 Count words in corpus and output to stdout
 
+Uses both the Brown and Reuters corpus
+
 @author: Johannes H. Jensen <joh@pseudoberries.com>
 """
 

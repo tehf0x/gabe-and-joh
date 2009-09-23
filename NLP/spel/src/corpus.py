@@ -16,6 +16,7 @@ class FreqDist(nltk.FreqDist):
         self.loads(file.read())
     
     def loads(self, s):
+        """ Load frequencies from string """
         for line in s.split("\n"):
             if not line:
                 continue
@@ -31,6 +32,7 @@ class FreqDist(nltk.FreqDist):
             self[sample] = int(count)
     
     def dumps(self):
+        """ Dump frequencies to string """
         s = ""
         for sample, count in self.items():
             if isinstance(sample, tuple):
@@ -41,7 +43,7 @@ class FreqDist(nltk.FreqDist):
         return s
     
     def dump(self, file):
-        """ Save frequency counts from file """
+        """ Save frequency counts to file """
         file.write(self.dumps())
     
     def known(self, sample_list):
@@ -53,6 +55,7 @@ class FreqDist(nltk.FreqDist):
         return float(self[sample]) + 0.5
     
     def freq_cmp(self, s1, s2):
+        """ Compare to samples by frequency """
         f1 = self[s1]
         f2 = self[s2]
         if f1 < f2:
