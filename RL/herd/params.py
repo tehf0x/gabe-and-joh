@@ -116,8 +116,9 @@ def breed(cows, offspring = [(0,1)]):
 @memoized
 def probs(post_state):
     """ Get all possible sub-states from post_state and their probabilities """
+
+#    print 'not cached'
     
-    print 'not cached'
     s_prime= set()
     sub_states = [0]*len(post_state)
     '''
