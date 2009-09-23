@@ -88,7 +88,7 @@ def cartesian_product(lists):
 def probs(post_state):
     """ Get all possible sub-states from post_state and their probabilities """
     
-    print 'not cached'
+    #print 'not cached'
     ret_states = {}
     s_prime= set()
     sub_states = [0]*len(post_state)
