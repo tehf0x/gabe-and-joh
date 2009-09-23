@@ -74,6 +74,12 @@ class ConfusionMatrix():
             self.letter_freq.inc(''.join(bigram))
         
     def construct_matrix(self, word_list = None, dictionary = None):
+        '''
+        This goes through the text, and for every word that is not a dictionary
+        word, it runs a noisy channel on the word, figures out the correction
+        candidates, and then updates the transformation table with the transformation
+        that took place for the most likely candidate word (based on P(c)).
+        '''
         freq_dist = corpus.FreqDist()
         freq_dist.load(open('data/count_brown.txt'))
         if word_list == None:
@@ -82,19 +88,18 @@ class ConfusionMatrix():
             dictionary = self.dt
         
         for word in word_list:
+            #Load up all the permutations possible, along with what permutation took place:
             perms = dict((perm, meta) for (perm,meta) in permutate.permutate_meta(word))
             edits = {}
-            print word
             for perm in perms:
                 if dictionary.has_word(perm):
                     edits[perm] = perms[perm]
             if len(edits) == 0:
                 continue
-            print edits
             just_words = edits.keys()
+            #Get the most likely word according to the word probability
             c_word = freq_dist.sort_samples(just_words)[0]
             correction = c_word, edits[c_word]
-            print correction
             self.update_cmatrix(edits[c_word])
 
     def get_prob(self, permutation):
