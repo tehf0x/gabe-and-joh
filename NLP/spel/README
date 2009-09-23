@@ -1,0 +1,37 @@
+CS637 - Natural Language Processing
+Programming Assignment 1 – Spell Checker
+
+Statistical Spell Checker
+
+Gabriel Dulac-Arnold <gabe@squirrelsoup.net> [CS09F004]
+Johannes H. Jensen <johannj@stud.ntnu.no> [CS09F005]
+
+
+-------------------------------------------------------------------------------
+
+
+For information on the theory behind the spellchecker, please see the report.
+
+All the code can be found in the src/ directory. The programs depend on Python
+and the Natural Language Toolkit (http://www.nltk.org).
+
+The following programs are provided:
+
+main.py	--	Main program for running spellchecker against test cases.
+			Usage: ./main.py <input.xml> <output.csv>
+
+spel.py	--	Program for simple testing of the spellchecker.
+			spel.py reads sentences from standard input and prints a list
+			of misspelled words and provides weighted candidate suggestions.
+
+
+count_words.py			--	Count words in corpus and output to stdout
+count_word_bigrams.py	--	Count word bigrams in corpus and output to stdout
+
+
+For generating the word and bigram counts the brown and reuters corpora need
+to be installed to NLTK. This can be done with the command
+
+	python -c 'import nltk; nltk.download()'
+
+Happy testing!
