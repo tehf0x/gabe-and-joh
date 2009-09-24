@@ -216,7 +216,7 @@ def actions(s):
     
     return actions
                 
-
+@memoized
 def states():
     """ Get all possible states
     
@@ -243,11 +243,3 @@ def afterstate(s, a):
     
     return sa
 
-        
-if __name__ == '__main__': 
-    for state in states():
-            print state
-            p = probs(state)
-            s = sum(p.values())
-            assert sum(p.values()) - 1 <= 1e-10, sum(p.values())
-            assert all(sum(v)<=H for v in p.keys())
