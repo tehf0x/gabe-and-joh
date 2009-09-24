@@ -10,26 +10,34 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 def hash_13(state):
     return state[0]*13**2 + state[1]*13 + state[2]
 
-def graph_state_values(state_values):
+def graph_vals(state_values):
     x = [hash_13(state) for state in state_values.keys()]
     y = state_values.items()
+    graph((x,), (y,), 'state 1')
 
-def graph(x, y, name):
+def graph_vals_multi(state_values_multi):
+    pass
+
+def graph(x_m, y_m, titles, name):
     fig = Figure(figsize=(5,5))
-    
     ax = fig.add_subplot(111)
-
-    ax.plot(x,y, 'r-')
-    ax.grid(False)
-
+    
+    plots = list()
+    
+    for i in range(len(x_m)):
+        ax.plot(x_m[i],y_m[i], label=titles[i])
+    
+    ax.legend(titles)
+    
     ax.set_xlabel("Value")
     ax.set_ylabel("State Number")
 
     # Make the PNG
     canvas = FigureCanvasAgg(fig)
-    # The size * the dpi gives the final image size
-    #   a4"x4" image * 80 dpi ==> 320x320 pixel image
+    #Image resolution is dpi * size
     canvas.print_figure('%s.png' % name, dpi=150)
 
 if __name__ == "__main__":
-    graph(range(0,100), range(0,100), 'test')
+    x_m = (range(0,50,1),)
+    y_m = (range(0,50,1),)
+    graph(x_m, y_m,('one',), 'test')
