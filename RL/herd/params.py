@@ -15,12 +15,12 @@ H = 12
 r = (0.3, 0.4, 0.2)
 
 """ Expected payoff for young, breedable and old cows respectively """
-c = (2, 6, 4)
+c = (2.0, 6.0, 4.0)
 
 '''Transition probabilities from one type of cow to another.'''
-t_probs = ((0.9, 0.1, 0),
-           (0, 0.75, 0.25),
-           (0, 0.15, 0.85))
+t_probs = ((0.9, 0.10, 0.0),
+           (0.0, 0.75, 0.25),
+           (0.0, 0.15, 0.85))
 
 
 '''Birth probabilities for breedable cows.'''
