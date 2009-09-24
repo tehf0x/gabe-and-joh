@@ -50,6 +50,22 @@ class memoized(object):
         """Return the function's docstring."""
         return self.func.__doc__
 
+def concat_multiples(states):
+    '''
+    Takes elements in the list that are the same, and sums their probabilities
+    into a single entry.  Each element of the list must be of the form
+    (element, probability).
+    Return a dictionary where the keys are the elements, and their values 
+    are the probabilities.
+    '''
+    concat_dict = {}
+    for state in states:
+        try:
+            concat_dict[state[0]] += state[1]
+        except KeyError,e:
+            concat_dict[state[0]] = state[1]
+    return concat_dict
+    
 
 def join_states(states):
     '''
@@ -89,6 +105,7 @@ def cartesian_product(lists):
             for x in cartesian_product(lists[1:]):
                 yield (el,) + x
 
+@memoized
 def breed(cows, offspring = [(0,1)]):
     '''
     Recursive function that finds out the probabilities for the 
@@ -142,9 +159,7 @@ def probs(post_state):
         A bit of base 13 trickery going on here, replace 13 by 10 and it'll make
         sense
         '''
-        for i in range(2197):
-            s = (i/(13**2), (i/13)%13, i%13)
-            #Keep a state if has the same number of cows as the original state
+        for s in states():
             if(sum(s) == el):
                 p = t_probs[pos]
                 #Calculate the probability of this state happening
@@ -155,21 +170,23 @@ def probs(post_state):
                 if(prob > 0):
                     sub_states[pos].add((s, prob))
     #Now for combine all the sub_states together in every possible way
-    new_states = [join_states(states) for states in cartesian_product(sub_states)]
-    postbirth = list()
+    new_states = [join_states(j_states) for j_states in cartesian_product(sub_states)]
+    prebirth = concat_multiples(new_states)
     #Now calculate birth probabilities:
+    postbirth = list()
     for state in new_states:
+        #This returns all the different amounts of cows that can be produced, along with probability.
         offspring = breed(state[0][1])
         for off in offspring:
-            print 'i'
-            postbirth.append(((state[0][0] + off, state[0][1], state[0][2]), 
+            if sum(state[0]) + off > H:
+                calves = H - sum(state[0])
+                num_young = state[0][0] + calves
+            else:
+                num_young = state[0][0] + off
+            postbirth.append(((num_young, state[0][1], state[0][2]), 
                               state[1] * offspring[off]))
-    ret_states = {}
-    for state in postbirth:
-        try:
-            ret_states[state[0]] += state[1]
-        except KeyError,e:
-            ret_states[state[0]] = state[1]
+
+    ret_states = concat_multiples(postbirth)
     return ret_states
 
 def reward(s, a):
@@ -226,12 +243,11 @@ def afterstate(s, a):
     
     return sa
 
-if __name__ == '__main__':
-    import params
-    import sys
-    for state in params.states():
-        print state
-        probs = calc_prob(state)
-        s = sum(probs.values())
-        assert sum(probs.values()) - 1 <= 1e-15, sum(probs.values())
         
+if __name__ == '__main__': 
+    for state in states():
+            print state
+            p = probs(state)
+            s = sum(p.values())
+            assert sum(p.values()) - 1 <= 1e-10, sum(p.values())
+            assert all(sum(v)<=H for v in p.keys())
