@@ -138,6 +138,8 @@ def probs(post_state):
     
     s_prime= set()
     sub_states = [0]*len(post_state)
+    if post_state == (0,0,0):
+        return {(0,0,0) : 0}
     '''
     For each element in the post state, figure out all ways it can be spread out.
     Example for (5,4,3):
