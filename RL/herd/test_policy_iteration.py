@@ -9,7 +9,8 @@ Created on 24 Sep 2009
 from value_methods import policy_iteration
 
 if __name__ == '__main__':
-    V, pi = policy_iteration(limit=(None, 15))
+    values = []
+    V, pi = policy_iteration(theta=0.01, value_list=values)
     
     def vcmp(v1, v2):
         #print 'vcmp',v1,v2
@@ -21,4 +22,5 @@ if __name__ == '__main__':
         print v, "=>", pi[v[0]]
     
     
+    print len(values)
     

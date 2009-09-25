@@ -9,7 +9,7 @@ Created on 24 Sep 2009
 from value_methods import value_iteration
 
 if __name__ == '__main__':
-    V = value_iteration(limit=(None, 10))
+    V = value_iteration(sweeps=10)
     
     def vcmp(v1, v2):
         #print 'vcmp',v1,v2
@@ -19,8 +19,5 @@ if __name__ == '__main__':
     
     for v in V:
         print v
-    
-    
-    
     
     
