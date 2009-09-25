@@ -104,8 +104,6 @@ def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
         V*[s] = value
     """
     
-    theta, sweeps = limit
-    
     # Initialize value function to 0
     V = dict((s, 0) for s in states())
     
