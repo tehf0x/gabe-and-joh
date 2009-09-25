@@ -6,6 +6,8 @@
 %\usepackage{multicol}
 \usepackage{graphicx}
 \usepackage[top=2cm,nohead,nofoot]{geometry}
+\usepackage{subfig}
+
 \graphicspath{{../graphs/}}
 
 \author{Gabriel Dulac-Arnold $<$gabe@squirrelsoup.net$>$ (CS09F004) \\
@@ -27,20 +29,21 @@ Value iteration with $\theta=0.01$ produced the following value functions:
 \caption{$V(s)$ after sweep 1}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[h]
 \center
 \includegraphics[scale=0.75]{value_iteration/sweep_10.png}
 \caption{$V(s)$ after sweep 10}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[h]
 \center
 \includegraphics[scale=0.75]{value_iteration/convergence.png}
 \caption{$V^*(s)$ at convergence}
 \end{figure}
 
 
-\newpage
+\clearpage
+
 \section{Policy Iteration}
 
 Policy Iteration with $\theta=0.01$ gave an optimal policy and value function
@@ -70,12 +73,26 @@ after 4 policy evaluations:
 \caption{$V^*(s)$ after policy evaluation 4}
 \end{figure}
 
-\newpage
+
+\clearpage
 
 \section{Varying the Discount Rate}
+
+%\begin{figure}
+%  \centering
+%  \subfloat[A gull]{\label{fig:gull}\includegraphics[width=0.3\textwidth]{gamma_iteration/gamma_9_1.png}}                
+%  \subfloat[A tiger]{\label{fig:tiger}\includegraphics[width=0.3\textwidth]{gamma_iteration/gamma_5_1.png}}
+%  \subfloat[A mouse]{\label{fig:mouse}\includegraphics[width=0.3\textwidth]{gamma_iteration/gamma_3_1.png}}
+%  \caption{Pictures of animals}
+%  \label{fig:animals}
+%\end{figure}
+
+
+
+
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_9_1}
+\includegraphics[scale=0.75]{gamma_iteration/gamma_9_1.png}
 \end{figure}
 
 \begin{figure}[h]
