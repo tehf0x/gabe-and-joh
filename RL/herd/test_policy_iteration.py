@@ -12,6 +12,8 @@ if __name__ == '__main__':
     values = []
     V, pi = policy_iteration(theta=0.01, value_list=values)
     
+    assert values[-1] == V
+    
     def vcmp(v1, v2):
         #print 'vcmp',v1,v2
         return cmp(v1[1], v2[1])
@@ -22,5 +24,6 @@ if __name__ == '__main__':
         print v, "=>", pi[v[0]]
     
     
-    print len(values)
+    print "%d policy evaluation steps were required." % (len(values))
+    
     
