@@ -6,6 +6,7 @@
 %\usepackage{multicol}
 \usepackage{graphicx}
 \usepackage[top=2cm,nohead,nofoot]{geometry}
+\graphicspath{{../graphs/}}
 
 \author{Gabriel Dulac-Arnold $<$gabe@squirrelsoup.net$>$ (CS09F004) \\
 Johannes H. Jensen $<$johannj@stud.ntnu.no$>$ (CS09F005)}
@@ -18,25 +19,60 @@ Johannes H. Jensen $<$johannj@stud.ntnu.no$>$ (CS09F005)}
 
 \section{Value Iteration}
 
-Running value iteration with $\theta=0.01$ produced the following value functions:
+Value iteration with $\theta=0.01$ produced the following value functions:
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{../graphs/value_iteration/one_iteration.png}
+\includegraphics[scale=0.75]{value_iteration/sweep_1.png}
 \caption{$V(s)$ after sweep 1}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[p]
 \center
-\includegraphics[scale=0.75]{../graphs/value_iteration/ten_iterations.png}
+\includegraphics[scale=0.75]{value_iteration/sweep_10.png}
 \caption{$V(s)$ after sweep 10}
 \end{figure}
 
+\begin{figure}[p]
+\center
+\includegraphics[scale=0.75]{value_iteration/convergence.png}
+\caption{$V^*(s)$ at convergence}
+\end{figure}
+
+
+\newpage
+\section{Policy Iteration}
+
+Policy Iteration with $\theta=0.01$ gave an optimal policy and value function
+after 4 policy evaluations:
+
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{../graphs/value_iteration/convergence.png}
-\caption{$V*(s)$ at convergence}
+\includegraphics[scale=0.75]{policy_iteration/evaluation_1.png}
+\caption{$V(s)$ after policy evaluation 1}
+\end{figure}
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.75]{policy_iteration/evaluation_2.png}
+\caption{$V(s)$ after policy evaluation 2}
+\end{figure}
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.75]{policy_iteration/evaluation_3.png}
+\caption{$V(s)$ after policy evaluation 3}
+\end{figure}
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.75]{policy_iteration/evaluation_4.png}
+\caption{$V^*(s)$ after policy evaluation 4}
 \end{figure}
 
 \end{document}
+
+
+
+
 
