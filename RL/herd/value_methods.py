@@ -46,16 +46,15 @@ def max_action(state, V, gamma = 0.9, debug = False):
 
 
 
-def value_iteration(gamma = 0.9, limit = (0.5, None)):
+def value_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
     """ Value iteration algorithm
     
     gamma -- discount factor
-    limit -- specifies when the algorithm should stop (theta, sweeps)
+    theta -- stop when delta < theta
+    sweeps -- stop after N sweeps
     
     Returns a dictionary V[s] = value 
     """
-    
-    theta, sweeps = limit
     
     # Initialize value function to 0
     V = dict((s, 0) for s in states())
@@ -93,18 +92,17 @@ def value_iteration(gamma = 0.9, limit = (0.5, None)):
     return V
 
 
-def policy_iteration(gamma = 0.9, limit = (0.5, None)):
+def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
     """ Policy iteration
     
     gamma -- discount factor
-    limit -- specifies when the algorithm should stop (theta, sweeps)
+    theta -- stop when delta < theta
+    sweeps -- stop after N sweeps
     
     Returns a tuple (pi*, V*) where
         pi*[s] = action
         V*[s] = value
     """
-    
-    theta, sweeps = limit
     
     # Initialize value function to 0
     V = dict((s, 0) for s in states())
