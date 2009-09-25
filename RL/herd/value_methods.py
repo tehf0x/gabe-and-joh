@@ -8,6 +8,7 @@ Heavily dependent on the params module - not generalized whatsoever
 
 from params import states, actions, probs, reward, afterstate, H
 import sys
+import copy
 
 def value(s, r, V, gamma = 0.9):
     """ Calculate the expected value of state s given reward r,
@@ -92,20 +93,19 @@ def value_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
     return V
 
 
-def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
+def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None, value_list = None):
     """ Policy iteration
     
     gamma -- discount factor
     theta -- stop when delta < theta
     sweeps -- stop after N sweeps
+    value_list -- passing a list here will populate it with the value functions
+                  generated after each policy evaluation step
     
     Returns a tuple (pi*, V*) where
         pi*[s] = action
         V*[s] = value
     """
-    
-    # Initialize value function to 0
-    V = dict((s, 0) for s in states())
     
     # Initialize value function to 0
     V = dict((s, 0) for s in states())
@@ -152,6 +152,9 @@ def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
             if sweeps and sweep == sweeps:
                 break
         
+        
+        if isinstance(value_list, list):
+            value_list.append(copy.deepcopy(V))
         
         #
         # Policy Improvement

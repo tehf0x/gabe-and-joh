@@ -9,7 +9,10 @@ Created on 24 Sep 2009
 from value_methods import policy_iteration
 
 if __name__ == '__main__':
-    V, pi = policy_iteration(limit=(None, 15))
+    values = []
+    V, pi = policy_iteration(theta=0.01, value_list=values)
+    
+    assert values[-1] == V
     
     def vcmp(v1, v2):
         #print 'vcmp',v1,v2
@@ -20,5 +23,7 @@ if __name__ == '__main__':
     for v in V:
         print v, "=>", pi[v[0]]
     
+    
+    print "%d policy evaluation steps were required." % (len(values))
     
     
