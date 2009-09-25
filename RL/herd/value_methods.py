@@ -107,9 +107,6 @@ def policy_iteration(gamma = 0.9, theta = 0.01, sweeps = None):
     # Initialize value function to 0
     V = dict((s, 0) for s in states())
     
-    # Initialize value function to 0
-    V = dict((s, 0) for s in states())
-    
     # Initialize policy to (0, 0, 0)
     pi = dict((s, (0, 0, 0)) for s in states())
     
