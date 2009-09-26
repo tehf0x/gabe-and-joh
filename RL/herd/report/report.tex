@@ -8,6 +8,8 @@
 \usepackage[top=2cm,nohead,nofoot]{geometry}
 \usepackage{subfig}
 
+
+
 \graphicspath{{../graphs/}}
 
 \author{Gabriel Dulac-Arnold $<$gabe@squirrelsoup.net$>$ (CS09F004) \\
@@ -21,23 +23,23 @@ Johannes H. Jensen $<$johannj@stud.ntnu.no$>$ (CS09F005)}
 
 \section{Value Iteration}
 
-Value iteration with $\theta=0.01$ produced the following value functions:
+Value iteration with $\theta=0.01$ produced the value functions plotted below. From the graph of the optimal $V^*$ we see that the best possible state is (0, 12, 0), that is 12 breedable cows.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \center
-\includegraphics[scale=0.75]{value_iteration/sweep_1.png}
+\includegraphics[scale=0.8]{value_iteration/sweep_1.png}
 \caption{$V(s)$ after sweep 1}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \center
-\includegraphics[scale=0.75]{value_iteration/sweep_10.png}
+\includegraphics[scale=0.8]{value_iteration/sweep_10.png}
 \caption{$V(s)$ after sweep 10}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \center
-\includegraphics[scale=0.75]{value_iteration/convergence.png}
+\includegraphics[scale=0.8]{value_iteration/convergence.png}
 \caption{$V^*(s)$ at convergence}
 \end{figure}
 
@@ -51,25 +53,25 @@ after 4 policy evaluations:
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{policy_iteration/evaluation_1.png}
+\includegraphics[scale=0.8]{policy_iteration/evaluation_1.png}
 \caption{$V(s)$ after policy evaluation 1}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{policy_iteration/evaluation_2.png}
+\includegraphics[scale=0.8]{policy_iteration/evaluation_2.png}
 \caption{$V(s)$ after policy evaluation 2}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{policy_iteration/evaluation_3.png}
+\includegraphics[scale=0.8]{policy_iteration/evaluation_3.png}
 \caption{$V(s)$ after policy evaluation 3}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{policy_iteration/evaluation_4.png}
+\includegraphics[scale=0.8]{policy_iteration/evaluation_4.png}
 \caption{$V^*(s)$ after policy evaluation 4}
 \end{figure}
 
@@ -77,6 +79,10 @@ after 4 policy evaluations:
 \clearpage
 
 \section{Varying the Discount Rate}
+
+Policy Iteration with $\gamma = 0.5$ and $\gamma = 0.3$ converged after only 2 iterations of evaluation and improvement, whereas $\gamma = 0.9$ required 4 iterations to converge.
+
+\subsection{$V^*$ Plots}
 
 %\begin{figure}
 %  \centering
@@ -87,52 +93,65 @@ after 4 policy evaluations:
 %  \label{fig:animals}
 %\end{figure}
 
-
-
-
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_9_1.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_9_1.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_5_1.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_5_1.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_3_1.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_3_1.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_9_2.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_9_2.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_5_2.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_5_2.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_3_2.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_3_2.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_9_3.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_9_3.png}
 \end{figure}
 
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.75]{gamma_iteration/gamma_9_4.png}
+\includegraphics[scale=0.8]{gamma_iteration/gamma_9_4.png}
 \end{figure}
+
+\clearpage
+
+\subsection{Policies}
+
+The following table lists the optimal next action for the states (4, 7, 1), 
+(1, 3, 6) and (9, 2, 1) with different values for $\gamma$:
+
+\begin{tabular}{ l | c | c | c }
+State $(y, b, o)$ & $\pi(s; \gamma = 0.9)$ & $\pi(s; \gamma = 0.5)$ & $\pi(s; \gamma = 0.3)$ \\
+\hline
+(4, 7, 1) & (0, 3, 1) & (4, 7, 1) & (4, 7, 1) \\ 
+\hline
+(1, 3, 6) & (0, 0, 2) & (1, 3, 6) & (1, 3, 6) \\
+\hline
+(9, 2, 1) & (0, 1, 1) & (9, 2, 1) & (9, 2, 1) \\
+\end{tabular}
+
+It's interesting to see that $\gamma = 0.5$ and $\gamma = 0.3$ are sufficiently
+greedy and result in similar policies: sell all cows for immediate reward.
+$\gamma = 0.9$ produced a more refined policy.
 
 \end{document}
-
-
-
-
-

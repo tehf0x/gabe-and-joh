@@ -10,7 +10,7 @@ from value_methods import policy_iteration
 
 if __name__ == '__main__':
     values = []
-    V, pi = policy_iteration(gamma=0.8, theta=0.01, value_list=values)
+    V, pi = policy_iteration(gamma=0.9, theta=0.01, value_list=values)
     
     assert values[-1] == V
     
