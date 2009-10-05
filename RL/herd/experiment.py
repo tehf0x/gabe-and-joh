@@ -39,4 +39,4 @@ for g in(0.9, 0.5, 0.3):
     V, pi = policy_iteration(theta=0.01, value_list=values, gamma=g)
     
     for i, v in enumerate(values):
-        graph_vals(v, 'Policy Evaluation %d. Gamma: %f' % (i + 1, g))
+        graph_vals(v, 'Policy Evaluation %d. Gamma: %f' % (i + 1, g), 'gamma_%d_%d' % (int(g*10), i+1))
