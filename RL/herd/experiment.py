@@ -31,12 +31,20 @@ V, pi = policy_iteration(gamma=0.9, theta=0.01, value_list=values)
 
 for i, v in enumerate(values):
     graph_vals(v, 'Policy Evaluation %d' % (i + 1))
-    '''
+'''
+    
 #Gamma Variations
 print 'Generating Gamma Variations'
 for g in(0.9, 0.5, 0.3):
     values = []
     V, pi = policy_iteration(theta=0.01, value_list=values, gamma=g)
     
+    print 'gamma = %f:' % (g)
+    
+    for s in ((4,7,1), (1,3,6), (9,2,1)):
+        print 'state %s => action %s' % (s, pi[s])
+    
+'''    
     for i, v in enumerate(values):
         graph_vals(v, 'Policy Evaluation %d. Gamma: %f' % (i + 1, g), 'gamma_%d_%d' % (int(g*10), i+1))
+'''
