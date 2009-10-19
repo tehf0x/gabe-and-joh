@@ -81,6 +81,7 @@ after 4 policy evaluations:
 \section{Varying the Discount Rate}
 
 Policy Iteration with $\gamma = 0.5$ and $\gamma = 0.3$ converged after only 2 iterations of evaluation and improvement, whereas $\gamma = 0.9$ required 4 iterations to converge.
+The smaller discount rates converge faster, but give much smaller values to the states.  This will have an important effect on the final policies (as we see later on).
 
 \subsection{$V^*$ Plots}
 
@@ -150,8 +151,8 @@ State $(y, b, o)$ & $\pi(s; \gamma = 0.9)$ & $\pi(s; \gamma = 0.5)$ & $\pi(s; \g
 (9, 2, 1) & (0, 1, 1) & (9, 2, 1) & (9, 2, 1) \\
 \end{tabular}
 
-It's interesting to see that $\gamma = 0.5$ and $\gamma = 0.3$ are sufficiently
-greedy and result in similar policies: sell all cows for immediate reward.
-$\gamma = 0.9$ produced a more refined policy.
+We can now see the problem with smaller values for $\gamma$. The immediate return for selling all the cows is not countered by big enough state values (
+Because of this, policies for $\gamma = 0.5$ and $\gamma = 0.3$ are too greedy and result in the same bad action: sell all cows for immediate reward.
+Policy iteration for $\gamma = 0.9$, however, produces a good policy for long-term cow farming.
 
 \end{document}
