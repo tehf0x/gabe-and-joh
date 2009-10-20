@@ -7,6 +7,7 @@ function [ M, C, pi ] = em_gmm( xs, K )
 %   pi = mixture coefficients for the K mixtures
 
     % Initialize
+    alpha = 0.01;   % Convergence limit
     dim = size(xs, 2);
     n_samples = size(xs, 1);
 
@@ -35,8 +36,8 @@ function [ M, C, pi ] = em_gmm( xs, K )
 
     % TODO: Loop EM until convergence
     ll_prev = 0;
-    for iteration=1:10
-        iteration
+    ld = alpha * 100;
+    while abs(ld) > alpha
         % E step
         for n=1:n_samples
             mixtures = zeros(K, 1);
@@ -90,7 +91,10 @@ function [ M, C, pi ] = em_gmm( xs, K )
            ll = ll + log(gmm(xs(n,:)', M, C, pi)); 
         end
         
-        ld = max(ll_prev, ll) - min(ll_prev, ll)
+        ld = ll - ll_prev;
+        
+        %ll
+        ld
         
         ll_prev = ll;
     end
