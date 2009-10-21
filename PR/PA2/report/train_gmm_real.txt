@@ -1,0 +1,8 @@
+Trying K=1... Evaluating... 49.62% accuracy
+Trying K=2... Evaluating... 50.40% accuracy
+Trying K=3... Evaluating... 50.25% accuracy
+Trying K=4... Evaluating... 50.25% accuracy
+Trying K=5... Evaluating... 50.43% accuracy
+Trying K=6... Evaluating... 50.45% accuracy
+Trying K=7... Evaluating... 50.49% accuracy
+Trying K=8... Evaluating... 50.59% accuracy

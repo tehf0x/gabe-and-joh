@@ -1,0 +1,54 @@
+NONLINEARLY SEPARABLE DATASET
+
+Diagonal covariance matrix:
+
+accuracy =
+
+    0.9926
+
+
+confusion =
+
+   609     3
+     6   606
+
+
+Full covariance matrix:
+
+accuracy =
+
+     1
+
+
+confusion =
+
+   612     0
+     0   612
+
+
+REAL WORLD DATASET
+Diagonal covariance matrix:
+
+accuracy =
+
+    0.6434
+
+
+confusion =
+
+   417     7     3
+   136   258    15
+     2     0   486
+
+Full covariance matrix:
+
+accuracy =
+
+    0.6434
+
+
+confusion =
+
+   417     7     3
+   136   258    15
+     2     0   486
