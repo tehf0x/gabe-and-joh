@@ -7,6 +7,7 @@ function [accuracy, confusion] = eval_results(test_data, classified_data)
         num_right = size(intersect(test_data{i}, classified_data{i}, 'rows'), 1);
         accuracies{i} = num_right / length(test_data{i});
     end
+    
     %This syntax is ugly, but oh well...
     accuracy = mean([accuracies{:}]);
 
