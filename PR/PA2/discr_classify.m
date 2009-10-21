@@ -1,4 +1,4 @@
-function [ ind ] = discriminant_classify( x, g_funcs )
+function [ ind ] = discr_classify( x, g_funcs )
 % CLASSIFY the feature vector x 
 %   Returns the class number
     num_classes = size(g_funcs, 2);
