@@ -7,7 +7,8 @@ dataset = load('datasets/nls_group14.txt');
 class_sizes = [2446, 2447];
 
 % Train the GMM
-[Ms, Cs, pis] = train_gmm(dataset, class_sizes);
+[Ms, Cs, pis, K] = train_gmm(dataset, class_sizes, 1);
 
 % Store the result for later use
-save gmm_nls Ms Cs pis
+save gmm_nls Ms Cs pis K
+

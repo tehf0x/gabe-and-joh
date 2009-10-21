@@ -1,20 +1,20 @@
-function [ Ms, Cs, pis ] = train_gmm( dataset, class_sizes )
+function [ Ms, Cs, pis, K ] = train_gmm( dataset, class_sizes, target_accuracy )
 %TRAIN_GMM Train Gaussian Mixture Model from dataset
-%   Varies number of mixtures until a 100% classification
+%   Varies number of mixtures until a target_accuracy% classification
 %   accuracy is achieved.
 %
 %   Returns the means, covariances and pis for the K mixtures
 %   in each class.
     
     % Split data into training and test-data
-    [training_data, test_data] = generate_datasets(dataset, [2446, 2447]);
+    [training_data, test_data] = generate_datasets(dataset, class_sizes);
     
     % Initialize K to 0
     K = 0;
     
-    % Increase K until we achieve 100% classification accuracy
+    % Increase K until we achieve the target classification accuracy
     accuracy = 0;
-    while accuracy ~= 1
+    while accuracy < target_accuracy
         K = K + 1;
         
         printf('Trying K=%d... ', K);
@@ -34,10 +34,10 @@ function [ Ms, Cs, pis ] = train_gmm( dataset, class_sizes )
         printf('Evaluating... ');
         g_funcs = gmm_generator(Ms, Cs, pis);
         classify = discr_classify_gen(g_funcs);
-        td = cat(1, test_data{:});
+        td = cat(1, training_data{:});
         result = categorize(td, classify);
         
-        [accuracy, confusion] = eval_results(test_data, result);
+        [accuracy, confusion] = eval_results(training_data, result);
         
         printf('%.2f%% accuracy\n', accuracy * 100);
     end

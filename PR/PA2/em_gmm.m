@@ -15,12 +15,14 @@ function [ M, C, pi ] = em_gmm( xs, K )
     for k=1:K
        % Choose means uniformly from training data
        % TODO: Is this the best way?
+       % Best: K-Means (if we have time)
        M{k} = xs(round((k-1)*n_samples/k + 1),:)';
     end
 
     C = cell(K, 1);
     for k=1:K
-       C{k} = diag(ones(dim,1));
+        % Better: cov for each cluster from K-Means
+        C{k} = cov(xs);
     end
 
     pi = cell(K, 1);
@@ -94,7 +96,7 @@ function [ M, C, pi ] = em_gmm( xs, K )
         ld = ll - ll_prev;
         
         %ll
-        ld
+        %ld
         
         ll_prev = ll;
     end
