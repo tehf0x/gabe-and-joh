@@ -1,5 +1,5 @@
-function [] = plot_decision_region(training_data, g_funcs)
-% PLOT_DECISION_REGION of g_funcs with training_data superposed
+function [] = plot_decision_region(training_data, classify)
+% PLOT_DECISION_REGION of classify with training_data superposed
     
     % Concatenate all training data
     d = cat(1, training_data{:});
@@ -26,7 +26,7 @@ function [] = plot_decision_region(training_data, g_funcs)
     for i=1:dim
         for j=1:dim
             x = [xmin + i * xstep; ymin + j * ystep];
-            img(j, i) = classify(x, g_funcs);
+            img(j, i) = classify(x);
         end
     end
     
