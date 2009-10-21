@@ -1,0 +1,341 @@
+% CS669: Pattern Recognition
+% Programming Assignment II
+% Gabriel Dulac-Arnold <gabe@squirrelsoup.net>
+% Johannes H. Jensen <johannj@stud.ntnu.no>
+\documentclass[a4paper]{article}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage[top=2cm,nohead,nofoot]{geometry}
+
+\author{Gabriel Dulac-Arnold $<$gabe@squirrelsoup.net$>$ (CS09F004) \\
+Johannes H. Jensen $<$johannj@stud.ntnu.no$>$ (CS09F005) \\
+\\
+(Batch no. 14)}
+\title{CS669 - Pattern Recognition\\
+\emph{Programming Assignment II}}
+
+\begin{document}
+\setlength{\parskip}{2ex}
+\maketitle
+
+\section{Classifier Accuracy for Each Dataset}
+
+\begin{tabular}{ l | c | c | c | c | c | }
+Dataset & GMM $C_{diag}$ & GMM $C_{full}$ & ...\\
+\hline
+  NLS & 99.26\% & 100\% & \% & \% & \% \\
+\hline
+  RL & 64.34\% & 64.34\% & \% & \% & \% \\
+\hline
+\end{tabular}
+
+\section{Confusion Matrices}
+\begin{enumerate}
+\item Bayes $C_{mean}$
+
+\begin{multicols}{2}
+\begin{enumerate}
+\item Linearly Seperable
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 124 & 1 & 0 \\ 
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+
+\item Non-Linearly Seperable
+
+\begin{tabular}{ l | c | c |}
+
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 384 & 228 \\ 
+\hline
+  $\omega_2$ & 235 & 377 \\
+\hline
+\end{tabular}
+\newline
+
+\item Overlapping Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 106 & 17 & 2 \\ 
+\hline
+  $\omega_2$ & 0 & 109 & 16 \\
+\hline
+  $\omega_3$ & 7 & 1 & 117 \\
+\hline
+\end{tabular}
+
+\item Real World Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 571 & 23 & 3 \\ 
+\hline
+  $\omega_2$ & 343 & 213 & 17 \\
+\hline
+  $\omega_3$ & 0 & 0 & 622 \\
+\hline
+\end{tabular}
+\end{enumerate}
+\end{multicols}
+
+\item Bayes $C_{distinct}$
+
+\begin{multicols}{2}
+\begin{enumerate}
+\item Linearly Seperable
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 125 & 0 & 0 \\ 
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+\item Non-Linearly Seperable
+
+\begin{tabular}{ l | c | c |}
+
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 379 & 233 \\ 
+\hline
+  $\omega_2$ & 232 & 380 \\
+\hline
+\end{tabular}
+\newline
+
+\item Overlapping Data
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 114 & 8 & 3 \\ 
+\hline
+  $\omega_2$ & 4 & 116 & 5 \\
+\hline
+  $\omega_3$ & 6 & 2 & 117 \\
+\hline
+\end{tabular}
+
+\item Real World Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 571 & 23 & 3 \\ 
+\hline
+  $\omega_2$ & 343 & 211 & 15 \\
+\hline
+  $\omega_3$ & 0 & 1 & 621 \\
+\hline
+\end{tabular}
+\end{enumerate}
+\end{multicols}
+
+\newpage
+
+\item Naive Bayes $C = \sigma^2I$
+\begin{multicols}{2}
+\begin{enumerate}
+\item Linearly Seperable
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 124 & 1 & 0 \\ 
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+\item Non-Linearly Seperable
+
+\begin{tabular}{ l | c | c |}
+
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 388 & 224 \\ 
+\hline
+  $\omega_2$ & 234 & 378 \\
+\hline
+\end{tabular}
+\newline
+
+\item Overlapping Data
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 106 & 17 & 2 \\ 
+\hline
+  $\omega_2$ & 2 & 106 & 17 \\
+\hline
+  $\omega_3$ & 6 & 1 & 118 \\
+\hline
+\end{tabular}
+
+\item Real World Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 570 & 24 & 3 \\ 
+\hline
+  $\omega_2$ & 348 & 207 & 18 \\
+\hline
+  $\omega_3$ & 0 & 0 & 622 \\
+\hline
+\end{tabular}
+\end{enumerate}
+\end{multicols}
+
+\item Naive Bayes $C_{mean}$
+\begin{multicols}{2}
+\begin{enumerate}
+\item Linearly Seperable
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 124 & 1 & 0 \\ 
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+\item Non-Linearly Seperable
+
+\begin{tabular}{ l | c | c |}
+
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 386 & 226 \\ 
+\hline
+  $\omega_2$ & 234 & 378 \\
+\hline
+\end{tabular}
+\newline
+
+\item Overlapping Data
+
+\begin{tabular}{ l | c | c | c | }
+
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 106 & 17 & 2 \\ 
+\hline
+  $\omega_2$ & 0 & 109 & 16 \\
+\hline
+  $\omega_3$ & 7 & 1 & 117 \\
+\hline
+\end{tabular}
+
+\item Real World Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 571 & 23 & 3 \\ 
+\hline
+  $\omega_2$ & 345 & 210 & 18 \\
+\hline
+  $\omega_3$ & 0 & 0 & 622 \\
+\hline
+\end{tabular}
+\end{enumerate}
+\end{multicols}
+
+\item Naive Bayes $C_{distinct}$
+\begin{multicols}{2}
+\begin{enumerate}
+\item Linearly Separable
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 124 & 1 & 0 \\ 
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+\item Non-Linearly Seperable
+
+\begin{tabular}{ l | c | c |}
+
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 384 & 228 \\ 
+\hline
+  $\omega_2$ & 230 & 382 \\
+\hline
+\end{tabular}
+\newline
+
+\item Overlapping Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 106 & 18 & 1 \\ 
+\hline
+  $\omega_2$ & 2 & 115 & 8 \\
+\hline
+  $\omega_3$ & 10 & 2 & 113 \\
+\hline
+\end{tabular}
+
+\item Real World Data
+
+\begin{tabular}{ l | c | c | c | }
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 571 & 23 & 3 \\ 
+\hline
+  $\omega_2$ & 346 & 210 & 18 \\
+\hline
+  $\omega_3$ & 0 & 0 & 622 \\
+\hline
+\end{tabular}
+\end{enumerate}
+\end{multicols}
+\end{enumerate}
+
+\newpage
+
+\section{Decision Region Plots}
+% GMM C_diag
+\begin{figure}[h]
+\center
+\includegraphics[clip, trim=40px 15px 30px 10px]{gmm_nls_fullcov.png}
+\caption{Bayes $C_{mean}$, Linearly separable data set}
+\end{figure}
+\end{document}
+

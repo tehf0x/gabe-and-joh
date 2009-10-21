@@ -1,13 +1,10 @@
-function [ Ms, Cs, pis, K ] = train_gmm( dataset, class_sizes, target_accuracy )
+function [ Ms, Cs, pis, K ] = train_gmm( training_data, target_accuracy )
 %TRAIN_GMM Train Gaussian Mixture Model from dataset
 %   Varies number of mixtures until a target_accuracy% classification
 %   accuracy is achieved.
 %
 %   Returns the means, covariances and pis for the K mixtures
 %   in each class.
-    
-    % Split data into training and test-data
-    [training_data, test_data] = generate_datasets(dataset, class_sizes);
     
     % Initialize K to 0
     K = 0;
