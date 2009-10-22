@@ -1,10 +1,7 @@
-function [ ] = test_classifier( dataset, class_sizes, classify )
+function [ ] = test_classifier( training_data, test_data, classify )
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
-    % Split data into training and test-data
-    [training_data, test_data] = generate_datasets(dataset, class_sizes);
-    
     % Evaluate results
     [accuracy, confusion] = eval_classifier(test_data, classify);
     
