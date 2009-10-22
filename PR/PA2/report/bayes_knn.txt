@@ -1,11 +1,19 @@
+k=15
 BAYES KNN
 
  NLS DATA:
 
-acc =
+accuracy =
 
      1
 
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | }
 \hline
@@ -16,22 +24,33 @@ acc =
   $\omega_2$ & 0 & 612 \\
 \hline
 \end{tabular}
+Plot decision region? y
+Current plot held
+Current plot released
 
  REAL DATA:
 
-acc =
+accuracy =
 
-    0.6344
+    0.8721
 
+
+confusion =
+
+   568    26     3
+   174   381    18
+     0     0   622
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 398 & 26 & 3 \\
+  $\omega_1$ & 568 & 26 & 3 \\
 \hline
-  $\omega_2$ & 133 & 259 & 17 \\
+  $\omega_2$ & 174 & 381 & 18 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 0 & 0 & 622 \\
 \hline
 \end{tabular}

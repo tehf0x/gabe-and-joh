@@ -1,11 +1,19 @@
+k=1
 KNN
 
  NLS DATA:
 
-acc =
+accuracy =
 
      1
 
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | }
 \hline
@@ -16,76 +24,197 @@ acc =
   $\omega_2$ & 0 & 612 \\
 \hline
 \end{tabular}
+Plot decision region? n
 
  REAL DATA:
 
-acc =
+accuracy =
 
-    0.6315
+    0.8470
 
+
+confusion =
+
+   571    23     3
+   224   335    14
+     0     0   622
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 397 & 27 & 3 \\
+  $\omega_1$ & 571 & 23 & 3 \\
 \hline
-  $\omega_2$ & 137 & 255 & 17 \\
+  $\omega_2$ & 224 & 335 & 14 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 0 & 0 & 622 \\
 \hline
 \end{tabular}
 
-K = 1
+k = 20
+KNN
 
+ NLS DATA:
+
+accuracy =
+
+     1
+
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 612 & 0 \\
+\hline
+  $\omega_2$ & 0 & 612 \\
+\hline
+\end{tabular}
+Plot decision region? n
+
+ REAL DATA:
+
+accuracy =
+
+    0.8698
+
+
+confusion =
+
+   567    27     3
+   177   378    18
+     0     0   622
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 401 & 23 & 3 \\
+  $\omega_1$ & 567 & 27 & 3 \\
 \hline
-  $\omega_2$ & 174 & 222 & 13 \\
+  $\omega_2$ & 177 & 378 & 18 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 0 & 0 & 622 \\
 \hline
 \end{tabular}
 
-K = 20
+k = 40
+KNN
+
+ NLS DATA:
+
+accuracy =
+
+     1
+
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 612 & 0 \\
+\hline
+  $\omega_2$ & 0 & 612 \\
+\hline
+\end{tabular}
+Plot decision region? k n
+
+REAL DATA:
+
+accuracy =
+
+    0.8703
+
+
+confusion =
+
+   569    25     3
+   178   377    18
+     0     0   622
+
+Confusion LaTeX:
+
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 397 & 27 & 3 \\
+  $\omega_1$ & 569 & 25 & 3 \\
 \hline
-  $\omega_2$ & 135 & 257 & 17 \\
+  $\omega_2$ & 178 & 377 & 18 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 0 & 0 & 622 \\
 \hline
 \end{tabular}
 
-K= 40
-\begin{tabular}{ | l | c | c | c | }
+k = 60
+
+KNN
+
+ NLS DATA:
+
+accuracy =
+
+     1
+
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
 \hline
-& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+& $\omega_1$ & $\omega_2$ \\
 \hline
-  $\omega_1$ & 399 & 25 & 3 \\
+  $\omega_1$ & 612 & 0 \\
 \hline
-  $\omega_2$ & 135 & 257 & 17 \\
-\hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_2$ & 0 & 612 \\
 \hline
 \end{tabular}
+Plot decision region? n
 
-K=60
+ REAL DATA:
+
+accuracy =
+
+    0.8686
+
+
+confusion =
+
+   568    26     3
+   179   375    19
+     0     0   622
+
+Confusion LaTeX:
+
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 398 & 26 & 3 \\
+  $\omega_1$ & 568 & 26 & 3 \\
 \hline
-  $\omega_2$ & 136 & 255 & 18 \\
+  $\omega_2$ & 179 & 375 & 19 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 0 & 0 & 622 \\
 \hline
 \end{tabular}
