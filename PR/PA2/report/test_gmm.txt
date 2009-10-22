@@ -4,14 +4,26 @@ Diagonal covariance matrix:
 
 accuracy =
 
-    0.9926
+    0.9894
 
 
 confusion =
 
-   609     3
-     6   606
+   606     6
+     7   605
 
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 606 & 6 \\
+\hline
+  $\omega_2$ & 7 & 605 \\
+\hline
+\end{tabular}
+Plot decision region? n
 
 Full covariance matrix:
 
@@ -25,30 +37,75 @@ confusion =
    612     0
      0   612
 
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 612 & 0 \\
+\hline
+  $\omega_2$ & 0 & 612 \\
+\hline
+\end{tabular}
+Plot decision region? n
 
 REAL WORLD DATASET
 Diagonal covariance matrix:
 
 accuracy =
 
-    0.6434
+    0.8857
 
 
 confusion =
 
-   417     7     3
-   136   258    15
-     2     0   486
+   587     7     3
+   169   388    16
+     2     0   620
 
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 587 & 7 & 3 \\
+\hline
+  $\omega_2$ & 169 & 388 & 16 \\
+\hline
+  $\omega_3$ & 2 & 0 & 620 \\
+\hline
+\end{tabular}
+Plot decision region? y
+Current plot held
+Current plot released
 Full covariance matrix:
 
 accuracy =
 
-    0.6434
+    0.8829
 
 
 confusion =
 
-   417     7     3
-   136   258    15
-     2     0   486
+   587     7     3
+   173   385    15
+     4     0   618
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 587 & 7 & 3 \\
+\hline
+  $\omega_2$ & 173 & 385 & 15 \\
+\hline
+  $\omega_3$ & 4 & 0 & 618 \\
+\hline
+\end{tabular}
+Plot decision region? y
+Current plot held
+Current plot released

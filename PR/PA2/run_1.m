@@ -35,7 +35,7 @@ g_funcs = gmm_generator(Ms, Cs_diag, pis);
 classify = discr_classify_gen(g_funcs);
 
 % Test classifier
-test_classifier(dataset, class_sizes, classify);
+test_classifier(training_data, test_data, classify);
 
 
 % b) Full covariance matrix
@@ -46,7 +46,7 @@ g_funcs = gmm_generator(Ms, Cs, pis);
 classify = discr_classify_gen(g_funcs);
 
 % Test classifier
-test_classifier(dataset, class_sizes, classify);
+test_classifier(training_data, test_data, classify);
 
 
 
@@ -85,7 +85,7 @@ g_funcs = gmm_generator(Ms, Cs_diag, pis);
 classify = discr_classify_gen(g_funcs);
 
 % Test classifier
-test_classifier(dataset, class_sizes, classify);
+test_classifier(training_data, test_data, classify);
 
 
 % b) Full covariance matrix
@@ -96,4 +96,4 @@ g_funcs = gmm_generator(Ms, Cs, pis);
 classify = discr_classify_gen(g_funcs);
 
 % Test classifier
-test_classifier(dataset, class_sizes, classify);
+test_classifier(training_data, test_data, classify);

@@ -31,10 +31,8 @@ function [ Ms, Cs, pis, K ] = train_gmm( training_data, target_accuracy )
         printf('Evaluating... ');
         g_funcs = gmm_generator(Ms, Cs, pis);
         classify = discr_classify_gen(g_funcs);
-        td = cat(1, training_data{:});
-        result = categorize(td, classify);
         
-        [accuracy, confusion] = eval_results(training_data, result);
+        [accuracy, confusion] = eval_classifier(training_data, classify);
         
         printf('%.2f%% accuracy\n', accuracy * 100);
     end
