@@ -44,4 +44,15 @@ acc =
 \end{tabular}
 
 PARZEN NORMAL REAL
+k=1500
+acc = .5865
 
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 390 & 222 \\
+\hline
+  $\omega_2$ & 190 & 422 \\
+\hline
+\end{tabular}
