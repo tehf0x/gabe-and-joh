@@ -1,5 +1,22 @@
-PARZEN SPHERE NLS
-acc = 1
+k= 15
+
+Parzen
+
+ NLS DATA:
+
+ Sphere 
+
+accuracy =
+
+     1
+
+
+confusion =
+
+   612     0
+     0   612
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | }
 \hline
@@ -10,53 +27,89 @@ acc = 1
   $\omega_2$ & 0 & 612 \\
 \hline
 \end{tabular}
+Plot decision region? y
+Current plot held
+Current plot released
 
-PARZEN SPHERE REAL DATA
+ Gauss
 
-    0.6249
-
-\begin{tabular}{ | l | c | c | c | }
-\hline
-& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
-\hline
-  $\omega_1$ & 418 & 6 & 3 \\
-\hline
-  $\omega_2$ & 157 & 240 & 12 \\
-\hline
-  $\omega_3$ & 17 & 1 & 470 \\
-\hline
-\end{tabular}
-
-PARZEN NORMAL NLS
-
-acc =
+accuracy =
 
     0.9706
 
-   \begin{tabular}{ | l | c | c | }
+
+confusion =
+
+   593    19
+    17   595
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ \\
 \hline
-  $\omega_1$ & 390 & 222 \\
+  $\omega_1$ & 593 & 19 \\
 \hline
-  $\omega_2$ & 190 & 422 \\
+  $\omega_2$ & 17 & 595 \\
 \hline
 \end{tabular}
+Plot decision region? n
 
-PARZEN NORMAL REAL
-k=1500
-acc =
+ REAL DATA:
 
-    0.5865
+ Sphere 
+
+accuracy =
+
+    0.8599
+
+
+confusion =
+
+   588     6     3
+   199   361    13
+    18     4   600
+
+Confusion LaTeX:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & 409 & 15 & 3 \\
+  $\omega_1$ & 588 & 6 & 3 \\
 \hline
-  $\omega_2$ & 229 & 166 & 14 \\
+  $\omega_2$ & 199 & 361 & 13 \\
 \hline
-  $\omega_3$ & 0 & 0 & 488 \\
+  $\omega_3$ & 18 & 4 & 600 \\
 \hline
 \end{tabular}
+Plot decision region? n
+
+ Gauss
+
+accuracy =
+
+    0.7765
+
+
+confusion =
+
+   579    15     3
+   352   206    15
+     0     0   622
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 579 & 15 & 3 \\
+\hline
+  $\omega_2$ & 352 & 206 & 15 \\
+\hline
+  $\omega_3$ & 0 & 0 & 622 \\
+\hline
+\end{tabular}
+Plot decision region? n
