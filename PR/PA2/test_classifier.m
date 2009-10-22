@@ -8,6 +8,10 @@ function [ ] = test_classifier( training_data, test_data, classify )
     accuracy
     confusion
     
+    % Latex
+    printf('Confusion LaTeX:\n');
+    print_confusion_latex(confusion);
+    
     % Plot decision region
     a = input('Plot decision region? ', 's');
     if a == 'y'
