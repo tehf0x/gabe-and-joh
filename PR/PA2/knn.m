@@ -1,15 +1,26 @@
-function [results]  = k_nn( training_classes, test_classes, k )
+function [idx, results]  = k_nn( training_classes, test_classes, k )
 %Apply k-nearest neighbor to a dataset.
 %   Try and sort data into 'num_classes' classes using the K-NN algorithm.
 %   'training_classes' should be cells of data points, one cell per class
 %   'test_data' should be a column-matrix of data points to be classified
 %   'k' is the number of nearest neighbours to consider in k-nn
     
-    test_lump = cat(1, test_classes{:});
+    %If we are getting a cell of all the test classes, then clump them
+    %together into one big matrix.
+    if iscell(test_classes)
+        test_lump = cat(1, test_classes{:});
+    %Otherwise it's directly data points, so just put them together.
+    else
+        test_lump = test_classes;
+    end
+    
     training_lump = cat(1, training_classes{:});
-    num_classes = size(training_classes, 2)
+    num_classes = size(training_classes, 2);
     %The datapoints will get sorted into these various cells:
     results = cell(num_classes, 1);
+    %The index of the last point classified.  This is used when classifying
+    %only one point.
+    idx = -1;
     
     %For each point in the training data, classify it based on the K nearest
     %neighbours
