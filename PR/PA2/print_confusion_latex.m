@@ -1,11 +1,11 @@
 function [ ] = print_confusion_latex( confusion )
      % Do confusion latex
     n_classes = length(confusion);
-    printf('\n\\begin{tabular}{ l | ');
+    printf('\n\\begin{tabular}{ | l | ');
     for i=1:n_classes
         printf('c | ');
     end
-    printf('}\n');
+    printf('}\n\\hline\n');
     
     for i=1:n_classes
         printf('& $\\omega_%d$ ', i);
