@@ -21,7 +21,8 @@ class_sizes = [2446, 2447];
 load gmm_nls.mat
 
 % a) Diagonal covariance matrix
-printf('Diagonal covariance matrix:\n');
+printf('\nDiagonal covariance matrix:\n');
+
 Cs_diag = Cs;
 for c=1:length(Cs)
    for k=1:length(Cs{c})
@@ -29,16 +30,28 @@ for c=1:length(Cs)
    end
 end
 
-[accuracy, confusion] = run_gmm(test_data, Ms, Cs_diag, pis)
+% Create classifier function
+g_funcs = gmm_generator(Ms, Cs_diag, pis);
+classify = discr_classify_gen(g_funcs);
+
+% Test classifier
+test_classifier(dataset, class_sizes, classify);
+
 
 % b) Full covariance matrix
-printf('Full covariance matrix:\n');
-[accuracy, confusion] = run_gmm(test_data, Ms, Cs, pis)
+printf('\nFull covariance matrix:\n');
+
+% Create classifier function
+g_funcs = gmm_generator(Ms, Cs, pis);
+classify = discr_classify_gen(g_funcs);
+
+% Test classifier
+test_classifier(dataset, class_sizes, classify);
 
 
 
 % REAL WORLD DATASET
-printf('REAL WORLD DATASET\n');
+printf('\nREAL WORLD DATASET\n');
 
 % Load the dataset
 dataset = load('datasets/real/data.txt');
@@ -59,6 +72,7 @@ load gmm_real.mat
 
 % a) Diagonal covariance matrix
 printf('Diagonal covariance matrix:\n');
+
 Cs_diag = Cs;
 for c=1:length(Cs)
    for k=1:length(Cs{c})
@@ -66,8 +80,20 @@ for c=1:length(Cs)
    end
 end
 
-[accuracy, confusion] = run_gmm(test_data, Ms, Cs_diag, pis)
+% Create classifier function
+g_funcs = gmm_generator(Ms, Cs_diag, pis);
+classify = discr_classify_gen(g_funcs);
+
+% Test classifier
+test_classifier(dataset, class_sizes, classify);
+
 
 % b) Full covariance matrix
 printf('Full covariance matrix:\n');
-[accuracy, confusion] = run_gmm(test_data, Ms, Cs, pis)
+
+% Create classifier function
+g_funcs = gmm_generator(Ms, Cs_diag, pis);
+classify = discr_classify_gen(g_funcs);
+
+% Test classifier
+test_classifier(dataset, class_sizes, classify);
