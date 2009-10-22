@@ -1,0 +1,91 @@
+KNN
+
+ NLS DATA:
+
+acc =
+
+     1
+
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 612 & 0 \\
+\hline
+  $\omega_2$ & 0 & 612 \\
+\hline
+\end{tabular}
+
+ REAL DATA:
+
+acc =
+
+    0.6315
+
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 397 & 27 & 3 \\
+\hline
+  $\omega_2$ & 137 & 255 & 17 \\
+\hline
+  $\omega_3$ & 0 & 0 & 488 \\
+\hline
+\end{tabular}
+
+K = 1
+
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 401 & 23 & 3 \\
+\hline
+  $\omega_2$ & 174 & 222 & 13 \\
+\hline
+  $\omega_3$ & 0 & 0 & 488 \\
+\hline
+\end{tabular}
+
+K = 20
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 397 & 27 & 3 \\
+\hline
+  $\omega_2$ & 135 & 257 & 17 \\
+\hline
+  $\omega_3$ & 0 & 0 & 488 \\
+\hline
+\end{tabular}
+
+K= 40
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 399 & 25 & 3 \\
+\hline
+  $\omega_2$ & 135 & 257 & 17 \\
+\hline
+  $\omega_3$ & 0 & 0 & 488 \\
+\hline
+\end{tabular}
+
+K=60
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 398 & 26 & 3 \\
+\hline
+  $\omega_2$ & 136 & 255 & 18 \\
+\hline
+  $\omega_3$ & 0 & 0 & 488 \\
+\hline
+\end{tabular}
