@@ -1,7 +1,7 @@
-function [ result ] = categorize(dataset, classify)
+function [ result ] = categorize(dataset, classify, n_classes)
 % CATEGORIZE a dataset using classifier
 %   Returns an array for each class containing a matrix of features
-    result = {};
+    result = cell(1, n_classes);
     for i=1:length(dataset)
         cls = classify(dataset(i,:)');
         

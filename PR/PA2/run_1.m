@@ -92,7 +92,7 @@ test_classifier(dataset, class_sizes, classify);
 printf('Full covariance matrix:\n');
 
 % Create classifier function
-g_funcs = gmm_generator(Ms, Cs_diag, pis);
+g_funcs = gmm_generator(Ms, Cs, pis);
 classify = discr_classify_gen(g_funcs);
 
 % Test classifier

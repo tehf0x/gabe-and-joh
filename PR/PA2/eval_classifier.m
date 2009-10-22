@@ -6,7 +6,7 @@ function [accuracy, confusion] = eval_classifier(datasets, classify)
     accuracy = zeros(n_classes, 1);
     
     for i=1:n_classes
-        result = categorize(datasets{i}, classify);
+        result = categorize(datasets{i}, classify, n_classes);
         for j=1:n_classes
             confusion(i, j) = size(result{j}, 1);
         end

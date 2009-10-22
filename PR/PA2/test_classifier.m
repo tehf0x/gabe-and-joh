@@ -5,12 +5,8 @@ function [ ] = test_classifier( dataset, class_sizes, classify )
     % Split data into training and test-data
     [training_data, test_data] = generate_datasets(dataset, class_sizes);
     
-    % Concatenate test_data
-    td = cat(1, test_data{:});
-    result = categorize(td, classify);
-
     % Evaluate results
-    [accuracy, confusion] = eval_results(test_data, result);
+    [accuracy, confusion] = eval_classifier(test_data, classify);
     
     accuracy
     confusion
