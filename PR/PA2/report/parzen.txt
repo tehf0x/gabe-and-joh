@@ -1,0 +1,34 @@
+PARZEN SPHERE NLS
+acc = 1
+
+\begin{tabular}{ | l | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ \\
+\hline
+  $\omega_1$ & 612 & 0 \\
+\hline
+  $\omega_2$ & 0 & 612 \\
+\hline
+\end{tabular}
+
+PARZEN SPHERE REAL DATA
+
+    0.6249
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 418 & 6 & 3 \\
+\hline
+  $\omega_2$ & 157 & 240 & 12 \\
+\hline
+  $\omega_3$ & 17 & 1 & 470 \\
+\hline
+\end{tabular}
+
+PARZEN NORMAL NLS
+
+acc =
+
+    
