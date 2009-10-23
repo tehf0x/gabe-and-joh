@@ -449,5 +449,39 @@ KNN, $K=60$                                   &   86.86\% \\
 \end{figure}
 
 
+\section{Conclusions}
+
+Four classifiers were built and trained against two different datasets
+
+For \textbf{dataset 1} (2-dimensional, nonlinearly separable data set) all the
+classifiers performed well on the test data, however some of them required
+more extensive computation than others. Most noticeably, the Bayes classifier
+using Gaussian mixture models required a significant amount of time to
+train and estimate the number of mixtures K. The Bayes classifier using
+Parzen window method based on a gaussian kernel also required a lot of
+time to run. The best classifier for this dataset appeared to be the standard
+K-nearest neighbor algorithm - it did not require any training and was
+very fast.
+
+
+\textbf{Dataset 2} (2-dimensional, vowel formant data) was a lot more
+difficult for the classifiers. Not only does it have a lot of noise
+but it even has many overlapping data points.
+
+By looking at only the accuracies, it would seem as all the classifiers
+performed equally good. From the confusion matrices, all of them were
+able to classify the data points from class 3 ($\omega_3$) with little
+or no errors. Classes 1 and 2 are inherently more difficult as they are
+overlapping each other to a high degree.
+
+From the decision region plots, we can see that GMM with diagonal
+and full covariance matrix both gave fairly good generalizations.
+Parzen with hypersphere was unable to eliminate the noise and seems
+to be overfitting the training data. Parzen with the gaussian kernel
+seems to do a better job. Bayes KNN appears to give more smooth decision
+regions than pure KNN, although both give reasonable decision regions.
+
+The best classifiers on this dataset appeared to be GMM and Bayes KNN.
+
 \end{document}
 
