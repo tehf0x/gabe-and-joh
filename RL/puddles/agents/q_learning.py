@@ -37,7 +37,7 @@ class QAgent(Agent):
     #Epsilon-Greed epsilon value
     epsilon = 0.9
     #Initialize Q
-    Q = []  
+    Q = {}
     
     #We need to remember our last action and state for updating Q
     last_state = []
@@ -51,7 +51,7 @@ class QAgent(Agent):
         try:
             Q = self.Q[state][action]
         except KeyError:
-            self.Q[state] = {action : 0}
+            self.Q[state] = {'E' : 0, 'N' : 0, 'S' : 0, 'W' : 0}
             Q = 0
         #Look at the best action from the next state.
         try:       
@@ -59,7 +59,7 @@ class QAgent(Agent):
         #If no state-action pairs exist for this state yet,
         #initialize the state then set Qp = 0
         except (KeyError, ValueError):
-            Q[new_state] = {}
+            Q[new_state] = {'E' : 0, 'N' : 0, 'S' : 0, 'W' : 0}
             Qp = 0
         #The famous formula:
         Q = Q + self.alpha * (reward + self.gamma * Qp - Q)
@@ -90,7 +90,8 @@ class QAgent(Agent):
         """
         a_obj = Action()
         #Query the policy to find the best action
-        a_obj.intArray = self.policy(state)
+        #a_obj.intArray = self.policy(state)
+        a_obj.charArray = [self.policy(state)]
         #Run the Q update if this isn't the first step
         if(reward):
             self.update_Q(self.last_state, self.last_action, reward, state)
@@ -103,7 +104,7 @@ class QAgent(Agent):
     def agent_init(self, task_spec):
         """Re-initialize the agent for a new training round."""
         #Reset the Q-values
-        self.Q = []
+        self.Q = {}
     
     def agent_start(self, state):
         """ Called every time a new game is started """
@@ -118,14 +119,10 @@ class QAgent(Agent):
     
     def agent_end(self, reward):
         """ Called when a game ends, this is where we learn """
-
-                
+          
     def agent_cleanup(self):
         """ Clean up for next run """
         
-        self.save()
-        
-    
     def agent_message(self, msg):
         """ Retrieve message from the environment in the form param=value """
         result = re.match('(.+)=(.+)', msg)
