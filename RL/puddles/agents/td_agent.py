@@ -37,6 +37,8 @@ class TDAgent(Agent):
     epsilon = 0.9
     #Initialize Q
     Q = {}
+    #What type of learning is this:
+    name = 'TD'
     
     #We need to remember our last action and state for updating Q
     last_state = []
@@ -77,12 +79,9 @@ class TDAgent(Agent):
         Runs the actual Q-Learning algorithm.
         In a separate function so it can be called both on start and on step.
         """
-        a_obj = Action()
-        print reward
-        
+        a_obj = Action()        
         #Query the policy to find the best action
         action = self.policy(state)
-        print action
         a_obj.charArray = list(action)
         #Run the Q update if this isn't the first step
         if reward != None:
@@ -94,6 +93,16 @@ class TDAgent(Agent):
         #And we're done
         return a_obj
     
+    def export_policy(self):
+        '''
+        Export the policy as a 2 dimensional list of actions.
+        '''
+        a = [[0]*12 for i in range(12)]
+        for i in range(12):
+            for t in range(12):
+                a[i][t] = self.policy((i,t))
+        return a
+        
     def agent_init(self, task_spec):
         """Re-initialize the agent for a new training round."""
         #Reset the Q-values
@@ -123,12 +132,17 @@ class TDAgent(Agent):
             param, value = result.groups()
             if param == 'echo' and value != 'None':
                 return value
+            elif param == 'export_policy':
+                return self.export_policy()
+            elif param == 'get_name':
+                return self.name
             elif param == 'alpha' and value != 'None' and \
             type(value) in (int, float):
                 self.alpha is value
             elif param == 'epsilon' and value != 'None' and \
             type(value) in (int, float):
-                self.epsilon is value
+                self.epsilon = value
+            
             else:
                 return "Unknown parameter: " + param
             
