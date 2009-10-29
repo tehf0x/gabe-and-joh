@@ -70,7 +70,7 @@ class Experiment:
         steps = RLGlue.RL_num_steps()
         reward = RLGlue.RL_return()
         
-        #print "Episode %d\t %d steps\t reward: %d" % (self.episode_number, steps, reward)
+        print "\nEpisode %d\t %d steps\t reward: %d" % (self.episode_number, steps, reward)
         #print "Episode "+str(episode_number)+"\t "+str(totalSteps)+ " steps \t" + str(totalReward) + " total reward\t " + str(terminal) + " natural end"
     
         self.returns[self.episode_number] = (reward + self.returns[self.episode_number] * (self.instance - 1)) / self.instance

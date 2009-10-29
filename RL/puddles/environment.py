@@ -136,8 +136,8 @@ class PuddleEnvironment(Environment):
         r = random.randrange(len(self.start_states))
         self.world.agent_state = list(self.start_states[r])
         
-        print('START WORLD:')
-        print(self.world)
+        #print('START WORLD:')
+        #print(self.world)
         
         # Pass agent state over to the agent
         obs = Observation()
@@ -173,7 +173,7 @@ class PuddleEnvironment(Environment):
         # Action is one of N,S,W,E
         action = action.charArray[0]
         
-        print 'ACTION:', action
+        #print 'ACTION:', action
         
         if not action in self.valid_actions.keys():
             print 'WARNING: Invalid action %s' % (action)
@@ -190,7 +190,7 @@ class PuddleEnvironment(Environment):
             action = random.choice(other_actions)
         
         # Move the agent
-        print 'RESULT ACTION:', action
+        #print 'RESULT ACTION:', action
         
         self.move_agent(self.valid_actions[action])
         
@@ -201,19 +201,19 @@ class PuddleEnvironment(Environment):
             dice = random.random()
             if dice <= p:
                 # Fudge & crackers! Our agent gets caught by the wind!
-                print 'WIND IN %s!' % (dir)
+                #print 'WIND IN %s!' % (dir)
                 self.move_agent(dir)
         
         pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
         
-        print 'NEW STATE:', str(self.world.agent_state)
+        #print 'NEW STATE:', str(self.world.agent_state)
         
         # Return observation
         obs = Observation()
         obs.intArray = self.world.agent_state
         
-        print('IT\'S A NEW WORLD:')
-        print(self.world)
+        #print('IT\'S A NEW WORLD:')
+        #print(self.world)
         
         return Reward_observation_terminal(pstate.reward, obs, pstate.terminal)
         
