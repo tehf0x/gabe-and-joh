@@ -118,6 +118,9 @@ class TDAgent(Agent):
             elif param == 'alpha' and value != 'None' and \
             type(value) in (int, float):
                 self.alpha is value
+            elif param == 'epsilon' and value != 'None' and \
+            type(value) in (int, float):
+                self.epsilon is value
             else:
                 return "Unknown parameter: " + param
             
