@@ -26,7 +26,7 @@ class TDAgent(Agent):
     """
     
     #The 4 actions we can take.
-    actions = ['E', 'N', 'S', 'W']
+    actions = [('E',), ('N',), ('S',), ('W',)]
     
     #Some constants
     #Discount Gamma value
@@ -54,11 +54,15 @@ class TDAgent(Agent):
         """
         Return the action to be taken for the state given.
         """
-        #Greedy policy means pick the best action!
+        #Greedy policy means pick the best action:
         try:
-            action = max(self.Q[state].values())
+            v = self.Q[state].values()[0]
+            if all( i == v for i in self.Q[state].values()):
+                #It's *sort of* a value error, right?
+                raise ValueError
+            action = max(self.Q[state].items(), key=lambda x : x[1])[0]
         except (KeyError, ValueError):
-            return random.choice(self.actions)
+            action = random.choice(self.actions)
         
         #Epsilon-greedy decision:
         if(random.uniform(0, 1) >= self.epsilon):
@@ -66,23 +70,27 @@ class TDAgent(Agent):
             tmp_actions.remove(action)
             return random.choice(tmp_actions)
         else:
-            return action
-    
-    def do_step(self, state, reward = False):
+            return action        
+        
+    def do_step(self, state, reward = None):
         """
         Runs the actual Q-Learning algorithm.
         In a separate function so it can be called both on start and on step.
         """
         a_obj = Action()
+        print reward
+        
         #Query the policy to find the best action
-        #a_obj.intArray = self.policy(state)
-        a_obj.charArray = [self.policy(state)]
+        action = self.policy(state)
+        print action
+        a_obj.charArray = list(action)
         #Run the Q update if this isn't the first step
-        if(reward):
-            self.update_Q(self.last_state, self.last_action, reward, state)
+        if reward != None:
+            self.update_Q(tuple(self.last_state), tuple(self.last_action),
+                          reward, tuple(state))
         #Save the current state-action pair for the next step's Q update.
         self.last_state = state
-        self.last_action = list(a_obj.intArray)
+        self.last_action = action
         #And we're done
         return a_obj
     
@@ -99,7 +107,7 @@ class TDAgent(Agent):
     def agent_step(self, reward, state):
         """ Called for each game step """
         state = tuple(state.intArray)
-        return self.do_step(state)
+        return self.do_step(state, reward)
 
     
     def agent_end(self, reward):

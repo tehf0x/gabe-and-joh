@@ -26,21 +26,27 @@ class QAgent(TDAgent):
         """
         #If it hasn't been visited yet, initialize it.
         try:
-            Q = self.Q[state][action]
+            Q_val = self.Q[state][action]
         except KeyError:
-            self.Q[state] = {'E' : 0, 'N' : 0, 'S' : 0, 'W' : 0}
-            Q = 0
+            print 'ke'
+            self.Q[state] = {('E',) : 0, ('N',) : 0, ('S',) : 0, ('W',) : 0}
+            Q_val = 0
+    
         #Look at the best action from the next state.
         try:       
-            Qp = max(Q[new_state].values())
+            Qp_val = max(self.Q[new_state].values())
         #If no state-action pairs exist for this state yet,
         #initialize the state then set Qp = 0
         except (KeyError, ValueError):
-            Q[new_state] = {'E' : 0, 'N' : 0, 'S' : 0, 'W' : 0}
-            Qp = 0
+            print 'ke2'
+            self.Q[new_state] = {('E',) : 0, ('N',) : 0, ('S',) : 0, ('W',) : 0}
+            Qp_val = 0
         #The famous formula:
-        Q = Q + self.alpha * (reward + self.gamma * Qp - Q)
-        self.Q[state][action] = Q
+        Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)
+        print state, 'action: ', action
+        print 'Q: ', self.Q[state]
+        print 'Q val: ', Q_val
+        self.Q[state][action] = Q_val
 
 if __name__=="__main__":
     AgentLoader.loadAgent(QAgent())
