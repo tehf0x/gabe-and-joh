@@ -5,7 +5,7 @@ Puddle world environment
 """
 
 import random
-from random import randrange
+import re
 
 from rlglue.environment.Environment import Environment
 from rlglue.environment import EnvironmentLoader
@@ -93,48 +93,48 @@ class PuddleEnvironment(Environment):
     start_states = [(5,0), (6,0), (10,0), (11,0)]
     
     """ Terminal states """
-    terminal_states = [(0,11)]
+    terminal_states = {(0,11): 10}
     
     """ Rewards """
-    rewards = [[0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 10], \
-               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0,  0], \
-               [0, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0,  0], \
-               [0, 0, 0, -1, -2, -2, -2, -2, -1, 0, 0,  0], \
-               [0, 0, 0, -1, -2, -3, -3, -2, -1, 0, 0,  0], \
-               [0, 0, 0, -1, -2, -3, -2, -2, -1, 0, 0,  0], \
-               [0, 0, 0, -1, -2, -3, -2, -1,  0, 0, 0,  0], \
-               [0, 0, 0, -1, -2, -2, -2, -1,  0, 0, 0,  0], \
-               [0, 0, 0, -1, -1, -1, -1, -1,  0, 0, 0,  0], \
-               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0,  0], \
-               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0,  0], \
-               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0,  0]]
+    rewards = [[0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
+               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
+               [0, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, 0], \
+               [0, 0, 0, -1, -2, -2, -2, -2, -1, 0, 0, 0], \
+               [0, 0, 0, -1, -2, -3, -3, -2, -1, 0, 0, 0], \
+               [0, 0, 0, -1, -2, -3, -2, -2, -1, 0, 0, 0], \
+               [0, 0, 0, -1, -2, -3, -2, -1,  0, 0, 0, 0], \
+               [0, 0, 0, -1, -2, -2, -2, -1,  0, 0, 0, 0], \
+               [0, 0, 0, -1, -1, -1, -1, -1,  0, 0, 0, 0], \
+               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
+               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
+               [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0]]
     
     # () -> string
     def env_init(self):
         # Create gridworld
         self.world = PuddleWorld(self.size)
         
-        # Set up start states
-        self.world.add_starts(*self.start_states)
-        
-        # Set up terminal states
-        self.world.add_terminals(*self.terminal_states)
-        
         # Set up rewards
         for row in range(len(self.rewards)):
             for col in range(len(self.rewards[row])):
                 self.world[row][col].reward = self.rewards[row][col]
         
-        # Initialize state of the agent to one of start_states
-        r = randrange(len(self.start_states))
-        self.world.agent_state = list(self.start_states[r])
-        
-        return 'EnvInit'
+        return 'PuddleEnvironment initialized...'
     
     # () -> Observation
     def env_start(self):
         """ Start the game! """
+        # Set up start states
+        self.world.add_starts(*self.start_states)
         
+        # Set up terminal states
+        self.world.add_terminals(*self.terminal_states.keys())
+        for (row, col), reward in self.terminal_states.items():
+            self.world[row][col].reward = reward
+        
+        # Initialize state of the agent to one of start_states
+        r = random.randrange(len(self.start_states))
+        self.world.agent_state = list(self.start_states[r])
         
         print('START WORLD:')
         print(self.world)
@@ -224,11 +224,23 @@ class PuddleEnvironment(Environment):
         pass
     
     # (string) -> string
-    def env_message(self, message):
-        print 'ENV MSG', message
-        if message == 'peek':
+    def env_message(self, msg):
+        print 'ENV MSG', msg
+        if msg == 'peek':
             # Peek at world state
             return str(self.world)
+        
+        # Look for prop=value
+        result = re.match('(.+)=(.+)', msg)
+        if result:
+            param, value = result.groups()
+            if param == 'terminal_states':
+                self.terminal_states = eval(value)
+            else:
+                return "Unknown parameter: " + param
+            
+        else:
+            return "Unknown command: " + msg;
 
 if __name__ == '__main__':
     #p = PuddleEnvironment()
