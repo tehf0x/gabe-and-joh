@@ -32,7 +32,7 @@ class TDAgent(Agent):
     #Discount Gamma value
     gamma = 0.9
     #Q-Update Alpha Value
-    alpha = 0.8
+    alpha = 0.001
     #Epsilon-Greed epsilon value
     epsilon = 0.9
     #Initialize Q
@@ -49,8 +49,7 @@ class TDAgent(Agent):
         Update the Q value of this state-action pair.
         This should be implemented in the child class
         """
-        print "Not Implemented."
-        pass
+        raise NotImplementedError
         
     def policy(self, state):
         """
@@ -126,16 +125,14 @@ class TDAgent(Agent):
         """ Clean up for next run """
         
     def agent_message(self, msg):
-        """ Retrieve message from the environment in the form param=value """
+        """ Retrieve message from the environment in one of the forms
+        get_param or param=value """
+        
         result = re.match('(.+)=(.+)', msg)
         if result:
             param, value = result.groups()
             if param == 'echo' and value != 'None':
                 return value
-            elif param == 'export_policy':
-                return self.export_policy()
-            elif param == 'get_name':
-                return self.name
             elif param == 'alpha' and value != 'None' and \
             type(value) in (int, float):
                 self.alpha is value
@@ -145,6 +142,11 @@ class TDAgent(Agent):
             
             else:
                 return "Unknown parameter: " + param
-            
+        
+        elif msg == 'get_name':
+            return self.name
+        elif msg == 'get_policy':
+            policy = self.export_policy()
+            return str(policy)
         else:
             return "Unknown command: " + msg;
