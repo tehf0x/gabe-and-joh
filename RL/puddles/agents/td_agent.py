@@ -50,7 +50,7 @@ class TDAgent(Agent):
         This should be implemented in the child class
         """
         raise NotImplementedError
-        
+
     def policy(self, state):
         """
         Return the action to be taken for the state given.
@@ -123,11 +123,12 @@ class TDAgent(Agent):
 
     def agent_cleanup(self):
         """ Clean up for next run """
+        self.Q = {}
 
     def agent_message(self, msg):
         """ Retrieve message from the environment in one of the forms
         get_param or param=value """
-        
+
         result = re.match('(.+)=(.+)', msg)
         if result:
             param, value = result.groups()
