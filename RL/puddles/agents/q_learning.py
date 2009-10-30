@@ -20,6 +20,8 @@ class QAgent(TDAgent):
     """
     Implements Q-Learning in an agent.
     """
+    
+    name = 'Q-Learning'
 
     def update_Q(self, state, action, reward, new_state):
         """

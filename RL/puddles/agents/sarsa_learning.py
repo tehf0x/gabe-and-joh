@@ -20,6 +20,8 @@ class SarsaAgent(TDAgent):
     """
     Implements Sarsa Learning in an agent.
     """
+    
+    name = 'SARSA'
 
     def update_Q(self, state, action, reward, new_state):
         """
