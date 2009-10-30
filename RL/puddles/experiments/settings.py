@@ -8,10 +8,10 @@
 
 experiment = dict(
     # Number of instances to run
-    instances = 50,
+    instances = 2,
     
     # Number of episodes (i.e. games) to run for each instance
-    episodes = 1000,
+    episodes = 100,
     
     # Where to store results
     results_dir = 'results'
@@ -23,7 +23,7 @@ experiment = dict(
 #
 agent = dict(
     # Alpha
-    alpha = 0.8
+    alpha = 0.001
 )
 
 #
