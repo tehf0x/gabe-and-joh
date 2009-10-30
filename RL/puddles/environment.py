@@ -173,7 +173,7 @@ class PuddleEnvironment(Environment):
         # Action is one of N,S,W,E
         action = action.charArray[0]
         
-        #print 'ACTION:', action
+        print 'ACTION:', action
         
         if not action in self.valid_actions.keys():
             print 'WARNING: Invalid action %s' % (action)
@@ -190,7 +190,7 @@ class PuddleEnvironment(Environment):
             action = random.choice(other_actions)
         
         # Move the agent
-        #print 'RESULT ACTION:', action
+        print 'RESULT ACTION:', action
         
         self.move_agent(self.valid_actions[action])
         
@@ -213,7 +213,7 @@ class PuddleEnvironment(Environment):
         obs.intArray = self.world.agent_state
         
         #print('IT\'S A NEW WORLD:')
-        #print(self.world)
+        print(self.world)
         #print "Reward", pstate.reward
         
         return Reward_observation_terminal(pstate.reward, obs, pstate.terminal)
