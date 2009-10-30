@@ -23,7 +23,7 @@ experiment = dict(
 #
 agent = dict(
     # Alpha
-    alpha = 0.001
+    alpha = 0.01
 )
 
 #

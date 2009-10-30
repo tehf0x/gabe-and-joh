@@ -20,30 +20,30 @@ from rlglue.types import Action
 from rlglue.types import Observation
 
 
-class TDAgent(Agent):    
+class TDAgent(Agent):
     """
     Base agent for TD learning.
     """
-    
+
     #The 4 actions we can take.
     actions = [('E',), ('N',), ('S',), ('W',)]
-    
+
     #Some constants
     #Discount Gamma value
     gamma = 0.9
     #Q-Update Alpha Value
-    alpha = 0.001
+    alpha = 0.01
     #Epsilon-Greed epsilon value
-    epsilon = 0.9
+    epsilon = 0.1
     #Initialize Q
     Q = {}
     #What type of learning is this:
     name = 'TD'
-    
+
     #We need to remember our last action and state for updating Q
     last_state = []
     last_action = []
-    
+
     def update_Q(self, state, action, reward, new_state):
         """
         Update the Q value of this state-action pair.
@@ -64,21 +64,21 @@ class TDAgent(Agent):
             action = max(self.Q[state].items(), key=lambda x : x[1])[0]
         except (KeyError, ValueError):
             action = random.choice(self.actions)
-        
+
         #Epsilon-greedy decision:
-        if(random.uniform(0, 1) >= self.epsilon):
+        if(random.uniform(0, 1) <= self.epsilon):
             tmp_actions = copy(self.actions)
             tmp_actions.remove(action)
             return random.choice(tmp_actions)
         else:
-            return action        
-        
+            return action
+
     def do_step(self, state, reward = None):
         """
         Runs the actual Q-Learning algorithm.
         In a separate function so it can be called both on start and on step.
         """
-        a_obj = Action()        
+        a_obj = Action()
         #Query the policy to find the best action
         action = self.policy(state)
         a_obj.charArray = list(action)
@@ -91,7 +91,7 @@ class TDAgent(Agent):
         self.last_action = action
         #And we're done
         return a_obj
-    
+
     def export_policy(self):
         '''
         Export the policy as a 2 dimensional list of actions.
@@ -101,29 +101,29 @@ class TDAgent(Agent):
             for t in range(12):
                 a[i][t] = self.policy((i,t))
         return a
-        
+
     def agent_init(self, task_spec):
         """Re-initialize the agent for a new training round."""
         #Reset the Q-values
         self.Q = {}
-    
+
     def agent_start(self, state):
         """ Called every time a new game is started """
         state = tuple(state.intArray)
         return self.do_step(state)
-    
+
     def agent_step(self, reward, state):
         """ Called for each game step """
         state = tuple(state.intArray)
         return self.do_step(state, reward)
 
-    
+
     def agent_end(self, reward):
         """ Called when a game ends, this is where we learn """
-          
+
     def agent_cleanup(self):
         """ Clean up for next run """
-        
+
     def agent_message(self, msg):
         """ Retrieve message from the environment in one of the forms
         get_param or param=value """
@@ -139,10 +139,9 @@ class TDAgent(Agent):
             elif param == 'epsilon' and value != 'None' and \
             type(value) in (int, float):
                 self.epsilon = value
-            
+
             else:
                 return "Unknown parameter: " + param
-        
         elif msg == 'get_name':
             return self.name
         elif msg == 'get_policy':
