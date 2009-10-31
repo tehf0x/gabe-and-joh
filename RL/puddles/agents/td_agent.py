@@ -117,7 +117,7 @@ class TDAgent(Agent):
         a = [[0]*12 for i in range(12)]
         for i in range(12):
             for t in range(12):
-                a[i][t] = self.policy((i,t))
+                a[i][t] = self.policy((i, t))
         self.epsilon = bak_epsilon
         return a
 
