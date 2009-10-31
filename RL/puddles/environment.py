@@ -113,6 +113,9 @@ class PuddleEnvironment(Environment):
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0]]
     
+    """ Step limit - sends terminal signal if reached """
+    step_limit = 500
+    
     """ Whether to output debug info """
     degug = False
     
@@ -146,7 +149,10 @@ class PuddleEnvironment(Environment):
         # Initialize state of the agent to one of start_states
         r = random.randrange(len(self.start_states))
         self.world.agent_state = list(self.start_states[r])
-
+        
+        # Initialize step counter
+        self.steps = 0
+        
         #print('START WORLD:')
         self.debug(self.world)
 
@@ -181,6 +187,8 @@ class PuddleEnvironment(Environment):
 
     # (Action) -> Reward_observation_terminal
     def env_step(self, action):
+        self.steps += 1
+        
         # Action is one of N,S,W,E
         action = action.charArray[0]
 
@@ -227,8 +235,13 @@ class PuddleEnvironment(Environment):
         #print('IT\'S A NEW WORLD:')
         self.debug(self.world)
         #print "Reward", pstate.reward
+        
+        terminal = pstate.terminal
+        if self.steps > self.step_limit:
+            self.debug("STEP LIMIT REACHED!")
+            terminal = True
 
-        return Reward_observation_terminal(pstate.reward, obs, pstate.terminal)
+        return Reward_observation_terminal(pstate.reward, obs, terminal)
 
 
 
