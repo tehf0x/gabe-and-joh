@@ -34,7 +34,7 @@ class TDAgent(Agent):
     #Q-Update Alpha Value
     alpha = 0.01
     #Epsilon-Greed epsilon value
-    epsilon = 0.05
+    epsilon = 0.1
     #Initialize Q
     Q = {}
     #What type of learning is this:
@@ -167,6 +167,8 @@ class TDAgent(Agent):
             return self.name
         elif msg == 'get_policy':
             policy = self.export_policy()
-            return str(policy)
+            return repr(policy)
+        elif msg == 'get_q':
+            return repr(self.Q)
         else:
             return "Unknown command: " + msg;
