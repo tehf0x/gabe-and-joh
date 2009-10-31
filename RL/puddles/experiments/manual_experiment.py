@@ -11,6 +11,8 @@ from rlglue import RLGlue
 # Initialize RL Glue
 RLGlue.RL_init()
 
+RLGlue.RL_env_message('debug=True')
+
 RLGlue.RL_start()
 
 running = True
