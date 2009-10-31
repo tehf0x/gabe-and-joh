@@ -56,6 +56,10 @@ class GradientAgent(Agent):
         #The delta part is the same for both theta values:
         d_theta = self.alpha * (reward - self.baseline) * \
                     (1 - self.policy_val(state, action))
+#        print "Reward: ", reward
+#        print "Delta: ", d_theta
+#        print "Base: ", self.baseline
+#        print "C: ", 1 - self.policy_val(state, action)
         t_x = t_x + d_theta
         t_y = t_y + d_theta
         self.theta_x[state[0]][action] = t_x
@@ -73,7 +77,6 @@ class GradientAgent(Agent):
         The denominator of the soft-max formula can be pre-calculated and 
         passed if this function is to be called many times in the same place.
         '''
-        print state
         if pol_denom is None:
             pol_denom = 0
             for action in self.actions:
@@ -81,6 +84,9 @@ class GradientAgent(Agent):
                                       self.theta_y[state[1]][action])
 
         theta = self.theta_x[state[0]][action] + self.theta_y[state[1]][action]
+        print 'State: ', state
+        print 'Action: ', action
+        print 'Theta: ', theta
         return math.exp(theta) / pol_denom
     
     def pick_weighted(self, weighted_dict):
@@ -89,7 +95,6 @@ class GradientAgent(Agent):
         '''
         rand = random.random()
         last_el = 0
-        print 'rand: ', rand
         idx = weighted_dict.keys()
         idx.sort()
         for i in idx:
@@ -153,15 +158,20 @@ class GradientAgent(Agent):
         '''
         Export the policy as a 2 dimensional list of actions.
         '''
-        #Back up the epsilon and set it to zero so that we don't export
-        #random moves in the final policy.
-        bak_epsilon = self.epsilon
-        self.epsilon = 0
+        #Get the softmax evaluation for each action in this state
+        #and pick the 'best' action based on the softmax value.
+        #This allows us to export a determenistic policy.
+
         a = [[0]*12 for i in range(12)]
         for i in range(12):
             for t in range(12):
-                a[i][t] = self.policy((i, t))
-        self.epsilon = bak_epsilon
+                acts = {}
+                for action in self.actions:
+                    print 'Value: ', self.policy_val((i, t), action)
+                    acts[self.policy_val((i, t), action)] = action
+                print acts
+                a[i][t] = acts[max(acts.keys())]
+                print a[i][t]
         return a
 
     def agent_init(self, task_spec):
@@ -187,7 +197,7 @@ class GradientAgent(Agent):
 
     def agent_cleanup(self):
         """ Clean up for next run """
-        actions_dict = dict((a,random.random()) for a in self.actions)
+        actions_dict = dict((a,0) for a in self.actions)
         self.theta_x = dict((i,copy(actions_dict)) for i in range(12))
         self.theta_y = dict((i,copy(actions_dict)) for i in range(12))  
 
@@ -208,6 +218,8 @@ class GradientAgent(Agent):
                 return "Unknown parameter: " + param
         elif msg == 'get_name':
             return self.name
+        elif msg == 'get_q':
+            return repr(list())
         elif msg == 'get_policy':
             policy = self.export_policy()
             return str(policy)
