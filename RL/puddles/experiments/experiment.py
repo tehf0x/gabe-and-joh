@@ -169,6 +169,9 @@ if __name__ == "__main__":
     returns = experiment.returns
     steps = experiment.steps
     policy = eval(RLGlue.RL_agent_message('get_policy'))
+    q = eval(RLGlue.RL_agent_message('get_q'))
+    world = eval(RLGlue.RL_env_message('get_world'))
+    #print world
     
     def gen_filename(base, ext):
         yield base + ext
@@ -202,7 +205,9 @@ if __name__ == "__main__":
                     'agent': settings.agent},
         returns = returns,
         steps = steps,
-        policy = policy
+        policy = policy,
+        Q = q,
+        world = world
     )
     pickle.dump(obj, file)
     

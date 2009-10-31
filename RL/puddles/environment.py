@@ -30,6 +30,9 @@ class PuddleState():
 
     def __str__(self):
         return str(self.reward)
+    
+    def __repr__(self):
+        return str(self.reward)
 
 class PuddleWorld(list):
 
@@ -109,7 +112,14 @@ class PuddleEnvironment(Environment):
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0]]
-
+    
+    """ Whether to output debug info """
+    degug = False
+    
+    def debug(self, s):
+        if self.degug:
+            print s
+    
     # () -> string
     def env_init(self):
         # Create gridworld
@@ -138,7 +148,7 @@ class PuddleEnvironment(Environment):
         self.world.agent_state = list(self.start_states[r])
 
         #print('START WORLD:')
-        #print(self.world)
+        self.debug(self.world)
 
         # Pass agent state over to the agent
         obs = Observation()
@@ -189,7 +199,7 @@ class PuddleEnvironment(Environment):
             # Randomness! Choose uniformly between each other action
             other_actions = list(set(self.valid_actions.keys()) - set(action))
             action = random.choice(other_actions)
-
+        
         # Move the agent
         #print 'RESULT ACTION:', action
 
@@ -204,7 +214,8 @@ class PuddleEnvironment(Environment):
                 # Fudge & crackers! Our agent gets caught by the wind!
                 #print 'WIND IN %s!' % (dir)
                 self.move_agent(dir)
-
+        
+        
         pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
 
         #print 'NEW STATE:', str(self.world.agent_state)
@@ -214,7 +225,7 @@ class PuddleEnvironment(Environment):
         obs.intArray = self.world.agent_state
 
         #print('IT\'S A NEW WORLD:')
-        #print(self.world)
+        self.debug(self.world)
         #print "Reward", pstate.reward
 
         return Reward_observation_terminal(pstate.reward, obs, pstate.terminal)
@@ -231,13 +242,18 @@ class PuddleEnvironment(Environment):
         if msg == 'peek':
             # Peek at world state
             return str(self.world)
-
+        elif msg == 'get_world':
+            # Return the gridworld
+            return repr(self.world)
+        
         # Look for prop=value
         result = re.match('(.+)=(.+)', msg)
         if result:
             param, value = result.groups()
             if param == 'terminal_states':
                 self.terminal_states = eval(value)
+            elif param == 'debug':
+                self.degug = bool(eval(value))
             else:
                 return "Unknown parameter: " + param
 
