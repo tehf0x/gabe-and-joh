@@ -110,10 +110,15 @@ class TDAgent(Agent):
         '''
         Export the policy as a 2 dimensional list of actions.
         '''
+        #Back up the epsilon and set it to zero so that we don't export
+        #random moves in the final policy.
+        bak_epsilon = self.epsilon
+        self.epsilon = 0
         a = [[0]*12 for i in range(12)]
         for i in range(12):
             for t in range(12):
                 a[i][t] = self.policy((i,t))
+        self.epsilon = bak_epsilon
         return a
 
     def agent_init(self, task_spec):
