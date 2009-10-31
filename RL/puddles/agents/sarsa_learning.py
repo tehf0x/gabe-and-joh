@@ -27,21 +27,12 @@ class SarsaAgent(TDAgent):
         """
         Update the Q value of this state-action pair.
         """
-        #If it hasn't been visited yet, initialize it.
-        try:
-            Q_val = self.Q[state][action]
-        except KeyError:
-            self.Q[state] = {('E',) : random(), ('N',) : random(), ('S',) : random(), ('W',) : random()}
-            Q_val = choice(self.Q[state].values())
+        Q_val = self.Q[state][action]
+        
         #Look at the best action from the next state.
-        try:
-            new_action = self.policy(new_state)
-            Qp_val = self.Q[new_state][new_action]
-        #If no state-action pairs exist for this state yet,
-        #initialize the state then set Qp = 0
-        except (KeyError, ValueError):
-            self.Q[new_state] = {('E',) : random(), ('N',) : random(), ('S',) : random(), ('W',) : random()}
-            Qp_val = choice(self.Q[new_state].values())
+        new_action = self.policy(new_state)
+        Qp_val = self.Q[new_state][new_action]
+        
         #The famous formula:
         Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)
         self.Q[state][action] = Q_val

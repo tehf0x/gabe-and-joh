@@ -34,7 +34,7 @@ class TDAgent(Agent):
     #Q-Update Alpha Value
     alpha = 0.01
     #Epsilon-Greed epsilon value
-    epsilon = 0.1
+    epsilon = 0.05
     #Initialize Q
     Q = {}
     #What type of learning is this:
@@ -43,6 +43,9 @@ class TDAgent(Agent):
     #We need to remember our last action and state for updating Q
     last_state = []
     last_action = []
+
+    def random_actions(self):
+        return dict((a, random.random()) for a in self.actions)
 
     def update_Q(self, state, action, reward, new_state):
         """
@@ -56,6 +59,7 @@ class TDAgent(Agent):
         Return the action to be taken for the state given.
         """
         #Greedy policy means pick the best action:
+        '''
         try:
             v = self.Q[state].values()[0]
             if all( i == v for i in self.Q[state].values()):
@@ -64,13 +68,23 @@ class TDAgent(Agent):
             action = max(self.Q[state].items(), key=lambda x : x[1])[0]
         except (KeyError, ValueError):
             action = random.choice(self.actions)
-
+        '''
+        
+        # Determine the best action
+        if not state in self.Q:
+            # State not yet visited, initialize randomly
+            self.Q[state] = self.random_actions()
+        
+        action = max(self.Q[state].items(), key=lambda x : x[1])[0]
+        
         #Epsilon-greedy decision:
         if(random.uniform(0, 1) <= self.epsilon):
+            # Explore!
             tmp_actions = copy(self.actions)
             tmp_actions.remove(action)
             return random.choice(tmp_actions)
         else:
+            # Greediness!
             return action
 
     def do_step(self, state, reward = None):
@@ -120,6 +134,7 @@ class TDAgent(Agent):
 
     def agent_end(self, reward):
         """ Called when a game ends, this is where we learn """
+        pass
 
     def agent_cleanup(self):
         """ Clean up for next run """

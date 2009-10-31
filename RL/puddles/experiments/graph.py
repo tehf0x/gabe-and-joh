@@ -15,8 +15,9 @@ class Plot:
     
     colors = ['#ff0000', '#0000ff', '#00cc00']
     
-    def __init__(self, title=None, xlabel='x', ylabel='y', axis=(None, None, None, None)):
-        self.fig = Figure(figsize=(6.5,5))
+    def __init__(self, title=None, xlabel='x', ylabel='y', 
+                 axis=(None, None, None, None), figsize=(6.5,5)):
+        self.fig = Figure(figsize=figsize)
         if title:
             self.fig.suptitle(title)
         
@@ -57,13 +58,16 @@ class Plot:
 
 class PolicyPlot(Plot):
     
+    def __init__(self, title=None, xlabel='', ylabel='', 
+                 axis=(None, None, None, None), figsize=(5,5)):
+        
+        Plot.__init__(self, title, xlabel, ylabel, axis, figsize)
+    
     def plot(self, policy):
         rows = len(policy)
         cols = len(policy[0])
         
         X,Y = meshgrid(range(rows), range(cols))
-        #print X
-        #print Y
         
         # U, V give the x and y components of the arrow vectors
         U = [[0]*cols for _ in range(rows)]
