@@ -10,6 +10,8 @@ from pylab import meshgrid
 from matplotlib.mlab import frange
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib import cm
+from matplotlib.colors import LinearSegmentedColormap
 
 class Plot:
     
@@ -59,9 +61,11 @@ class Plot:
 class PolicyPlot(Plot):
     
     def __init__(self, title=None, xlabel='', ylabel='', 
-                 axis=(None, None, None, None), figsize=(5,5)):
+                 axis=(None, None, None, None), figsize=(5,5), world=None):
         
         Plot.__init__(self, title, xlabel, ylabel, axis, figsize)
+        
+        self.world = world
     
     def plot(self, policy):
         rows = len(policy)
@@ -74,7 +78,6 @@ class PolicyPlot(Plot):
         V = [[0]*cols for _ in range(rows)]
         
         for row,r in enumerate(policy):
-            row = rows - row - 1
             for col,c in enumerate(r):
                 a = c[0]
                 if a == 'N':
@@ -102,37 +105,24 @@ class PolicyPlot(Plot):
         
         xmin, xmax, ymin, ymax = ax.axis()
         ax.axis([xmin-0.5, xmax-1, ymin-0.5, ymax-1])
-
-    
-
-def graph_vals(x, y, name):
-    hashed = [(state, value) for state, value in state_values.items()]
-    hashed = sorted(hashed, cmp = lambda a,b: cmp(a[0],b[0]))
-    x = [el[0] for el in hashed]
-    y = [el[1] for el in hashed]
-    graph((x,), (y,), ('state 1',), name)
-
-
-def graph(x_m, y_m, titles, name):
-    fig = Figure(figsize=(6.5,5))
-    ax = fig.add_subplot(111)
-    
-    plots = list()
-    
-    for i in range(len(x_m)):
-        ax.plot(x_m[i],y_m[i], 'b.', markersize=4, label=titles[i])
-    
-    #ax.legend(titles, loc='lower right')
-    axes = ax.axis()
-    ax.axis((-75, 2200, -5, 140))
-    ax.set_xlabel('State')
-    ax.set_ylabel('Value')
-    fig.suptitle(name)
-
-    # Make the PNG
-    canvas = FigureCanvasAgg(fig)
-    #Image resolution is dpi * size
-    canvas.print_figure('graphs/%s.png' % name, dpi=150)
+        
+        if self.world:
+            #map = 
+            cdict = {'blue': ((0.0, 0.2, 0.2),
+                              (0.25, 1, 1),
+                              (1.0, 0, 0)),
+                              
+                     'green': ((0.0, 0.2, 0.2),
+                               (0.25, 1, 1),
+                               (1.0, 1, 1)),
+                               
+                      'red': ((0.0, 0.2, 0.2),
+                              (0.25, 1, 1),
+                              (1.0, 0, 0)) }
+            
+            cmap = LinearSegmentedColormap('fudge', cdict)
+            
+            ax.imshow(self.world, cmap=cmap, interpolation='nearest')
 
 
 if __name__ == '__main__':
@@ -173,15 +163,18 @@ if __name__ == '__main__':
     elif type == 'policy':
         # Plot policy
         for name, d in datasets.items():
-            #p = ['N','E','S','W']
-            #rows = len(d['policy'])
-            #cols = len(d['policy'][0])
-            #d['policy'] = []
-            #for r in range(rows):
-            #    d['policy'].append([(p[(i+r) % 4], ) for i in range(cols)])
+            #print d['policy']
+            '''
+            p = ['N','E','S','W']
+            rows = len(d['policy'])
+            cols = len(d['policy'][0])
+            d['policy'] = []
+            for r in range(rows):
+                d['policy'].append([(p[(i+r) % 4], ) for i in range(cols)])
             #d['policy'] = [[('S',)]*len(d['policy'][0]) for _ in range(len(d['policy']))]
-            
-            plot = PolicyPlot(title=name + ' Policy')
+            '''
+            #print d['policy']
+            plot = PolicyPlot(title=name + ' Policy', world=d['world'])
             plot.plot(d['policy'])
             plot.save(name + '.policy.png')
             
@@ -191,7 +184,7 @@ if __name__ == '__main__':
         
     
     else:
-        sys.stderr.write("Invalid plot type: %s" % (type))
+        sys.stderr.write("Invalid plot type: %s\n" % (type))
         sys.exit(-1)
     
     
