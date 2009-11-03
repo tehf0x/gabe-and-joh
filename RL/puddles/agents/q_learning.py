@@ -36,8 +36,9 @@ class QAgent(TDAgent):
         Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)
         #print self.alpha
         #print state, 'action: ', action
-        #print 'Q: ', self.Q[state]
+        #print 'Q[%s]: %s' % (state, self.Q[state])
         #print 'Q val: ', Q_val
+        
         self.Q[state][action] = Q_val
 
 if __name__=="__main__":

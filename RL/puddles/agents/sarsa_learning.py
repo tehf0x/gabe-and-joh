@@ -1,7 +1,5 @@
 """
-Sarsa Agent
-
-See the README for details
+SARSA Agent
 
 Authors:
     Johannes H. Jensen <johannj@stud.ntnu.no>

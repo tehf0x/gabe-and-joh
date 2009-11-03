@@ -142,14 +142,14 @@ if __name__ == "__main__":
     print
     print "Environment settings:"
     for k,v in settings.environment.items():
-        msg = '%s=%s' % (k, v)
+        msg = 'set %s %s' % (k, v)
         print "  ", msg 
         RLGlue.RL_env_message(msg)
     
     # Set up agent
     print "Agent settings:"
     for k,v in settings.agent.items():
-        msg = '%s=%s' % (k, v)
+        msg = 'set %s %s' % (k, v)
         print "  ", msg 
         RLGlue.RL_agent_message(msg)
     
@@ -168,9 +168,9 @@ if __name__ == "__main__":
     # Store data to file
     returns = experiment.returns
     steps = experiment.steps
-    policy = eval(RLGlue.RL_agent_message('get_policy'))
-    q = eval(RLGlue.RL_agent_message('get_q'))
-    world = eval(RLGlue.RL_env_message('get_world'))
+    policy = eval(RLGlue.RL_agent_message('get policy'))
+    #q = eval(RLGlue.RL_agent_message('get Q'))
+    world = eval(RLGlue.RL_env_message('get world'))
     #print world
     
     def gen_filename(base, ext):
@@ -181,7 +181,7 @@ if __name__ == "__main__":
             counter += 1
     
     #env_name = RLGlue.RL_env_message('get_name')
-    agent_name = RLGlue.RL_agent_message('get_name')
+    agent_name = RLGlue.RL_agent_message('get name')
     
     basename = agent_name
     results_dir = settings.experiment['results_dir']
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         returns = returns,
         steps = steps,
         policy = policy,
-        Q = q,
+        #Q = q,
         world = world
     )
     pickle.dump(obj, file)

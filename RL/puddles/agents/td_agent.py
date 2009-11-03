@@ -1,5 +1,5 @@
 """
-Q-Learning Agent
+Temporal Different base agent
 
 See the README for details
 
@@ -19,33 +19,89 @@ from rlglue.agent.Agent import Agent
 from rlglue.types import Action
 from rlglue.types import Observation
 
+from base import BaseAgent
 
-class TDAgent(Agent):
+
+class TDAgent(BaseAgent):
     """
     Base agent for TD learning.
     """
-
-    #The 4 actions we can take.
+    # Name of this agent
+    name = 'TDAgent'
+    
+    # The 4 actions we can take.
+    # TODO: Should be moved to taskSpec!
     actions = [('E',), ('N',), ('S',), ('W',)]
 
-    #Some constants
-    #Discount Gamma value
+    # Discount Gamma value
+    # TODO: Should be moved to taskSpec
     gamma = 0.9
-    #Q-Update Alpha Value
+    
+    # Q-Update Alpha Value
     alpha = 0.01
-    #Epsilon-Greed epsilon value
+    
+    # Epsilon-Greed epsilon value
     epsilon = 0.1
-    #Initialize Q
+    
+    # Epsilon is multiplied by this parameter for each episode
+    #epsilon_mul = 0.9993
+    epsilon_mul = 1.0
+    
+    # Initialize Q
     Q = {}
-    #What type of learning is this:
-    name = 'TD'
 
-    #We need to remember our last action and state for updating Q
-    last_state = []
-    last_action = []
+    # We need to remember our last action and state for updating Q
+    last_state = ()
+    last_action = ()
+    
+    def agent_init(self, task_spec):
+        """Re-initialize the agent for a new training round."""
+        self.debug("INIT")
+        self.Q = {}
 
-    def random_actions(self):
-        return dict((a, random.random()) for a in self.actions)
+    def agent_start(self, state):
+        """ Called every time a new game is started """
+        self.debug("START")
+        self.epsilon *= self.epsilon_mul
+        #print 'epsilon =', self.epsilon
+        state = tuple(state.intArray)
+        return self.do_step(state)
+
+    def agent_step(self, reward, state):
+        """ Called for each game step """
+        state = tuple(state.intArray)
+        return self.do_step(state, reward)
+
+    def agent_end(self, reward):
+        """ Called when a game ends """
+        self.debug("END")
+
+    def agent_cleanup(self):
+        """ Clean up for next run """
+        self.Q = {}
+        self.debug("CLEANUP")
+    
+    def do_step(self, state, reward = None):
+        """
+        Runs the actual learning algorithm.
+        In a separate function so it can be called both on start and on step.
+        """
+        a_obj = Action()
+        
+        # Query the policy to find the best action
+        action = self.policy(state)
+        a_obj.charArray = list(action)
+        
+        # Run the Q update if this isn't the first step
+        if reward is not None:
+            self.update_Q(self.last_state, self.last_action, reward, state)
+            
+        # Save the current state-action pair for the next step's Q update.
+        self.last_state = state
+        self.last_action = action
+        
+        # And we're done
+        return a_obj
 
     def update_Q(self, state, action, reward, new_state):
         """
@@ -54,30 +110,24 @@ class TDAgent(Agent):
         """
         raise NotImplementedError
 
+    def random_actions(self):
+        """ Generate random action values """
+        return dict((a, random.random()) for a in self.actions)
+    
     def policy(self, state):
         """
         Return the action to be taken for the state given.
         """
-        #Greedy policy means pick the best action:
-        '''
-        try:
-            v = self.Q[state].values()[0]
-            if all( i == v for i in self.Q[state].values()):
-                #It's *sort of* a value error, right?
-                raise ValueError
-            action = max(self.Q[state].items(), key=lambda x : x[1])[0]
-        except (KeyError, ValueError):
-            action = random.choice(self.actions)
-        '''
         
         # Determine the best action
         if not state in self.Q:
             # State not yet visited, initialize randomly
             self.Q[state] = self.random_actions()
         
+        # Greedily select the best action
         action = max(self.Q[state].items(), key=lambda x : x[1])[0]
         
-        #Epsilon-greedy decision:
+        # Epsilon-greedy decision:
         if(random.uniform(0, 1) <= self.epsilon):
             # Explore!
             tmp_actions = copy(self.actions)
@@ -87,88 +137,32 @@ class TDAgent(Agent):
             # Greediness!
             return action
 
-    def do_step(self, state, reward = None):
-        """
-        Runs the actual Q-Learning algorithm.
-        In a separate function so it can be called both on start and on step.
-        """
-        a_obj = Action()
-        #Query the policy to find the best action
-        action = self.policy(state)
-        a_obj.charArray = list(action)
-        #Run the Q update if this isn't the first step
-        if reward != None:
-            self.update_Q(tuple(self.last_state), tuple(self.last_action),
-                          reward, tuple(state))
-        #Save the current state-action pair for the next step's Q update.
-        self.last_state = state
-        self.last_action = action
-        #And we're done
-        return a_obj
-
     def export_policy(self):
-        '''
-        Export the policy as a 2 dimensional list of actions.
-        '''
-        #Back up the epsilon and set it to zero so that we don't export
-        #random moves in the final policy.
+        """ Export the policy as a 2 dimensional list of actions. """
+        # Back up the epsilon and set it to zero so that we don't export
+        # exploring moves in the final deterministic policy.
         bak_epsilon = self.epsilon
         self.epsilon = 0
-        a = [[0]*12 for i in range(12)]
-        for i in range(12):
-            for t in range(12):
-                a[i][t] = self.policy((i, t))
+        
+        rows, cols = max(self.Q)
+        rows += 1
+        cols += 1
+        a = [[0]*cols for i in range(rows)]
+        for row in range(rows):
+            for col in range(cols):
+                a[row][col] = self.policy((row, col))
+        
+        # Set epsilon back to the original
         self.epsilon = bak_epsilon
+        
         return a
 
-    def agent_init(self, task_spec):
-        """Re-initialize the agent for a new training round."""
-        #Reset the Q-values
-        self.Q = {}
-
-    def agent_start(self, state):
-        """ Called every time a new game is started """
-        state = tuple(state.intArray)
-        return self.do_step(state)
-
-    def agent_step(self, reward, state):
-        """ Called for each game step """
-        state = tuple(state.intArray)
-        return self.do_step(state, reward)
-
-
-    def agent_end(self, reward):
-        """ Called when a game ends, this is where we learn """
-        pass
-
-    def agent_cleanup(self):
-        """ Clean up for next run """
-        self.Q = {}
-
-    def agent_message(self, msg):
-        """ Retrieve message from the environment in one of the forms
-        get_param or param=value """
-
-        result = re.match('(.+)=(.+)', msg)
-        if result:
-            param, value = result.groups()
-            if param == 'echo' and value != 'None':
-                return value
-            elif param == 'alpha' and value != 'None' and \
-            type(value) in (int, float):
-                self.alpha is value
-            elif param == 'epsilon' and value != 'None' and \
-            type(value) in (int, float):
-                self.epsilon = value
-
-            else:
-                return "Unknown parameter: " + param
-        elif msg == 'get_name':
-            return self.name
-        elif msg == 'get_policy':
-            policy = self.export_policy()
-            return repr(policy)
-        elif msg == 'get_q':
-            return repr(self.Q)
-        else:
-            return "Unknown command: " + msg;
+    
+    
+    def agent_message_get_param(self, param):
+        """ Get a parameter via message """
+        if param == 'policy':
+            return repr(self.export_policy())
+        
+        return BaseAgent.agent_message_get_param(self, param)
+    

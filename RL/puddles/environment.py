@@ -113,15 +113,23 @@ class PuddleEnvironment(Environment):
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0], \
                [0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0]]
     
+    """ Enable wind """
+    enable_wind = True
+    
+    """ Enable stochastic actions """
+    enable_stochastic_actions = True
+    
     """ Step limit - sends terminal signal if reached """
     step_limit = 500
     
-    """ Whether to output debug info """
-    degug = False
+    """ Name of the environment """
+    name = 'PuddleEnvironment'
     
-    def debug(self, s):
-        if self.degug:
-            print s
+    """ Whether to print debugging info """
+    degug = True
+    
+    """ Output info about every step """
+    output_steps = False
     
     # () -> string
     def env_init(self):
@@ -133,7 +141,8 @@ class PuddleEnvironment(Environment):
             for col in range(len(self.rewards[row])):
                 self.world[row][col].reward = self.rewards[row][col]
 
-        return 'PuddleEnvironment initialized...'
+        #return 'PuddleEnvironment initialized...'
+        return ''
 
     # () -> Observation
     def env_start(self):
@@ -153,9 +162,9 @@ class PuddleEnvironment(Environment):
         # Initialize step counter
         self.steps = 0
         
-        #print('START WORLD:')
-        self.debug(self.world)
-
+        self.step_out('START WORLD:')
+        self.step_out(self.world)
+        
         # Pass agent state over to the agent
         obs = Observation()
         obs.intArray = self.world.agent_state
@@ -192,7 +201,7 @@ class PuddleEnvironment(Environment):
         # Action is one of N,S,W,E
         action = action.charArray[0]
 
-        #print 'ACTION:', action
+        self.step_out('ACTION:', action)
 
         if not action in self.valid_actions.keys():
             print 'WARNING: Invalid action %s' % (action)
@@ -202,39 +211,40 @@ class PuddleEnvironment(Environment):
 
         # The actions might result in movement in a direction other than the one
         # intended with a probability of (1 - action_prob)
-        dice = random.random()
-        if dice > self.action_prob:
-            # Randomness! Choose uniformly between each other action
-            other_actions = list(set(self.valid_actions.keys()) - set(action))
-            action = random.choice(other_actions)
-        
-        # Move the agent
-        #print 'RESULT ACTION:', action
+        if self.enable_stochastic_actions:
+            dice = random.random()
+            if dice > self.action_prob:
+                # Randomness! Choose uniformly between each other action
+                other_actions = list(set(self.valid_actions.keys()) - set(action))
+                action = random.choice(other_actions)
+            
+            # Move the agent
+            self.step_out('RESULT ACTION:', action)
 
         self.move_agent(self.valid_actions[action])
 
         # Apply wind from the new state
-        pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
-        if pstate.wind:
-            p, dir = pstate.wind
-            dice = random.random()
-            if dice <= p:
-                # Fudge & crackers! Our agent gets caught by the wind!
-                #print 'WIND IN %s!' % (dir)
-                self.move_agent(dir)
+        if self.enable_wind:
+            pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
+            if pstate.wind:
+                p, dir = pstate.wind
+                dice = random.random()
+                if dice <= p:
+                    # Fudge & crackers! Our agent gets caught by the wind!
+                    self.step_out('WIND IN %s!' % (dir))
+                    self.move_agent(dir)
         
         
         pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
-
-        #print 'NEW STATE:', str(self.world.agent_state)
 
         # Return observation
         obs = Observation()
         obs.intArray = self.world.agent_state
 
         #print('IT\'S A NEW WORLD:')
-        self.debug(self.world)
-        #print "Reward", pstate.reward
+        self.step_out(self.world)
+        #self.debug('\n' + str(self.world))
+        self.step_out("REWARD:", pstate.reward)
         
         terminal = pstate.terminal
         if self.steps > self.step_limit:
@@ -248,31 +258,66 @@ class PuddleEnvironment(Environment):
     # () -> void
     def env_cleanup(self):
         pass
-
-    # (string) -> string
-    def env_message(self, msg):
-        print 'ENV MSG', msg
+    
+    def env_message_set_param(self, param, value):
+        """ Set a parameter via message """
+        # Only support setting existing parameters
+        attr = getattr(self, param)
+        setattr(self, param, eval(value))
+    
+    def env_message_get_param(self, param):
+        """ Get a parameter via message """
+        return repr(getattr(self, param))
+    
+    def env_message_handler(self, msg):
+        """ Handle a custom message """
         if msg == 'peek':
-            # Peek at world state
             return str(self.world)
-        elif msg == 'get_world':
-            # Return the gridworld
-            return repr(self.world)
-        
-        # Look for prop=value
-        result = re.match('(.+)=(.+)', msg)
-        if result:
-            param, value = result.groups()
-            if param == 'terminal_states':
-                self.terminal_states = eval(value)
-            elif param == 'debug':
-                self.degug = bool(eval(value))
-            else:
-                return "Unknown parameter: " + param
-
         else:
-            return "Unknown command: " + msg;
-
+            raise ValueError('Unknown message: %s' % (msg))
+    
+    def env_message(self, msg):
+        """ Retrieve and handle a message
+        
+        Set parameters by sending a message in the form:
+        
+            set param value
+            
+        Custom setters can be handled by overloading agent_message_set_param.
+        
+        Get parameters by sendin a message in the form:
+        
+            get param
+        
+        Custom getters can be handled by overloading agent_message_get_param.
+        
+        Other messages can be handled by overloading agent_message_handler.
+        """
+        result = re.match('set (.+) (.+)', msg)
+        if msg.startswith('set'):
+            param, value = msg.split(None, 2)[1:]
+            self.debug('set', param, value)
+            
+            self.env_message_set_param(param, value)
+        
+        elif msg.startswith('get'):
+            param = msg.split(None, 1)[1]
+            
+            return self.env_message_get_param(param)
+        
+        else:
+            return self.env_message_handler(msg)
+    
+    def debug(self, *args):
+        """ Print a debug msg """
+        if self.debug:
+            print "%s: %s" % (self.name, ' '.join(args))
+    
+    def step_out(self, *args):
+        if self.output_steps:
+            args = [str(a) for a in args]
+            print ' '.join(args)
+    
 if __name__ == '__main__':
     #p = PuddleEnvironment()
     #p.env_start()
