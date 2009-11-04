@@ -83,27 +83,31 @@ class GradientAgent(BaseAgent):
         self.theta_x = dict((i,copy(actions_dict)) for i in range(12))
         self.theta_y = dict((i,copy(actions_dict)) for i in range(12))
         
-        self.rewards = 0
+        self.avg_reward = 0
         self.num_rewards = 0
-        self.z = 0
-        self.delta = 0
     
     def update_theta(self, state, action, reward):
         """ Update our theta parameters with a new trajectory """
         row, col = state
         
-        t_x = self.theta_x[col][action]
-        t_y = self.theta_y[row][action]
+        t_x = self.theta_x[col]
+        t_y = self.theta_y[row]
         
+        d_theta = {}
         # The delta is the same for both theta values:
-        d_theta = self.alpha * (reward - self.baseline) * (1 - self.policy_val(state, action))
-#        print "Reward: ", reward
-#        print "Delta: ", d_theta
-#        print "Base: ", self.baseline
-#        print "C: ", 1 - self.policy_val(state, action)
-        t_x += d_theta
-        t_y += d_theta
+        for a in actions:
+            d = 0
+            if a == action:
+                d = 1
+            d_theta[a] =  (d - self.policy_val(state, action))
+
         
+        for a in actions:
+            t_x[a] += d_theta[a]
+            t_y[a] += d_theta[a]
+        
+        self.avg_reward = self.avg_reward + (1.0 / self.num_rewards) \
+                         * (reward - self.avg_reward)
         self.theta_x[col][action] = t_x
         self.theta_y[row][action] = t_y
                     
