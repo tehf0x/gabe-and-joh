@@ -28,7 +28,7 @@ class GradientAgent(BaseAgent):
 
     # Name of this agent
     name = 'MC-Policy-Gradient'
-    
+
     # The 4 actions we can take.
     # TODO: Should be moved to taskSpec!
     actions = [('E',), ('N',), ('S',), ('W',)]
@@ -36,13 +36,13 @@ class GradientAgent(BaseAgent):
     # Discount Gamma value
     # TODO: Should be moved to taskSpec
     gamma = 0.9
-    
+
     # Learning rate alpha
     alpha = 0.01
-    
+
     # Epsilon-Greed epsilon value
     epsilon = 0.1
-    
+
     # Epsilon is multiplied by this parameter for each episode
     #epsilon_mul = 0.9993
     epsilon_mul = 1.0
@@ -50,15 +50,15 @@ class GradientAgent(BaseAgent):
     # We need to remember our last action and state for updating Q
     last_state = ()
     last_action = ()
-    
+
     # Number of rewards seen so far (for the baseline)
     num_rewards = 0
     baseline = 0.0
-    
+
     def agent_init(self, task_spec):
         """ Initialize the agent """
         pass
-        
+
     def agent_start(self, state):
         """ Called every time a new episode is started """
         #self.baseline = 0.0
@@ -74,96 +74,122 @@ class GradientAgent(BaseAgent):
     def agent_end(self, reward):
         """ Called when a game ends """
         #self.delta += self.rewards * self.z
-        self.theta_x += self.alpha * delta / self.num_rewards
-        self.theta_y += self.alpha * delta / self.num_rewards
+        print 'END'
+        for idx in range(12):
+            for act in self.actions:
+                self.theta_x[idx][act] += self.avg_reward * self.delta_x[idx][act]
+                self.theta_y[idx][act] += self.avg_reward * self.delta_y[idx][act]
+
+        #Reset the gradient vectors for next episode.
+        actions_dict = dict((a, 0) for a in self.actions)
+        self.delta_x = dict((i, copy(actions_dict)) for i in range(12))
+        self.delta_y = dict((i, copy(actions_dict)) for i in range(12))
+
 
     def agent_cleanup(self):
         """ Clean up for next experiment """
-        actions_dict = dict((a,0) for a in self.actions)
-        self.theta_x = dict((i,copy(actions_dict)) for i in range(12))
-        self.theta_y = dict((i,copy(actions_dict)) for i in range(12))
-        
+        actions_dict = dict((a, 0) for a in self.actions)
+        #The actual preference vectors, cut into 2 for simplicity.
+        self.theta_x = dict((i, copy(actions_dict)) for i in range(12))
+        self.theta_y = dict((i, copy(actions_dict)) for i in range(12))
+
+        #The gradient vectors for each episode.
+        self.delta_x = dict((i, copy(actions_dict)) for i in range(12))
+        self.delta_y = dict((i, copy(actions_dict)) for i in range(12))
+
         self.avg_reward = 0
         self.num_rewards = 0
-    
-    def update_theta(self, state, action, reward):
+
+    def sum_vectors(self, v1, v2):
+        '''Return the sum of v1 and v2.'''
+        a = copy(v1)
+        if len(v1) != len(v2):
+            raise Exception('Vectors not same length.')
+        for key in v1:
+            a[key] = v1[key] + v2[key]
+
+
+
+    def update_delta(self, state, action, reward):
         """ Update our theta parameters with a new trajectory """
         row, col = state
-        
-        t_x = self.theta_x[col]
-        t_y = self.theta_y[row]
-        
+
+        d_x = self.delta_x[col]
+        d_y = self.delta_y[row]
+
         d_theta = {}
         # The delta is the same for both theta values:
-        for a in actions:
+        for act in self.actions:
             d = 0
-            if a == action:
+            if act == action:
                 d = 1
-            d_theta[a] =  (d - self.policy_val(state, action))
+            d_theta[act] =  d - self.policy_val(state, action)
 
-        
-        for a in actions:
-            t_x[a] += d_theta[a]
-            t_y[a] += d_theta[a]
-        
-        self.avg_reward = self.avg_reward + (1.0 / self.num_rewards) \
-                         * (reward - self.avg_reward)
-        self.theta_x[col][action] = t_x
-        self.theta_y[row][action] = t_y
-                    
+
+        for act in self.actions:
+            d_y[act] += d_theta[act]
+            d_x[act] += d_theta[act]
+
+        #And update the return for this episode.
+        self.avg_reward = self.avg_reward + float(reward - self.avg_reward) / \
+                            (self.num_rewards + 1)
+
+        self.delta_x[col] = d_x
+        self.delta_y[row] = d_y
+
 
     def update_avg_reward(self, reward):
         """ Update average reward baseline """
-        self.baseline = (self.baseline * self.num_rewards + float(reward) ) / \
+        self.baseline = self.baseline + float(reward - self.baseline) / \
                             (self.num_rewards + 1)
         self.num_rewards += 1
-     
+
     def policy_val(self, state, action):
         """
         Calculate the soft-max likelihood of a state-action pair.
         """
         row, col = state
-        
+
         pol_denom = 0
-        for a in self.actions:
-            pol_denom += math.exp(self.theta_x[col][a] + self.theta_y[row][a])
+        for act in self.actions:
+            pol_denom += math.exp(self.theta_x[col][act] + self.theta_y[row][act])
 
         theta = self.theta_x[col][action] + self.theta_y[row][action]
         #print 'State: ', state
         #print 'Action: ', action
         #print 'Theta: ', theta
         return math.exp(theta) / pol_denom
-    
+
     def pick_weighted(self, weighted_dict):
         """ Pick a random element from a weighted distribution.
-        
+
         weighted_dist is a dictionary where the keys are the elements
         to pick and the values are the weights of picking the element.
-        
+
         For example:
         weighted_dict[A] = 0.3
         weighted_dict[B] = 0.7
-        
+
         Would pick A 30% and B 70% of the time.
         """
-        
+
         weight_total = float(sum(weighted_dict.values()))
-        
+
         dice = random.random()
         lower = 0
-        
-        for e, w in weighted_dict.items():
-            p = float(w) / weight_total # Probability of selecting w
+
+        for el, weight in weighted_dict.items():
+            p = float(weight) / weight_total # Probability of selecting w
             #print 'e:',e,'w:',w,'p:',p,'lower:',lower
             #print 'check: dice(%f) >= lower(%f) and dice(%f) < (lower + p)(%f)' % (dice, lower, dice, lower + p)
             if dice >= lower and dice < lower + p:
-                return e
+                return el
             lower += p
-        
+
         # Shouldn't be reached
         raise ValueError
-        
-    
+
+
     def pick_weighted2(self, weighted_dict):
         """
         Pick a random action from a weighted distribution.
@@ -177,24 +203,24 @@ class GradientAgent(BaseAgent):
             if last_el < rand and rand <= i:
                 return weighted_dict[i]
             last_el = i
-            
+
         #If nothing has been picked it means it hit a bit too high, so return
         #the highest valued function.
         return weighted_dict[max(weighted_dict)]
-        
+
     def policy(self, state):
         """
         Return the action to be taken for the state given using soft-max.
         """
-        
+
         # Calculate the value of the policy for each state
         pol_vals = {}
         for action in self.actions:
             pol_vals[action] = self.policy_val(state, action)
-        
+
         #if state == (11,0):
         #    print 'POL_VALS for', state, ':', pol_vals
-        
+
         #print pol_vals
         #ranges = {}
         #last_val = 0
@@ -207,34 +233,25 @@ class GradientAgent(BaseAgent):
 
     def do_step(self, state, reward = None):
         """ Make an action from state, given an optional (previous) reward
-        
+
         In a separate function so it can be called both on start and on step.
         """
         a_obj = Action()
-        
+
         # Query the policy to find the best action
         action = self.policy(state)
         a_obj.charArray = list(action)
-        
+
         #print 'action: ', action
-        
+
         # Run the parameter update if this isn't the first step
         if reward is not None:
-            self.update_theta(tuple(self.last_state), tuple(self.last_action), reward)
-            self.update_avg_reward(reward)
-        
-        '''
-        p = self.export_policy()
-        for row in p:
-            for col in row:
-                print col[0][0],
-            print        
-        print
-        '''
+            self.update_delta(tuple(self.last_state), tuple(self.last_action), reward)
+
         # Save the current state-action pair for the next step update.
         self.last_state = state
         self.last_action = action
-        
+
         # Actionify!
         return a_obj
 
@@ -245,7 +262,7 @@ class GradientAgent(BaseAgent):
         # Get the softmax evaluation for each action in this state
         # and pick the 'best' action based on the softmax value.
         # This allows us to export a determenistic policy.
-        
+
         a = [[0]*12 for i in range(12)]
         for row in range(12):
             for col in range(12):
@@ -257,12 +274,12 @@ class GradientAgent(BaseAgent):
                 a[row][col] = max(pol_vals.items(), key=lambda e: e[1])
                 #print a[i][t]
         return a
-    
+
     def agent_message_get_param(self, param):
         """ Get a parameter via message """
         if param == 'policy':
             return repr(self.export_policy())
-        
+
         return BaseAgent.agent_message_get_param(self, param)
 
 if __name__=="__main__":
