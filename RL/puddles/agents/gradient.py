@@ -81,6 +81,7 @@ class GradientAgent(BaseAgent):
                 self.theta_y[idx][act] += self.avg_reward * self.delta_y[idx][act]
 
         #Reset the gradient vectors for next episode.
+        self.avg_reward = 0
         actions_dict = dict((a, 0) for a in self.actions)
         self.delta_x = dict((i, copy(actions_dict)) for i in range(12))
         self.delta_y = dict((i, copy(actions_dict)) for i in range(12))
@@ -134,15 +135,11 @@ class GradientAgent(BaseAgent):
         self.avg_reward = self.avg_reward + float(reward - self.avg_reward) / \
                             (self.num_rewards + 1)
 
+        self.num_rewards += 1
+
         self.delta_x[col] = d_x
         self.delta_y[row] = d_y
 
-
-    def update_avg_reward(self, reward):
-        """ Update average reward baseline """
-        self.baseline = self.baseline + float(reward - self.baseline) / \
-                            (self.num_rewards + 1)
-        self.num_rewards += 1
 
     def policy_val(self, state, action):
         """
@@ -228,7 +225,11 @@ class GradientAgent(BaseAgent):
         #    ranges[val[1] + last_val] = val[0]
         #    last_val = val[1] + last_val
         #print ranges
-        return self.pick_weighted(pol_vals)
+        print state
+
+        action = self.pick_weighted(pol_vals)
+        print action
+        return action
 
 
     def do_step(self, state, reward = None):
