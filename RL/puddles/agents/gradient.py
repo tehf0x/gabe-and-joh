@@ -67,22 +67,24 @@ class GradientAgent(BaseAgent):
         """ Called when a game ends """
         #self.delta += self.rewards * self.z
         print 'END'
-        self.avg_reward = self.avg_reward + float(reward - self.avg_reward) / \
-                            (self.num_rewards + 1)
+        self.avg_reward = self.avg_reward + (float(reward - self.avg_reward) / \
+                            (self.num_rewards + 1))
         print self.avg_reward
+
         for idx in range(12):
             for act in self.actions:
                 self.theta_x[idx][act] += self.avg_reward * self.delta_x[idx][act]
                 self.theta_y[idx][act] += self.avg_reward * self.delta_y[idx][act]
 
+        print self.theta_x[0]
+        print self.theta_y[0]
         #Increment the episode count
         self.episode_num += 1
-        if self.episode_num > 1200:
+
+        if self.episode_num > 300:
             self.tao = 1.0
-        elif self.episode_num > 800:
-            self.tao = 10.0
-        elif self.episode_num > 300:
-            self.tao = 100.0
+        elif self.episode_num > 150:
+            self.tao = 4.0
         #Reset the gradient vectors for next episode.
         self.avg_reward = 0.0
         self.num_rewards = 0
@@ -109,14 +111,6 @@ class GradientAgent(BaseAgent):
         self.tao = 500
         self.episode_num = 0
 
-    def sum_vectors(self, v1, v2):
-        '''Return the sum of v1 and v2.'''
-        a = copy(v1)
-        if len(v1) != len(v2):
-            raise Exception('Vectors not same length.')
-        for key in v1:
-            a[key] = v1[key] + v2[key]
-
     def update_delta(self, state, action, reward):
         """ Update our theta parameters with a new trajectory """
         row, col = state
@@ -130,16 +124,16 @@ class GradientAgent(BaseAgent):
             d = 0
             if act == action:
                 d = 1
-            d_theta[act] =  d - self.policy_val(state, action)
+            d_theta[act] =  d - self.policy_val(state, action, 1)
 
 
         for act in self.actions:
-            d_y[act] += d_theta[act]
             d_x[act] += d_theta[act]
+            d_y[act] += d_theta[act]
 
         #And update the return for this episode.
-        self.avg_reward = self.avg_reward + float(reward - self.avg_reward) / \
-                            (self.num_rewards + 1)
+        self.avg_reward = self.avg_reward + (float(reward - self.avg_reward) / \
+                            (self.num_rewards + 1))
 
         self.num_rewards += 1
 
@@ -147,23 +141,21 @@ class GradientAgent(BaseAgent):
         self.delta_y[row] = d_y
 
 
-    def policy_val(self, state, action):
+    def policy_val(self, state, action, tao = False):
         """
         Calculate the soft-max likelihood of a state-action pair.
         """
         row, col = state
 
+        if not tao:
+            tao = self.tao
+
         pol_denom = 0
         for act in self.actions:
-            pol_denom += math.exp( float(self.theta_x[col][act] + self.theta_y[row][act]) / self.tao)
+            pol_denom += math.exp( float(self.theta_x[col][act] + self.theta_y[row][act]) / tao)
 
         theta = self.theta_x[col][action] + self.theta_y[row][action]
-        print 'State: ', state
-        print self.theta_x[col]
-        print self.theta_y[row]
-        #print 'Action: ', action
-        #print 'Theta: ', theta
-        return math.exp(theta/self.tao) / pol_denom
+        return math.exp(float(theta)/tao) / pol_denom
 
     def pick_weighted(self, weighted_dict):
         """ Pick a random element from a weighted distribution.
@@ -179,39 +171,17 @@ class GradientAgent(BaseAgent):
         """
 
         weight_total = float(sum(weighted_dict.values()))
-        #print weighted_dict
         dice = random.random()
         lower = 0
 
         for el, weight in weighted_dict.items():
             p = float(weight) / weight_total # Probability of selecting w
-            #print 'e:',e,'w:',w,'p:',p,'lower:',lower
-            #print 'check: dice(%f) >= lower(%f) and dice(%f) < (lower + p)(%f)' % (dice, lower, dice, lower + p)
             if dice >= lower and dice < lower + p:
                 return el
             lower += p
 
         # Shouldn't be reached
         raise ValueError
-
-
-    def pick_weighted2(self, weighted_dict):
-        """
-        Pick a random action from a weighted distribution.
-        """
-        rand = random.random()
-        last_el = 0
-        idx = weighted_dict.keys()
-        idx.sort()
-        for i in idx:
-            #print i
-            if last_el < rand and rand <= i:
-                return weighted_dict[i]
-            last_el = i
-
-        #If nothing has been picked it means it hit a bit too high, so return
-        #the highest valued function.
-        return weighted_dict[max(weighted_dict)]
 
     def policy(self, state):
         """
@@ -223,20 +193,8 @@ class GradientAgent(BaseAgent):
         for action in self.actions:
             pol_vals[action] = self.policy_val(state, action)
 
-        #if state == (11,0):
-        #    print 'POL_VALS for', state, ':', pol_vals
-
-        #print pol_vals
-        #ranges = {}
-        #last_val = 0
-        #for val in pol_vals:
-        #    ranges[val[1] + last_val] = val[0]
-        #    last_val = val[1] + last_val
-        #print ranges
-        #print pol_vals
-        #print state
-
         action = self.pick_weighted(pol_vals)
+        #action = self.pick_weighted2(ranges)
         return action
 
 
