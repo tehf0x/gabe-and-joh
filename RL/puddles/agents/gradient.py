@@ -280,7 +280,7 @@ class GradientAgent(BaseAgent):
                     pol_vals[action] = self.policy_val((row, col), action)
                     #print 'Value: ', self.policy_val((i, t), action)
                 #print acts
-                a[row][col] = max(pol_vals.items(), key=lambda e: e[1])
+                a[row][col] = max(pol_vals.items(), key=lambda e: e[1])[0]
                 #print a[i][t]
         return a
 
