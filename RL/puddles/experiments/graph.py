@@ -154,7 +154,7 @@ if __name__ == '__main__':
     
     elif type == 'steps':
         # Plot steps
-        steps_plot = Plot(title='Steps', xlabel='Episodes', ylabel='Steps', axis=(None,None,None,500))
+        steps_plot = Plot(title='Steps', xlabel='Episodes', ylabel='Steps', axis=(None,None,None,200))
         for name, d in datasets.items():
             steps_plot.plot(d['steps'], label=name)
         

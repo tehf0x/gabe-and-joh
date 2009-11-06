@@ -23,14 +23,18 @@ class QAgent(TDAgent):
     
     name = 'Q-Learning'
 
-    def update_Q(self, state, action, reward, new_state):
+    def update_Q(self, state, action, reward, new_state = None):
         """
         Update the Q value of this state-action pair.
+        
+        new_state is None when terminal state has been reached.
         """
         Q_val = self.Q[state][action]
         
         # Look at the best action from the next state.
-        Qp_val = max(self.Q[new_state].values())
+        Qp_val = 0
+        if new_state is not None:
+            Qp_val = max(self.Q[new_state].values())
         
         # The famous formula:
         Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)

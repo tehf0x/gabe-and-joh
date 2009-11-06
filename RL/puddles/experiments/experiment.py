@@ -58,6 +58,15 @@ class Experiment:
     # Total reward
     total_reward = 0
     
+    # Epsilon value scheme
+    # Divide experiment into 3: high, decr, low
+    # During high: keep epsilon constant at epsilon_high
+    # During decr: decrease epsilon linearly until epsilon_decr
+    # During low: keep epsilon constant at epsilon_low
+    epsilon_high = 0.8
+    epsilon_decr = 0.2
+    epsilon_low = 0.1
+    
     # Instance number
     instance = 0
     
@@ -67,11 +76,13 @@ class Experiment:
     # Whether to print progress output
     quiet = False
     
-    def __init__(self, episodes = 100):
+    def __init__(self, **kwargs):
         """ Initialize experiment """
-        self.episodes = episodes
-        self.returns = [0] * episodes
-        self.steps = [0] * episodes
+        for k,v in kwargs.items():
+            setattr(self, k, v)
+        
+        self.returns = [0] * self.episodes
+        self.steps = [0] * self.episodes
         
         self.po = ProgressOutput()
         
@@ -112,6 +123,21 @@ class Experiment:
         
     def run_episode(self):
         """ Run a single episode """
+        # Update epsilon
+        '''
+        phase_len = self.episodes / 3
+        if self.episode_number == phase_len * 2:
+            # Start low phase
+            RLGlue.RL_agent_message('set epsilon %f' % (self.epsilon_low))
+        elif self.episode_number >= phase_len and self.episode_number < phase_len * 2:
+            # In decr phase
+            epsilon = float(RLGlue.RL_agent_message('get epsilon'))
+            epsilon += (self.epsilon_decr - self.epsilon_high) / phase_len
+            RLGlue.RL_agent_message('set epsilon %f' % (epsilon))
+        elif self.episode_number == 0:
+            # Start high phase
+            RLGlue.RL_agent_message('set epsilon %f' % (self.epsilon_high))
+        '''
         terminal = RLGlue.RL_episode(0)   # 0 - run until terminal
         steps = RLGlue.RL_num_steps()
         reward = RLGlue.RL_return()
@@ -136,7 +162,7 @@ if __name__ == "__main__":
     import settings
     
     # Create a new experiment
-    experiment = Experiment(settings.experiment['episodes'])
+    experiment = Experiment(**settings.experiment)
     
     # Set up environment
     print

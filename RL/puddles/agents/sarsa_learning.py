@@ -21,15 +21,19 @@ class SarsaAgent(TDAgent):
     
     name = 'SARSA'
 
-    def update_Q(self, state, action, reward, new_state):
+    def update_Q(self, state, action, reward, new_state = None):
         """
         Update the Q value of this state-action pair.
+        
+        new_state is None when terminal state has been reached.
         """
         Q_val = self.Q[state][action]
         
         #Look at the best action from the next state.
-        new_action = self.policy(new_state)
-        Qp_val = self.Q[new_state][new_action]
+        Qp_val = 0
+        if new_state is not None:
+            new_action = self.policy(new_state)
+            Qp_val = self.Q[new_state][new_action]
         
         #The famous formula:
         Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)

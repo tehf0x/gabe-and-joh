@@ -41,7 +41,7 @@ class BaseAgent(Agent):
         pass
 
     def agent_end(self, reward):
-        """ Called when a game ends """
+        """ Called when an episode is ended (terminal) """
         pass
 
     def agent_cleanup(self):
@@ -52,6 +52,7 @@ class BaseAgent(Agent):
     def debug(self, *args):
         """ Print a debug msg """
         if self.debug:
+            args = [str(a) for a in args]
             print "%s: %s" % (self.name, ' '.join(args))
     
     def agent_message_set_param(self, param, value):

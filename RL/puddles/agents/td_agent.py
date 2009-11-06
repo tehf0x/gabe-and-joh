@@ -43,10 +43,6 @@ class TDAgent(BaseAgent):
     # Epsilon-Greed epsilon value
     epsilon = 0.1
     
-    # Epsilon is multiplied by this parameter for each episode
-    #epsilon_mul = 0.9993
-    epsilon_mul = 1.0
-    
     # Initialize Q
     Q = {}
 
@@ -56,14 +52,12 @@ class TDAgent(BaseAgent):
     
     def agent_init(self, task_spec):
         """Re-initialize the agent for a new training round."""
-        self.debug("INIT")
+        #self.debug("INIT")
         self.Q = {}
 
     def agent_start(self, state):
         """ Called every time a new game is started """
-        self.debug("START")
-        self.epsilon *= self.epsilon_mul
-        #print 'epsilon =', self.epsilon
+        #self.debug("START")
         state = tuple(state.intArray)
         return self.do_step(state)
 
@@ -74,18 +68,20 @@ class TDAgent(BaseAgent):
 
     def agent_end(self, reward):
         """ Called when a game ends """
-        self.debug("END")
+        self.update_Q(self.last_state, self.last_action, reward, None)
+        #self.debug("END", reward)
 
     def agent_cleanup(self):
         """ Clean up for next run """
         self.Q = {}
-        self.debug("CLEANUP")
+        #self.debug("CLEANUP")
     
     def do_step(self, state, reward = None):
         """
         Runs the actual learning algorithm.
         In a separate function so it can be called both on start and on step.
         """
+        #self.debug('do_step(', state, ',', reward, ')')
         a_obj = Action()
         
         # Query the policy to find the best action
@@ -103,10 +99,12 @@ class TDAgent(BaseAgent):
         # And we're done
         return a_obj
 
-    def update_Q(self, state, action, reward, new_state):
+    def update_Q(self, state, action, reward, new_state = None):
         """
         Update the Q value of this state-action pair.
         This should be implemented in the child class
+        
+        new_state is None when terminal state has been reached.
         """
         raise NotImplementedError
 

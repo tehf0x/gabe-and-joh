@@ -311,6 +311,7 @@ class PuddleEnvironment(Environment):
     def debug(self, *args):
         """ Print a debug msg """
         if self.debug:
+            args = [str(a) for a in args]
             print "%s: %s" % (self.name, ' '.join(args))
     
     def step_out(self, *args):
