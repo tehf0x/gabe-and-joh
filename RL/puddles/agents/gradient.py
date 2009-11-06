@@ -33,27 +33,19 @@ class GradientAgent(BaseAgent):
     # TODO: Should be moved to taskSpec!
     actions = [('E',), ('N',), ('S',), ('W',)]
 
-    # Discount Gamma value
-    # TODO: Should be moved to taskSpec
-    gamma = 0.9
-
-    # Learning rate alpha
-    alpha = 0.01
-
-    # Epsilon-Greed epsilon value
-    epsilon = 0.1
-
-    # Epsilon is multiplied by this parameter for each episode
-    #epsilon_mul = 0.9993
-    epsilon_mul = 1.0
-
+    #This is around just for legacy:
+    epsilon = 0.0
+    alpha = 0.0
     # We need to remember our last action and state for updating Q
     last_state = ()
     last_action = ()
 
     # Number of rewards seen so far (for the baseline)
     num_rewards = 0
-    baseline = 0.0
+    avg_reward = 0.0
+
+    tao = 500
+    episode_num = 0
 
     def agent_init(self, task_spec):
         """ Initialize the agent """
@@ -75,13 +67,25 @@ class GradientAgent(BaseAgent):
         """ Called when a game ends """
         #self.delta += self.rewards * self.z
         print 'END'
+        self.avg_reward = self.avg_reward + float(reward - self.avg_reward) / \
+                            (self.num_rewards + 1)
+        print self.avg_reward
         for idx in range(12):
             for act in self.actions:
                 self.theta_x[idx][act] += self.avg_reward * self.delta_x[idx][act]
                 self.theta_y[idx][act] += self.avg_reward * self.delta_y[idx][act]
 
+        #Increment the episode count
+        self.episode_num += 1
+        if self.episode_num > 1200:
+            self.tao = 1.0
+        elif self.episode_num > 800:
+            self.tao = 10.0
+        elif self.episode_num > 300:
+            self.tao = 100.0
         #Reset the gradient vectors for next episode.
-        self.avg_reward = 0
+        self.avg_reward = 0.0
+        self.num_rewards = 0
         actions_dict = dict((a, 0) for a in self.actions)
         self.delta_x = dict((i, copy(actions_dict)) for i in range(12))
         self.delta_y = dict((i, copy(actions_dict)) for i in range(12))
@@ -98,8 +102,12 @@ class GradientAgent(BaseAgent):
         self.delta_x = dict((i, copy(actions_dict)) for i in range(12))
         self.delta_y = dict((i, copy(actions_dict)) for i in range(12))
 
-        self.avg_reward = 0
+        self.avg_reward = 0.0
         self.num_rewards = 0
+
+        #Reset the temperature counters
+        self.tao = 500
+        self.episode_num = 0
 
     def sum_vectors(self, v1, v2):
         '''Return the sum of v1 and v2.'''
@@ -108,8 +116,6 @@ class GradientAgent(BaseAgent):
             raise Exception('Vectors not same length.')
         for key in v1:
             a[key] = v1[key] + v2[key]
-
-
 
     def update_delta(self, state, action, reward):
         """ Update our theta parameters with a new trajectory """
@@ -149,13 +155,15 @@ class GradientAgent(BaseAgent):
 
         pol_denom = 0
         for act in self.actions:
-            pol_denom += math.exp(self.theta_x[col][act] + self.theta_y[row][act])
+            pol_denom += math.exp( float(self.theta_x[col][act] + self.theta_y[row][act]) / self.tao)
 
         theta = self.theta_x[col][action] + self.theta_y[row][action]
-        #print 'State: ', state
+        print 'State: ', state
+        print self.theta_x[col]
+        print self.theta_y[row]
         #print 'Action: ', action
         #print 'Theta: ', theta
-        return math.exp(theta) / pol_denom
+        return math.exp(theta/self.tao) / pol_denom
 
     def pick_weighted(self, weighted_dict):
         """ Pick a random element from a weighted distribution.
@@ -171,7 +179,7 @@ class GradientAgent(BaseAgent):
         """
 
         weight_total = float(sum(weighted_dict.values()))
-
+        #print weighted_dict
         dice = random.random()
         lower = 0
 
@@ -225,10 +233,10 @@ class GradientAgent(BaseAgent):
         #    ranges[val[1] + last_val] = val[0]
         #    last_val = val[1] + last_val
         #print ranges
-        print state
+        #print pol_vals
+        #print state
 
         action = self.pick_weighted(pol_vals)
-        print action
         return action
 
 
