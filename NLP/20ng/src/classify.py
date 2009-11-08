@@ -23,7 +23,7 @@ else:
     file_names = [fname.strip() for fname in f]
 
 #Create the bayes classifier:
-nb_classifier = NavieBayesClassifier(label_pd, feature_pd)
+nb_classifier = NaiveBayesClassifier(label_pd, feature_pd)
 
 class_results = {}
 #Now classify each file into the alloted class:
