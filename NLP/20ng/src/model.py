@@ -18,6 +18,8 @@ from nltk.classify import NaiveBayesClassifier
 from nltk.classify import ClassifierI
 from nltk.util import ingrams
 
+logging.basicConfig(level=logging.DEBUG)
+
 logger = logging.getLogger('model')
 
 class DocumentClassifier(ClassifierI):
@@ -53,8 +55,9 @@ class DocumentClassifier(ClassifierI):
             ngram_model = self.model.ngrams[label]
             
             prefix = ('',) * (ngram_model._n - 1)
+            words = [w.lower() for w in document if w.isalpha()]
             
-            for ngram in ingrams(chain(prefix, document), 3):
+            for ngram in ingrams(chain(prefix, words), 3):
                 context = tuple(ngram[:-1])
                 token = ngram[-1]
                 #print token, context
@@ -91,7 +94,8 @@ class LanguageModel(object):
             logger.debug("Processing category '" + c + "'...")
             
             # Create the NgramModel
-            self.ngrams[c] = SLINgramModel(3, self.corpus.words(categories=[c]))
+            words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
+            self.ngrams[c] = SLINgramModel(3, words)
             
             # Set weights manually
             # TODO: Estimate with EM etc.
