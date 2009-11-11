@@ -55,14 +55,10 @@ class DocumentClassifier(ClassifierI):
             ngram_model = self.model.ngrams[label]
 
             prefix = ('',) * (ngram_model._n - 1)
-<<<<<<< HEAD:NLP/20ng/src/model.py
 
-            for ngram in ingrams(chain(prefix, document), 3):
-=======
             words = [w.lower() for w in document if w.isalpha()]
 
             for ngram in ingrams(chain(prefix, words), 3):
->>>>>>> c1e5af79c5b757dd31b6610b170f8e75ceb57b25:NLP/20ng/src/model.py
                 context = tuple(ngram[:-1])
                 token = ngram[-1]
                 #print token, context
