@@ -96,7 +96,7 @@ class LanguageModel(object):
 
             # Create the NgramModel
             words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
-            self.ngrams[c] = SLINgramModel(3, words, factor)
+            self.ngrams[c] = SLINgramModel(3, words)
 
             # Set weights manually
             # TODO: Estimate with EM etc.
