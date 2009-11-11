@@ -91,7 +91,7 @@ class LanguageModel(object):
             logger.debug("Processing category '" + c + "'...")
             
             # Create the NgramModel
-            self.ngrams[c] = SLINgramModel(3, self.corpus.words(categories=[c])[:1000])
+            self.ngrams[c] = SLINgramModel(3, self.corpus.words(categories=[c]))
             
             # Set weights manually
             # TODO: Estimate with EM etc.
