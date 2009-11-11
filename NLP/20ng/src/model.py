@@ -58,7 +58,7 @@ class DocumentClassifier(ClassifierI):
                 context = tuple(ngram[:-1])
                 token = ngram[-1]
                 #print token, context
-                logprob[label] += ngram_model.logprob(token, context)
+                logprob[label] += -ngram_model.logprob(token, context)
             
             logger.debug(label + ': ' + str(logprob[label]))
         
@@ -206,7 +206,7 @@ class SLINgramModel(NgramModel):
             cfd[context].inc(token)
         
         v = len(set(train))
-        bins = v * n
+        bins = v ** n
         
         self._model = ConditionalProbDist(cfd, estimator, bins)
 
