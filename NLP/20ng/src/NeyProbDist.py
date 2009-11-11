@@ -10,7 +10,7 @@ class NeyProbDist(ProbDistI):
     ABSOLUTE, LINEAR = (0,1)
 
 
-    def __init__(self, freqdist, bins, n, n_0, factor=0.8, type = 'L'):
+    def __init__(self, freqdist, bins, n, n_0, factor=0.2, type = 0):
         """
         Use the Ney et al. estimate to create a prob dist.
 
@@ -42,7 +42,7 @@ class NeyProbDist(ProbDistI):
                                  'the number of bins in the FreqDist used ' +
                                  'to create it (%d).' % freqdist.N())
 
-        if(type) in (self.ABSOLUTE, self.LINEAR):
+        if type not in (self.ABSOLUTE, self.LINEAR):
             raise ValueError('Unrecognize discounting type.')
 
         self._freqdist = freqdist
@@ -59,13 +59,13 @@ class NeyProbDist(ProbDistI):
         #absolute discounting
         if self._type == self.ABSOLUTE:
             if(freq > 0):
-                return (freq - self._param) / self._n
+                return (freq - self._factor) / self._n
             else:
-                return (self._bins - self._n_0) * self._param / (self._n_0 * self._n)
+                return (self._bins - self._n_0) * self._factor / (self._n_0 * self._n)
         #linear discounting
         else:
             if(freq > 0):
-                return (1 - self._param) * freq/self._n
+                return (1 - self._factor) * freq/self._n
             else:
-                return self._param / self._n_0
+                return self._factor / self._n_0
 
