@@ -18,6 +18,8 @@ from nltk.classify import NaiveBayesClassifier
 from nltk.classify import ClassifierI
 from nltk.util import ingrams
 
+from NeyProbDist import NeyProbDist
+
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger('model')
@@ -26,9 +28,6 @@ class DocumentClassifier(ClassifierI):
 
     def __init__(self, lang_model):
         self.model = lang_model
-
-        cond_probdist = dict(((c, 'text'), lang_model.ngram_probdists[c]) \
-                             for c in lang_model.category_probdist.samples())
 
     def labels(self):
         """
@@ -77,16 +76,13 @@ class LanguageModel(object):
         logger.debug("Loading corpus from '" + corpus_path + "'...")
 
         self.corpus = CategorizedPlaintextCorpusReader(corpus_path, '.*', cat_pattern='(\w*)')
-
+        
         # Count total number of words
         self.word_count = len(self.corpus.words())
 
         # Our category-conditional ngram models
         self.ngrams = dict()
-
-        # Probability distribution for each ngram category
-        self.ngram_probdists = dict()
-
+        
         # Category probability dictionary
         cat_prob_dict = dict()
 
@@ -96,16 +92,14 @@ class LanguageModel(object):
 
             # Create the NgramModel
             words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
+            
             self.ngrams[c] = SLINgramModel(3, words)
-
+            
             # Set weights manually
             # TODO: Estimate with EM etc.
             self.ngrams[c].weight = 0.5
             self.ngrams[c]._backoff.weight = 0.3
             self.ngrams[c]._backoff._backoff.weight = 0.2
-
-            # Create probdist
-            self.ngram_probdists[c] = NgramProbDist(self.ngrams[c])
 
             # Count number of words in this category
             nw = len(self.corpus.words(categories=[c]))
@@ -115,62 +109,10 @@ class LanguageModel(object):
         # Create category probability distribution
         self.category_probdist = DictionaryProbDist(cat_prob_dict, normalize=True)
 
-    def prob(self, words, category):
-        """ Compute the probability of words in category """
-
-class NgramProbDist(ProbDistI):
-
-    def __init__(self, ngram_model):
-        self.model = ngram_model
-
-    def logprob(self, words):
-        """
-        @return: the probability for a given sample.  Probabilities
-            are always real numbers in the range [0, 1].
-        @rtype: float
-        @param sample: The sample whose probability
-               should be returned.
-        @type sample: any
-        """
-        prefix = ('',) * (self.model._n - 1)
-
-        p = 0.0
-        for ngram in ingrams(chain(prefix, words), self.model._n):
-            context = tuple(ngram[:-1])
-            token = ngram[-1]
-            #print token, context
-            d = self.model.logprob(token, context)
-            logger.debug(token + ' in context ' + str(context) + ' = ' + str(d))
-            if d > 0:
-                p += float(d)
-
-        return p
-
-    def max(self):
-        """
-        @return: the sample with the greatest probability.  If two or
-            more samples have the same probability, return one of them;
-            which sample is returned is undefined.
-        @rtype: any
-        """
-        raise AssertionError()
-
-    # deprecate this (use keys() instead?)
-    def samples(self):
-        """
-        @return: A list of all samples that have nonzero
-            probabilities.  Use C{prob} to find the probability of
-            each sample.
-        @rtype: C{list}
-        """
-        raise AssertionError()
-
 
 class SLINgramModel(NgramModel):
     """
-    NgramModel with Simple Linear Interpolation for unseen n-grams
-
-
+    NgramModel with Simple Linear Interpolation
     """
 
     # TODO: Estimate this with EM
@@ -196,11 +138,12 @@ class SLINgramModel(NgramModel):
         self._n = n
 
         if estimator is None:
-            estimator = lambda fdist, bins, n, n_0, factor : NeyProbDist(fdist, bins, n, n_0, factor, 'L' )
+            estimator = lambda fdist, bins, n, n_0: NeyProbDist(fdist, bins, n, n_0, factor, 'L' )
 
         cfd = ConditionalFreqDist()
         self._ngrams = set()
         self._prefix = ('',) * (n - 1)
+        self._ngram_count = 0
 
         for ngram in ingrams(chain(self._prefix, train), n):
             # Lowercase words
@@ -209,15 +152,17 @@ class SLINgramModel(NgramModel):
             context = tuple(ngram[:-1])
             token = ngram[-1]
             cfd[context].inc(token)
-
+        
         v = len(set(train))
         bins = v ** n
+        
         #Number of bins with a count > 0
-        seen_bins = 0
-        for fd in cfd:
-            seen_bins += fd.B()
+        self._ngram_count = len(self._ngrams)
+        del self._ngrams
+        
         #Gives us number of bins with count = 0
-        n_0 = bins - seen_bins
+        n_0 = bins - self._ngram_count
+        
         self._model = ConditionalProbDist(cfd, estimator, bins, n, n_0)
 
         # recursively construct the lower-order models

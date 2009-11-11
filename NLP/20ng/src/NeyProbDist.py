@@ -54,7 +54,7 @@ class NeyProbDist(ProbDistI):
 
 
     def prob(self, sample):
-        freq = self._freqdist.count(sample)
+        freq = self._freqdist[sample]
 
         #absolute discounting
         if self._type == self.ABSOLUTE:
