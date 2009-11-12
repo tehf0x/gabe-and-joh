@@ -91,7 +91,7 @@ class LanguageModel(object):
             logger.debug("Processing category '" + c + "'...")
 
             # Create the NgramModel
-            words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
+            words = [w.lower() for w in self.corpus.words(categories=[c])[:1000] if w.isalpha()]
             
             self.ngrams[c] = SLINgramModel(3, words)
             
@@ -178,7 +178,7 @@ class SLINgramModel(NgramModel):
         word = word.lower()
         context = tuple(c.lower() for c in context)
 
-        p = self[context].prob(word)
+        p = self.weight * self[context].prob(word)
 
 
         #print str(self._n) + '-gram:', repr(word), 'in context', context, '=', p
