@@ -60,8 +60,12 @@ class DocumentClassifier(ClassifierI):
             for ngram in ingrams(chain(prefix, words), 3):
                 context = tuple(ngram[:-1])
                 token = ngram[-1]
-                #print token, context
-                logprob[label] += -ngram_model.logprob(token, context)
+                try:
+                    logprob[label] += -ngram_model.logprob(token, context)
+                except RuntimeError:
+                    # Unknown word, skip it
+                    #logger.debug(label + ': Ignoring unknown word: ' + token)
+                    continue
 
             logger.debug(label + ': ' + str(logprob[label]))
 
@@ -91,7 +95,7 @@ class LanguageModel(object):
             logger.debug("Processing category '" + c + "'...")
 
             # Create the NgramModel
-            words = [w.lower() for w in self.corpus.words(categories=[c])[:1000] if w.isalpha()]
+            words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
             
             self.ngrams[c] = SLINgramModel(3, words)
 
@@ -160,7 +164,7 @@ class SLINgramModel(NgramModel):
 
         #Number of bins with a count > 0
         self._ngram_count = len(self._ngrams)
-        del ngrams
+        #del ngrams
 
         #Gives us number of bins with count = 0
         n_0 = bins - self._ngram_count
@@ -169,6 +173,8 @@ class SLINgramModel(NgramModel):
 
         # recursively construct the lower-order models
         if n > 1:
+            if n-1 == 1:
+                estimator = lambda fdist, bins, n_train, n_0: LaplaceProbDist(fdist, bins)
             self._backoff = SLINgramModel(n-1, train, estimator)
 
     # SLI probability
@@ -178,9 +184,12 @@ class SLINgramModel(NgramModel):
         """
         word = word.lower()
         context = tuple(c.lower() for c in context)
+        
+        #if self._n == 1 and (word,) not in self._ngrams:
+            # Unknown word!
+        #    raise RuntimeError("No probability mass assigned to word %s in context %s" % (word, ' '.join(context)))
 
         p = self.weight * self[context].prob(word)
-
 
         #print str(self._n) + '-gram:', repr(word), 'in context', context, '=', p
 
