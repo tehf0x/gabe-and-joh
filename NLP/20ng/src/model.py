@@ -138,7 +138,8 @@ class SLINgramModel(NgramModel):
         self._n = n
 
         if estimator is None:
-            estimator = lambda fdist, bins, n, n_0: NeyProbDist(fdist, bins, n, n_0, factor, 'L' )
+            estimator = lambda fdist, bins, n, n_0: \
+                            NeyProbDist(fdist, bins, n, n_0, factor, NeyProbDist.LINEAR)
 
         cfd = ConditionalFreqDist()
         self._ngrams = set()
