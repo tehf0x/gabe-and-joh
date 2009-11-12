@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger('test-classifier')
 
-def test_classifier(classifier, corpus):
+def test_classifier(classifier, corpus, test_files, ex_slice, num_slices=10):
     """
     classifier = instance of nltk.classify.ClassifierI
     corpus = instance of nltk.corpus.reader.plaintext.CategorizedCorpusReader
@@ -16,8 +16,8 @@ def test_classifier(classifier, corpus):
     labels = classifier.labels()
     confusion = dict((l, dict((l, 0) for l in labels)) for l in labels)
 
-    for label in corpus.categories():
-        for fileid in corpus.fileids(categories=[label]):
+    for label, files in test_files.item():
+        for fileid in files:
             l = classifier.classify(corpus.words(fileids=[fileid]))
             confusion[label][l] += 1
             logger.info(label + ': ' + fileid + ' => ' + l + '!')
@@ -28,7 +28,6 @@ def calc_accuracy(confusion):
     '''
     Calculate the accuracy froma confusion matrix.
     '''
-
     accuracy = 0.0
 
     for l,r in confusion.items():
