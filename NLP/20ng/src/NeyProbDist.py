@@ -31,6 +31,8 @@ class NeyProbDist(ProbDistI):
         {bins} is not specified, it defaults to C{freqdist.B()}.
         """
 
+        print freqdist,  bins, n, n_0, factor, type
+
         if (bins == 0) or (bins is None and freqdist.N() == 0):
             name = self.__class__.__name__[:-8]
             raise ValueError('A %s probability distribution ' % name +
@@ -64,6 +66,8 @@ class NeyProbDist(ProbDistI):
                 return (self._bins - self._n_0) * self._factor / (self._n_0 * self._n)
         #linear discounting
         else:
+            print sample
+            print "Factor: ", self._factor, "N0:", self._n_0
             if(freq > 0):
                 return (1 - self._factor) * freq/self._n
             else:

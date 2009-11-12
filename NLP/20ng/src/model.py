@@ -76,13 +76,13 @@ class LanguageModel(object):
         logger.debug("Loading corpus from '" + corpus_path + "'...")
 
         self.corpus = CategorizedPlaintextCorpusReader(corpus_path, '.*', cat_pattern='(\w*)')
-        
+
         # Count total number of words
         self.word_count = len(self.corpus.words())
 
         # Our category-conditional ngram models
         self.ngrams = dict()
-        
+
         # Category probability dictionary
         cat_prob_dict = dict()
 
@@ -94,7 +94,7 @@ class LanguageModel(object):
             words = [w.lower() for w in self.corpus.words(categories=[c])[:1000] if w.isalpha()]
             
             self.ngrams[c] = SLINgramModel(3, words)
-            
+
             # Set weights manually
             # TODO: Estimate with EM etc.
             self.ngrams[c].weight = 0.5
@@ -138,33 +138,34 @@ class SLINgramModel(NgramModel):
         self._n = n
 
         if estimator is None:
-            estimator = lambda fdist, bins, n, n_0: \
-                            NeyProbDist(fdist, bins, n, n_0, factor, NeyProbDist.LINEAR)
+            estimator = lambda fdist, bins, n_train, n_0: \
+                            NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.LINEAR)
 
         cfd = ConditionalFreqDist()
         self._ngrams = set()
         self._prefix = ('',) * (n - 1)
         self._ngram_count = 0
-
+        num_training = 0
         for ngram in ingrams(chain(self._prefix, train), n):
             # Lowercase words
             ngram = tuple(w.lower() for w in ngram)
             self._ngrams.add(ngram)
+            num_training += 1
             context = tuple(ngram[:-1])
             token = ngram[-1]
             cfd[context].inc(token)
-        
+
         v = len(set(train))
         bins = v ** n
-        
+
         #Number of bins with a count > 0
         self._ngram_count = len(self._ngrams)
-        del self._ngrams
-        
+        del ngrams
+
         #Gives us number of bins with count = 0
         n_0 = bins - self._ngram_count
-        
-        self._model = ConditionalProbDist(cfd, estimator, bins, n, n_0)
+
+        self._model = ConditionalProbDist(cfd, estimator, bins, num_training, n_0)
 
         # recursively construct the lower-order models
         if n > 1:
