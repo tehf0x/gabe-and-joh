@@ -1,0 +1,21 @@
+CS637 - Natural Language Processing
+Programming Assignment 2 – ngram model with smoothing
+
+Gabriel Dulac-Arnold <gabe@squirrelsoup.net> [CS09F004]
+Johannes H. Jensen <johannj@stud.ntnu.no> [CS09F005]
+
+
+-------------------------------------------------------------------------------
+
+All the code can be found in the src/ directory. The programs depend on Python
+and the Natural Language Toolkit (http://www.nltk.org).
+
+The following programs are provided:
+
+test_model.py --      Main program for running the classifier against test cases.
+                      Usage: test_model.py [-v] <train-dir> <test-dir>
+
+train-k.py --         10-fold CV on the training data for determining the
+                      discounting constants of the model.
+
+Happy testing!
