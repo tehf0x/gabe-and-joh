@@ -1,4 +1,6 @@
-
+"""
+...
+"""
 from nltk import ProbDistI
 
 class NeyProbDist(ProbDistI):

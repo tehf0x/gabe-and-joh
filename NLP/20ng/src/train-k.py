@@ -35,7 +35,7 @@ corpus = CategorizedPlaintextCorpusReader('data/task1_train', '.*', cat_pattern=
 max_accuracy = 0
 best_factor = -1
 
-for t_factor in range(0,4):
+for t_factor in range(0,5):
     accuracy = 0
     factor = t_factor/10.0
 

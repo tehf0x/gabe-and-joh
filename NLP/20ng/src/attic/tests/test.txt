@@ -1,0 +1,17 @@
+from nltk.corpus import *
+test_corpus = CategorizedPlaintextCorpusReader('data/task1_test', '.*', cat_pattern='([^/]*)')
+
+train_corpus = CategorizedPlaintextCorpusReader('data/task1_train', '.*', cat_pattern='([^/]*)')
+train_dict = dict((c, train_corpus.words(categories=[c])) for c in train_corpus.categories())
+
+
+import model
+import classify
+
+m = model.LanguageModel(train_dict)
+
+c = classify.DocumentClassifier(m)
+
+
+confusion = classify.test(c, test_corpus)
+

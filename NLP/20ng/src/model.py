@@ -3,7 +3,7 @@ Language Model for document classification
 
 Uses an n-gram model with Simple Linear Interpolation
 
-@author: joh
+@author: Johannes H. Jensen <johannj@stud.ntnu.no>
 """
 
 from math import log
@@ -13,73 +13,28 @@ import logging
 from nltk.model import NgramModel
 from nltk.probability import ProbDistI, ConditionalProbDist, ConditionalFreqDist, \
                              MLEProbDist, DictionaryProbDist, LaplaceProbDist
-from nltk.corpus.reader.plaintext import CategorizedPlaintextCorpusReader
-from nltk.classify import NaiveBayesClassifier
-from nltk.classify import ClassifierI
 from nltk.util import ingrams
 
-from NeyProbDist import NeyProbDist
+from probability import NeyProbDist
 
-logging.basicConfig(level=logging.WARN)
-
+# Set up logger
 logger = logging.getLogger('model')
 
-class DocumentClassifier(ClassifierI):
-
-    def __init__(self, lang_model):
-        self.model = lang_model
-
-    def labels(self):
-        """
-        @return: the list of category labels used by this classifier.
-        @rtype: C{list} of (immutable)
-        """
-        return self.model.category_probdist.samples()
-
-    def classify(self, document):
-        return self.prob_classify(document).max()
-
-    def prob_classify(self, document):
-        """
-        @return: a probability distribution over labels for the given
-            document.
-        @rtype: L{ProbDistI <nltk.probability.ProbDistI>}
-        """
-        # Find the log probabilty of each label, given the features.
-        # Start with the log probability of the label itself.
-        logprob = {}
-
-        for label in self.labels():
-            logprob[label] = self.model.category_probdist.prob(label)
-            ngram_model = self.model.ngrams[label]
-
-            prefix = ('',) * (ngram_model._n - 1)
-
-            words = [w.lower() for w in document if w.isalpha()]
-
-            for ngram in ingrams(chain(prefix, words), 3):
-                context = tuple(ngram[:-1])
-                token = ngram[-1]
-                try:
-                    logprob[label] += -ngram_model.logprob(token, context)
-                except RuntimeError:
-                    # Unknown word, skip it
-                    #logger.debug(label + ': Ignoring unknown word: ' + token)
-                    continue
-
-            logger.debug(label + ': ' + str(logprob[label]))
-
-        return DictionaryProbDist(logprob, normalize=True, log=True)
 
 class LanguageModel(object):
-    '''
-    Slice is the nth slice you want to exclude.  Excluding the first
-    part of the corpus with a slice means you should pass slice=0.
-    '''
-
+    """
+    Language Model based on ngrams
+    """
+    
     def __init__(self, training_dict, factor=0.7):
-        #self.corpus_path = corpus_path
-
+        """
+        training_dict: training data dictionary. Each element corresponds
+                       to training data for one category.
+        
+        factor: The NeyProbDist smoothing factor
+        """
+        
+        # Training data
         self.training_dict = training_dict
 
         # Count total number of words
@@ -93,7 +48,7 @@ class LanguageModel(object):
 
         # Loop through each category
         for c,c_words in self.training_dict.items():
-            logger.debug("Processing category '" + c + "'...")
+            logger.info("Processing category '" + c + "'...")
 
             words = [w.lower() for w in c_words if w.isalpha()]
 
@@ -122,7 +77,6 @@ class SLINgramModel(NgramModel):
     # TODO: Estimate this with EM
     weight = 0.3
 
-    # add cutoff
     def __init__(self, n, train, estimator=None, factor=0.7):
         """
         Creates an ngram language model to capture patterns in n consecutive
@@ -142,42 +96,62 @@ class SLINgramModel(NgramModel):
         self._n = n
 
         if estimator is None:
-            estimator = lambda fdist, bins, n_train, n_0: \
-                            NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.LINEAR)
-
+            if n > 1:
+                # Use smoothing based on Ney et al 
+                probdist_factory = lambda fdist, bins, n_train, n_0: \
+                                NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.LINEAR)
+            else:
+                # Use simple add-1 smoothing for unigrams
+                probdist_factory = lambda fdist, bins, *args: LaplaceProbDist(fdist, bins)
+        else:
+            probdist_factory = estimator
+        
+        # Initialize conditional frequency distribution
         cfd = ConditionalFreqDist()
+        
+        # Initialize set of ngrams
         self._ngrams = set()
-        self._prefix = ('',) * (n - 1)
         self._ngram_count = 0
+        
+        # Prefix beginning of document with empty strings
+        self._prefix = ('',) * (n - 1)
+        
+        # Count the number of training examples
         num_training = 0
+        
+        # Loop through each ngram and add to CFD
         for ngram in ingrams(chain(self._prefix, train), n):
             # Lowercase words
             ngram = tuple(w.lower() for w in ngram)
+            
+            # Add to known ngrams
             self._ngrams.add(ngram)
-            num_training += 1
+            
+            # Add to CFD
             context = tuple(ngram[:-1])
             token = ngram[-1]
             cfd[context].inc(token)
-
+            
+            num_training += 1
+        
+        # Calculate vocabulary size (for NeyProbDist)
         v = len(set(train))
         bins = v ** n
 
-        #Number of bins with a count > 0
+        # Number of bins with a count > 0
         self._ngram_count = len(self._ngrams)
-        #del ngrams
 
-        #Gives us number of bins with count = 0
+        # Gives us number of bins with count = 0
         n_0 = bins - self._ngram_count
-
-        self._model = ConditionalProbDist(cfd, estimator, bins, num_training, n_0)
+        
+        # Create CPD model
+        self._model = ConditionalProbDist(cfd, probdist_factory, bins, num_training, n_0)
 
         # recursively construct the lower-order models
         if n > 1:
-            if n-1 == 1:
-                estimator = lambda fdist, bins, n_train, n_0: LaplaceProbDist(fdist, bins)
             self._backoff = SLINgramModel(n-1, train, estimator)
 
-    # SLI probability
+    
     def prob(self, word, context):
         """
         Evaluate the probability of this word in this context.
@@ -188,11 +162,11 @@ class SLINgramModel(NgramModel):
         #if self._n == 1 and (word,) not in self._ngrams:
             # Unknown word!
         #    raise RuntimeError("No probability mass assigned to word %s in context %s" % (word, ' '.join(context)))
-
+        
+        # prob() should always return a smoothed non-zero probability
         p = self.weight * self[context].prob(word)
-
-        #print str(self._n) + '-gram:', repr(word), 'in context', context, '=', p
-
+        
+        # Add lower order ngram probabilities
         if self._n > 1:
             p += self._backoff.prob(word, context[1:])
 
