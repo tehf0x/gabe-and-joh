@@ -20,7 +20,7 @@ from nltk.util import ingrams
 
 from NeyProbDist import NeyProbDist
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARN)
 
 logger = logging.getLogger('model')
 
@@ -72,17 +72,18 @@ class DocumentClassifier(ClassifierI):
         return DictionaryProbDist(logprob, normalize=True, log=True)
 
 class LanguageModel(object):
+    '''
+    Slice is the nth slice you want to exclude.  Excluding the first
+    part of the corpus with a slice means you should pass slice=0.
+    '''
 
-    def __init__(self, corpus_path):
-        self.corpus_path = corpus_path
+    def __init__(self, training_dict, factor=0.7):
+        #self.corpus_path = corpus_path
 
-        # Load corpus
-        logger.debug("Loading corpus from '" + corpus_path + "'...")
-
-        self.corpus = CategorizedPlaintextCorpusReader(corpus_path, '.*', cat_pattern='(\w*)')
+        self.training_dict = training_dict
 
         # Count total number of words
-        self.word_count = len(self.corpus.words())
+        self.word_count = len(self.training_dict)
 
         # Our category-conditional ngram models
         self.ngrams = dict()
@@ -91,13 +92,12 @@ class LanguageModel(object):
         cat_prob_dict = dict()
 
         # Loop through each category
-        for c in self.corpus.categories():
+        for c,c_words in self.training_dict.items():
             logger.debug("Processing category '" + c + "'...")
 
-            # Create the NgramModel
-            words = [w.lower() for w in self.corpus.words(categories=[c]) if w.isalpha()]
-            
-            self.ngrams[c] = SLINgramModel(3, words)
+            words = [w.lower() for w in c_words if w.isalpha()]
+
+            self.ngrams[c] = SLINgramModel(3, words, factor=factor)
 
             # Set weights manually
             # TODO: Estimate with EM etc.
@@ -106,7 +106,7 @@ class LanguageModel(object):
             self.ngrams[c]._backoff._backoff.weight = 0.2
 
             # Count number of words in this category
-            nw = len(self.corpus.words(categories=[c]))
+            nw = len(c_words)
 
             cat_prob_dict[c] = float(nw) / float(self.word_count)
 
@@ -184,7 +184,7 @@ class SLINgramModel(NgramModel):
         """
         word = word.lower()
         context = tuple(c.lower() for c in context)
-        
+
         #if self._n == 1 and (word,) not in self._ngrams:
             # Unknown word!
         #    raise RuntimeError("No probability mass assigned to word %s in context %s" % (word, ' '.join(context)))
