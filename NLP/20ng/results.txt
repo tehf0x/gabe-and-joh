@@ -1,0 +1,46 @@
+TASK 1
+
+LINEAR DISCOUNTING
+
+Loading training corpus from 'data/task1_train/'...
+Loading test corpus from 'data/task1_test/'...
+Constructing Language Model... (this might take a while)
+Testing model against test corpus... (this might also take a while)
+
+Confusion Matrix:
+
+             RECREATIONS  COMP  POLITICS  RELIGION  SCIENCE 
+RECREATIONS           49     0         1         0        0 
+COMP                   4    20         0         3       23 
+POLITICS               0     0        46         3        1 
+RELIGION               0     0         1        47        2 
+SCIENCE                1     1         3         2       43 
+
+Accuracy: 82.00%
+
+
+
+
+
+TASK 2
+
+LINEAR DISCOUNTING
+
+Loading training corpus from 'data/task2_train/'...
+Loading test corpus from 'data/task2_test/'...
+Constructing Language Model... (this might take a while)
+Testing model against test corpus... (this might also take a while)
+
+Confusion Matrix:
+
+                    rec.motorcycles  rec.sport.baseball  rec.autos  rec.sport.hockey 
+rec.motorcycles                  24                   0          1                 0 
+rec.sport.baseball                0                  25          0                 0 
+rec.autos                         0                   0         25                 0 
+rec.sport.hockey                  0                   0          0                25 
+
+Accuracy: 99.00%
+
+
+
+ABSOLUTE DISCOUNTING
