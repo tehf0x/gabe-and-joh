@@ -25,15 +25,15 @@ class LanguageModel(object):
     """
     Language Model based on ngrams
     """
-    
+
     def __init__(self, training_dict, factor=0.7):
         """
         training_dict: training data dictionary. Each element corresponds
                        to training data for one category.
-        
+
         factor: The NeyProbDist smoothing factor
         """
-        
+
         # Training data
         self.training_dict = training_dict
 
@@ -97,7 +97,7 @@ class SLINgramModel(NgramModel):
 
         if estimator is None:
             if n > 1:
-                # Use smoothing based on Ney et al 
+                # Use smoothing based on Ney et al
                 probdist_factory = lambda fdist, bins, n_train, n_0: \
                                 NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.LINEAR)
             else:
@@ -105,35 +105,35 @@ class SLINgramModel(NgramModel):
                 probdist_factory = lambda fdist, bins, *args: LaplaceProbDist(fdist, bins)
         else:
             probdist_factory = estimator
-        
+
         # Initialize conditional frequency distribution
         cfd = ConditionalFreqDist()
-        
+
         # Initialize set of ngrams
         self._ngrams = set()
         self._ngram_count = 0
-        
+
         # Prefix beginning of document with empty strings
         self._prefix = ('',) * (n - 1)
-        
+
         # Count the number of training examples
         num_training = 0
-        
+
         # Loop through each ngram and add to CFD
         for ngram in ingrams(chain(self._prefix, train), n):
             # Lowercase words
             ngram = tuple(w.lower() for w in ngram)
-            
+
             # Add to known ngrams
             self._ngrams.add(ngram)
-            
+
             # Add to CFD
             context = tuple(ngram[:-1])
             token = ngram[-1]
             cfd[context].inc(token)
-            
+
             num_training += 1
-        
+
         # Calculate vocabulary size (for NeyProbDist)
         v = len(set(train))
         bins = v ** n
@@ -143,7 +143,7 @@ class SLINgramModel(NgramModel):
 
         # Gives us number of bins with count = 0
         n_0 = bins - self._ngram_count
-        
+
         # Create CPD model
         self._model = ConditionalProbDist(cfd, probdist_factory, bins, num_training, n_0)
 
@@ -151,7 +151,7 @@ class SLINgramModel(NgramModel):
         if n > 1:
             self._backoff = SLINgramModel(n-1, train, estimator)
 
-    
+
     def prob(self, word, context):
         """
         Evaluate the probability of this word in this context.
@@ -162,10 +162,10 @@ class SLINgramModel(NgramModel):
         #if self._n == 1 and (word,) not in self._ngrams:
             # Unknown word!
         #    raise RuntimeError("No probability mass assigned to word %s in context %s" % (word, ' '.join(context)))
-        
+
         # prob() should always return a smoothed non-zero probability
         p = self.weight * self[context].prob(word)
-        
+
         # Add lower order ngram probabilities
         if self._n > 1:
             p += self._backoff.prob(word, context[1:])

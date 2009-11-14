@@ -31,8 +31,23 @@ class NeyProbDist(ProbDistI):
         distribution.  This value must be correctly set for the
         probabilities of the sample values to sum to one.  If
         {bins} is not specified, it defaults to C{freqdist.B()}.
+
+        @type n: C{int}
+
+        @param n: Number of training instances (*non*-distinct n-gram count)
+
+        @type n_0: C{int}
+
+        @param n_0: Number of bins with count 0: number of elements in
+        the n-gram vocabulary that we have not encountered in the
+        training data.
+
+        @type factor: C{float}
+        @param: Discount factor.
+
+        @type type: C{int}
+        @param: What type of discounting are we using.
         """
-        
         if (bins == 0) or (bins is None and freqdist.N() == 0):
             name = self.__class__.__name__[:-8]
             raise ValueError('A %s probability distribution ' % name +
@@ -61,7 +76,7 @@ class NeyProbDist(ProbDistI):
         #absolute discounting
         if self._type == self.ABSOLUTE:
             if(freq > 0):
-                return (freq - self._factor) / self._n
+                return float(freq - self._factor) / self._n
             else:
                 return (self._bins - self._n_0) * self._factor / (self._n_0 * self._n)
         #linear discounting
@@ -73,5 +88,4 @@ class NeyProbDist(ProbDistI):
 
     def samples(self):
         return self._freqdist.samples()
-    
-    
+
