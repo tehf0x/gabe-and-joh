@@ -63,26 +63,26 @@ class NeyProbDist(ProbDistI):
             raise ValueError('Unrecognize discounting type.')
 
         self._freqdist = freqdist
-        self._bins = bins
-        self._n = n
-        self._n_0 = n_0
-        self._factor = factor
+        self._bins = float(bins)
+        self._n = float(n)
+        self._n_0 = float(n_0)
+        self._factor = float(factor)
         self._type = type
 
 
     def prob(self, sample):
-        freq = self._freqdist[sample]
+        freq = float(self._freqdist[sample])
 
         #absolute discounting
         if self._type == self.ABSOLUTE:
             if(freq > 0):
-                return float(freq - self._factor) / self._n
+                return (freq - self._factor) / self._n
             else:
                 return (self._bins - self._n_0) * self._factor / (self._n_0 * self._n)
         #linear discounting
         else:
             if(freq > 0):
-                return (1 - self._factor) * freq/self._n
+                return (1.0 - self._factor) * freq/self._n
             else:
                 return self._factor / self._n_0
 

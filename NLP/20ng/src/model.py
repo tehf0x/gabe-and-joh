@@ -26,7 +26,7 @@ class LanguageModel(object):
     Language Model based on ngrams
     """
 
-    def __init__(self, training_dict, factor=0.7):
+    def __init__(self, training_dict, factor=0.77):
         """
         training_dict: training data dictionary. Each element corresponds
                        to training data for one category.
@@ -77,7 +77,7 @@ class SLINgramModel(NgramModel):
     # TODO: Estimate this with EM
     weight = 0.3
 
-    def __init__(self, n, train, estimator=None, factor=0.7):
+    def __init__(self, n, train, estimator=None, factor=0.77):
         """
         Creates an ngram language model to capture patterns in n consecutive
         words of training text.  An estimator smooths the probabilities derived
@@ -99,7 +99,9 @@ class SLINgramModel(NgramModel):
             if n > 1:
                 # Use smoothing based on Ney et al
                 probdist_factory = lambda fdist, bins, n_train, n_0: \
-                                NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.LINEAR)
+                                NeyProbDist(fdist, bins, n_train, n_0, factor, NeyProbDist.ABSOLUTE)
+                                
+                #probdist_factory = lambda fdist, bins, *args: LaplaceProbDist(fdist, bins)
             else:
                 # Use simple add-1 smoothing for unigrams
                 probdist_factory = lambda fdist, bins, *args: LaplaceProbDist(fdist, bins)
