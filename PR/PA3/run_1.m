@@ -17,4 +17,8 @@ end
 
 G = bayes_generator(M,C);
 
-[accuracy, confusion] = test_datasets(test_data, G)
+[accuracy, confusion] = test_datasets(test_data, G);
+
+accuracy
+
+print_confusion_latex(confusion)
