@@ -1,8 +1,24 @@
-% BAYES
+% BAYES with PCA
 
 addpath('util');
 
 load_d1;
+
+% Run PCA on the data
+training_data = pca(training_data, 1);
+test_data = pca(test_data, 1);
+
+%{
+hold
+%plot(training_data{1}(:,1), 'r.')
+%plot(training_data{2}(:,1), 'g.')
+%plot(training_data{3}(:,1), 'b.')
+
+plot(training_data{1}(:,1), training_data{1}(:,2), 'r.')
+plot(training_data{2}(:,1), training_data{2}(:,2), 'g.')
+plot(training_data{3}(:,1), training_data{3}(:,2), 'b.')
+%plot3(training_data{1}(:,1), training_data{1}(:,2), training_data{1}(:,3), 'r.')
+%}
 
 % Set up the mean cells.
 M = {};

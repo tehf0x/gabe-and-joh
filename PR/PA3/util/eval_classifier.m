@@ -1,12 +1,12 @@
-function [accuracy, confusion] = test_datasets(datasets, g_funcs)
-% TEST_DATASETS returns accuracy and confusion matrix
-    n_classes = size(g_funcs, 2);
+function [accuracy, confusion] = eval_classifier(datasets, classify)
+% EVAL_CLASSIFIER returns accuracy and confusion matrix
+    n_classes = length(datasets);
     
     confusion = zeros(n_classes, n_classes);
     accuracy = zeros(n_classes, 1);
     
     for i=1:n_classes
-        result = categorize(datasets{i}, g_funcs);
+        result = categorize(datasets{i}, classify, n_classes);
         for j=1:n_classes
             confusion(i, j) = size(result{j}, 1);
         end
