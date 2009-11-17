@@ -146,7 +146,7 @@ if __name__ == '__main__':
     
     if type == 'returns':
         # Plot returns
-        returns_plot = Plot(title='Returns', xlabel='Episodes', ylabel='Return', axis=(None,None,-20,15))
+        returns_plot = Plot(title='Returns', xlabel='Episodes', ylabel='Return', axis=(None,None,-2,None))
         for name, d in datasets.items():
             returns_plot.plot(d['returns'], label=name)
         
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     
     elif type == 'steps':
         # Plot steps
-        steps_plot = Plot(title='Steps', xlabel='Episodes', ylabel='Steps', axis=(None,None,None,200))
+        steps_plot = Plot(title='Steps', xlabel='Episodes', ylabel='Steps', axis=(None,None,None,100))
         for name, d in datasets.items():
             steps_plot.plot(d['steps'], label=name)
         
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             #print d['policy']
             plot = PolicyPlot(title=name + ' Policy', world=d['world'])
             plot.plot(d['policy'])
-            plot.save(name + '.policy.png')
+            plot.save(name + '-policy.png')
             
         #dataset = datasets[sys.argv[2]]
         #if len(datasets) > 1:
