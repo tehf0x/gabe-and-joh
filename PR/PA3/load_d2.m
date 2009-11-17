@@ -1,7 +1,7 @@
 %Run the tests for the bayesian classifier on the 2d linearly seperable
 %dataset
 dataset = load('datasets/ls_group14.txt');
-class_offsets = [500,1000,1500]
+class_offsets = [500,1000,1500];
 
 % Split data into N classes
 n_classes = size(class_offsets, 2);
