@@ -35,7 +35,10 @@ class GradientAgent(BaseAgent):
 
     #This is around just for legacy:
     epsilon = 0.0
-    alpha = 0.0
+    
+    # Alpha is awesome
+    alpha = 0.01
+    
     # We need to remember our last action and state for updating Q
     last_state = ()
     last_action = ()
@@ -66,18 +69,18 @@ class GradientAgent(BaseAgent):
     def agent_end(self, reward):
         """ Called when a game ends """
         #self.delta += self.rewards * self.z
-        print 'END'
+        #print 'END'
         self.avg_reward = self.avg_reward + (float(reward - self.avg_reward) / \
-                            (self.num_rewards + 1))
-        print self.avg_reward
+                            (self.num_rewards + 1.0))
+        #print self.avg_reward
 
         for idx in range(12):
             for act in self.actions:
-                self.theta_x[idx][act] += self.avg_reward * self.delta_x[idx][act]
-                self.theta_y[idx][act] += self.avg_reward * self.delta_y[idx][act]
+                self.theta_x[idx][act] += self.alpha * self.avg_reward * self.delta_x[idx][act]
+                self.theta_y[idx][act] += self.alpha * self.avg_reward * self.delta_y[idx][act]
 
-        print self.theta_x[0]
-        print self.theta_y[0]
+        #print self.theta_x[0]
+        #print self.theta_y[0]
         #Increment the episode count
         self.episode_num += 1
 
