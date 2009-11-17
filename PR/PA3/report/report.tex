@@ -23,7 +23,7 @@ Johannes H. Jensen $<$johannj@stud.ntnu.no$>$ (CS09F005) \\
 \section{Dataset I: Linearly Separable}
 
 These are the linearly seperable datasets that allow us to visualize the basic functioning of the various linear classifiers.
-All the classifiers perform well on these datasets except for one outlying point that consistently gets misclassified.
+All the classifiers perform well on these datasets except for one outlying point that consistently gets misclassified for methods other than SVM.
 
 \subsection{Classifier Accuracy}
 
@@ -35,7 +35,7 @@ Fisher Discriminant  &   99.73\% \\
 \hline
 Perceptron          &   99.73\% \\
 \hline
-SVM                 &   ZERO\%   \\
+SVM                 &   100\%   \\
 \hline
 \end{tabular}
 
@@ -73,19 +73,21 @@ SVM                 &   ZERO\%   \\
 \end{tabular}
 \columnbreak
 
-\item SVM:
+\item Support Vector Machine:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & NOPE & 0 & 1 \\
+  $\omega_1$ & 125 & 0 & 0 \\
 \hline
-  $\omega_2$ & 0 & NEIN & 0 \\
+  $\omega_2$ & 0 & 125 & 0 \\
 \hline
-  $\omega_3$ & 0 & 0 & NIET \\
+  $\omega_3$ & 0 & 0 & 125 \\
 \hline
 \end{tabular}
+
+
 \end{enumerate}
 \end{multicols}
 
@@ -99,11 +101,22 @@ SVM                 &   ZERO\%   \\
 \caption{Fisher Discriminant}
 \end{figure}
 
+\begin{figure}[htbp!]
+\center
+\includegraphics[clip, trim=40px 15px 30px 10px]{perceptron.png}
+\caption{Support Vector Machine}
+\end{figure}
+\pagebreak
+\begin{figure}[htbp!]
+\center
+\includegraphics[clip, trim=40px 15px 30px 10px]{svm_c.png}
+\caption{Support Vector Machine}
+\end{figure}	
 
-
-\newpage
+\pagebreak
 \section{Dataset II: Overlapping Data}
-Fisher Discriminant does a good job of finding pertinent boundaries, but the overlapping nature of the dataset makes classification difficult.
+SVM outperforms Fisher Discrimnant on the overlapping data task most likely because it is doing
+a better job at maximizing the margins between the datasets.
 \subsection{Classifier Accuracy}
 
 \begin{tabular}{ | l | r | }
@@ -112,7 +125,7 @@ Fisher Discriminant does a good job of finding pertinent boundaries, but the ove
 \hline
 Fisher Discriminant  &   89.6\% \\
 \hline
-SVM          &   OUU\% \\
+SVM          &   91.2\% \\
 \hline
 
 \end{tabular}
@@ -135,17 +148,17 @@ SVM          &   OUU\% \\
 \hline
 \end{tabular}
 
-\item SVM:
+\item Support Vector Machine:
 
 \begin{tabular}{ | l | c | c | c | }
 \hline
 & $\omega_1$ & $\omega_2$ & $\omega_3$ \\
 \hline
-  $\omega_1$ & NOT & 16 & 1 \\
+  $\omega_1$ & 111 & 11 & 3 \\
 \hline
-  $\omega_2$ & 2 & TRUE & 7 \\
+  $\omega_2$ & 4 & 116 & 5 \\
 \hline
-  $\omega_3$ & 10 & 3 & ATALL \\
+  $\omega_3$ & 7 & 3 & 115 \\
 \hline
 \end{tabular}
 
@@ -160,6 +173,13 @@ SVM          &   OUU\% \\
 \caption{Fisher Discriminant}
 \end{figure}
 
+
+\begin{figure}[htbp!]
+\center
+\includegraphics[clip, trim=40px 15px 30px 10px]{svm_d.png}
+\caption{Support Vector Machine}
+\end{figure}
+
 \section{Dataset III: Real World Image Feature Data}
 
 \subsection{Classifier Accuracy}
@@ -170,11 +190,13 @@ SVM          &   OUU\% \\
 \hline
 Bayes Single Gaussian  &   58.67\% \\
 \hline
-Bayes PCA Gaussian  &   60.00\% \\
+Bayes PCA Gaussian (1 Dim.)  &   60.00\% \\
 \hline
 Fisher Discriminant  &   70.67\% \\
 \hline
-SVM          &   ou\% \\
+SVM          &   65.33\% \\
+\hline
+SVM w/ PCA & 61.33\% \\
 \hline
 \end{tabular}
 
@@ -197,7 +219,7 @@ SVM          &   ou\% \\
   $\omega_3$ & 5 & 3 & 17 \\
 \hline
 \end{tabular}
-
+\columnbreak
 \item Bayes PCA Gaussian:
 
 \begin{tabular}{ | l | c | c | c | }
@@ -226,13 +248,45 @@ SVM          &   ou\% \\
 \hline
 \end{tabular}
 
+\item Support Vector Machine
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 18 & 1 & 6 \\
+\hline
+  $\omega_2$ & 3 & 21 & 1 \\
+\hline
+  $\omega_3$ & 5 & 10 & 10 \\
+\hline
+\end{tabular}
+
+\item SVM w/ PCA
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 11 & 3 & 11 \\
+\hline
+  $\omega_2$ & 0 & 19 & 6 \\
+\hline
+  $\omega_3$ & 5 & 4 & 16 \\
+\hline
+\end{tabular}
+
+
 \end{enumerate}
 \end{multicols}
 
 
 \section{Conclusions}
 
-In this assignement we see the performance of linear classifiers with gradually more complex datasets.  We don't use explicitly non-linear datasets as these would of course not work well with these techniques, but we do realize that for real-world high-dimensional applications, linear classifiers and dimensional reduction techniques work much better than Gaussian Bayes classifiers.
+In this assignement we see the performance of linear classifiers with gradually more complex datasets.  We don't use explicitly non-linear datasets as these would of course not work well with these techniques, but we do realize that for real-world high-dimensional applications, linear classifiers and dimensional reduction techniques work much better than Gaussian Bayes classifiers.  
+
+We come to the conclusion that SVM and Fisher Discrimninant Analysis are the best performing classifiers for overlapping
+data or high-dimensionality data, and we see that in the case of the 45 dimensional data Fisher Discriminant actually outperforms SVM, whereas the lower-dimensional problem is better handled by SVM.
 
 \end{document}
 
