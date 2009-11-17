@@ -104,6 +104,17 @@ function [ gc_funcs ] = perceptron(training_data)
         
         g_funcs{i} = g;
         
+        
+        %{
+        % Plot some lines
+        x = -6.8586:.1:18.1881;
+
+        f = @(x) -a(2) * x / a(3) - a(1)/a(3);
+        plot(x, f(x), 'k-');
+        %refreshdata
+        drawnow
+        %}
+        
         %input('Continue?');
     end
     
