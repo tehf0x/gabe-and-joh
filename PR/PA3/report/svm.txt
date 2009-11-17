@@ -1,0 +1,111 @@
+# a. 45-dimensional representation of image data
+
+accuracy =
+
+    0.6533
+
+
+confusion =
+
+    18     1     6
+     3    21     1
+     5    10    10
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 18 & 1 & 6 \\
+\hline
+  $\omega_2$ & 3 & 21 & 1 \\
+\hline
+  $\omega_3$ & 5 & 10 & 10 \\
+\hline
+\end{tabular}
+
+
+# b. Reduced dimension representation of image data obtained using PCA
+
+accuracy =
+
+    0.6133
+
+
+confusion =
+
+    11     3    11
+     0    19     6
+     5     4    16
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 11 & 3 & 11 \\
+\hline
+  $\omega_2$ & 0 & 19 & 6 \\
+\hline
+  $\omega_3$ & 5 & 4 & 16 \\
+\hline
+\end{tabular}
+
+
+
+
+
+# c. Linearly separable data
+accuracy =
+
+     1
+
+
+confusion =
+
+   125     0     0
+     0   125     0
+     0     0   125
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 125 & 0 & 0 \\
+\hline
+  $\omega_2$ & 0 & 125 & 0 \\
+\hline
+  $\omega_3$ & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+
+
+# d. Overlapping data
+accuracy =
+
+    0.9120
+
+
+confusion =
+
+   111    11     3
+     4   116     5
+     7     3   115
+
+Confusion LaTeX:
+
+\begin{tabular}{ | l | c | c | c | }
+\hline
+& $\omega_1$ & $\omega_2$ & $\omega_3$ \\
+\hline
+  $\omega_1$ & 111 & 11 & 3 \\
+\hline
+  $\omega_2$ & 4 & 116 & 5 \\
+\hline
+  $\omega_3$ & 7 & 3 & 115 \\
+\hline
+\end{tabular}
