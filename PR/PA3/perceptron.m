@@ -31,7 +31,7 @@ function [ gc_funcs ] = perceptron(training_data)
     
     % Train each classifier
     for i=1:n_pairs
-        pair = pairs(i,:)
+        pair = pairs(i,:);
         
         % Initialize weights
         a = ones(dim + 1, 1);
