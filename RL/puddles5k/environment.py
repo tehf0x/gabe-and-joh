@@ -105,7 +105,7 @@ class PuddleEnvironment(Environment):
     
     """ Size of grid """
     #grid_size = 5000/12
-    grid_size = 10
+    grid_size = 5
 
     """ Valid actions and their resulting movement vectors (y, x) """
     valid_actions = {'N': (-1, 0),
@@ -143,7 +143,7 @@ class PuddleEnvironment(Environment):
     enable_stochastic_actions = True
     
     """ Step limit - sends terminal signal if reached """
-    step_limit = 500
+    step_limit = 5000
     
     """ Name of the environment """
     name = 'PuddleEnvironment'
@@ -164,7 +164,12 @@ class PuddleEnvironment(Environment):
             for col in range(len(self.rewards[row])):
                 self.world[row][col].reward = self.rewards[row][col]
 
-        return ''
+        height, width = self.size
+        taskSpec = 'VERSION RL-Glue-3.0 PROBLEMTYPE episodic ' + \
+                   'OBSERVATIONS INTS (0 %d) (0 %d) ACTIONS INTS(0 4)' % \
+                   (height * self.grid_size, width * self.grid_size)
+        
+        return taskSpec
 
     # () -> Observation
     def env_start(self):
@@ -273,7 +278,7 @@ class PuddleEnvironment(Environment):
         self.step_out("REWARD:", pstate.reward)
         
         terminal = pstate.terminal
-        if self.steps > self.step_limit * self.world.grid_size:
+        if self.steps > self.step_limit:
             self.debug("STEP LIMIT REACHED!")
             terminal = True
 

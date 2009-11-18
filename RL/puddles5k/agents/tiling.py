@@ -27,36 +27,16 @@ class CmacTiler:
         tiler_actions = []
         for tiling in self.tilings:
             tiler_actions.append(tiling[pos])
-        self.calc_avg(tiler_actions)
-
-        self.actions_set.pos = pos
-        self.action_set.actions = avg_value
-        return self.action_set
-
-    def update_action(self, pos, action, value):
-        frac_val = float(value) / n_tilings
-        for tiling in tilings:
-            tiling[pos][action] = frac_val
-
-    def calc_avg(self, tiler_actions):
-        '''
-        Calculate the average of the actions over the different tilers.
-        We will *not* do this:
-        dict((k, float(sum([e[k] for e in d]))/len(d)) for k in d1.keys())
-        '''
-        keys = tiler_actions[0].keys()
-        avg_action = {}
-        for key in keys:
-            avg_action[key] = float(sum([actions[key] for actions in tiler_actions])) \
-                            /self.n_tilings
-        return avg_action
+        
+        return ActionSet(tiler_actions)
 
 
 class Tiling:
     '''
     Contains a reduction map as well as a value store.
     '''
-    actions = {'E': 0, 'N': 0, 'S': 0, 'W': 0}
+    actions = [('E',), ('N',), ('S',), ('W',)]
+    #actions = {('E',): 0, ('N',): 0, ('S',): 0, ('W',): 0}
 
     def __init__(self, size, dens):
         '''
@@ -93,24 +73,57 @@ class Tiling:
         #look up the value once, and if it's not inited, init it.
         val = self.values[(mapped_x, mapped_y)]
         if val is None:
-            self.values[(mapped_x, mapped_y)] = copy(self.actions)
+            self.values[(mapped_x, mapped_y)] = self.random_actions()
+            
+            #self.values[(mapped_x, mapped_y)] = copy(self.actions)
             #Need to copy it back to keep the references correct.
             val = self.values[(mapped_x, mapped_y)]
 
         return val
+    
+    random.random()
+    
+    def random_actions(self):
+        """ Generate random action values """
+        return dict((a, random.random()) for a in self.actions)
 
-class  ActionSet:
+class ActionSet:
     '''
     This exists as a wrapper to the array of actions.
     When an action value gets updated by the RL agent, the actionset
     calls the cmactiler's update functino with the new value so that
     it gets properly distributed over the different tilings.
     '''
-    def  __init__(self, par_ref):
-        self.tile_ref = par_ref
-        self.pos = (0,0)
+    def  __init__(self, tiler_actions):
+        self.tiler_actions = tiler_actions
+    
+    def __getitem__(self, action):
+        '''
+        Calculate the average of one action over the different tilers.
+        We will *not* do this:
+        dict((k, float(sum([e[k] for e in d]))/len(d)) for k in d1.keys())
+        '''
+        avg_action = float(sum([actions[action] for actions in self.tiler_actions])) \
+                     / len(self.tiler_actions)
+                     
+        return avg_action
+    
+    def __setitem__(self, action, value):
+        ''' Sets the value of action for all tilers '''
+        for tiler_action in self.tiler_actions:
+            tiler_action[action] = value
+    
+    def __repr__(self):
+        return str(dict(self.items()))
+    
+    def keys(self):
+        return self.tiler_actions[0].keys()
+    
+    def items(self):
+        return [(k, self[k]) for k in self.keys()]
+    
+    def values(self):
+        return [self[k] for k in self.keys()]
 
-    def __set__item(action, value):
-        self.tile_ref.update_action(self.pos,action,value)
 
 

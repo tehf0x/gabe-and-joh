@@ -30,6 +30,7 @@ class SarsaAgent(TDAgent):
         Q_val = self.Q[state][action]
         
         #Look at the best action from the next state.
+        new_action = None
         Qp_val = 0
         if new_state is not None:
             new_action = self.policy(new_state)
@@ -38,6 +39,8 @@ class SarsaAgent(TDAgent):
         #The famous formula:
         Q_val = Q_val + self.alpha * (reward + self.gamma * Qp_val - Q_val)
         self.Q[state][action] = Q_val
+        
+        return new_action
 
 if __name__=="__main__":
     AgentLoader.loadAgent(SarsaAgent())

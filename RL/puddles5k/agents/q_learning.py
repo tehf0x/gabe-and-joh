@@ -44,6 +44,8 @@ class QAgent(TDAgent):
         #print 'Q val: ', Q_val
         
         self.Q[state][action] = Q_val
+        
+        return None
 
 if __name__=="__main__":
     AgentLoader.loadAgent(QAgent())

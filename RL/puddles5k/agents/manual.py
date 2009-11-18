@@ -5,12 +5,14 @@ Manual user-controlled agent for environment testing
 """
 
 import curses
+import time
 
 from rlglue import RLGlue
 from rlglue.agent.Agent import Agent
 from rlglue.agent import AgentLoader as AgentLoader
 from rlglue.types import Action
 from rlglue.types import Observation
+from rlglue.utils.TaskSpecVRLGLUE3 import TaskSpecParser
 
 
 class ManualAgent(Agent):    
@@ -19,10 +21,17 @@ class ManualAgent(Agent):
     """
     # (string) -> void
     def agent_init(self, taskSpecification):
+        ts = TaskSpecParser(taskSpecification)
+        print ts.getIntObservations()
+        
+        time.sleep(10)
+        
         self.window = curses.initscr()
         curses.noecho()
         curses.cbreak()
         self.window.keypad(1)
+        
+        
     
     # (Observation) -> Action
     def agent_start(self, observation):

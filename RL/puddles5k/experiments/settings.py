@@ -8,10 +8,10 @@
 
 experiment = dict(
     # Number of instances to run
-    instances = 30,
+    instances = 1,
     
     # Number of episodes (i.e. games) to run for each instance
-    episodes = 5000,
+    episodes = 100,
     
     # Where to store results
     results_dir = 'results',
@@ -32,7 +32,8 @@ experiment = dict(
 #
 agent = dict(
     # Alpha
-    alpha = 0.005,
+    alpha = 0.1,
+    #alpha = 0.005,
     
     # Epsilon
     #epsilon = experiment['epsilon_high']
@@ -45,7 +46,7 @@ agent = dict(
 #
 environment = dict(
     # Enable wind
-    enable_wind = True,
+    enable_wind = False,
     
     # Enable stochastic actions
     enable_stochastic_actions = False,
