@@ -36,8 +36,10 @@ class PuddleState():
 
 class PuddleWorld(list):
 
-    def __init__(self, size=(12,12)):
+    def __init__(self, size=(12,12), grid_size=1):
         self.agent_state = None
+        
+        self.grid_size = grid_size
 
         # Initialize with empty PuddleStates
         for row in range(size[0]):
@@ -56,12 +58,29 @@ class PuddleWorld(list):
     def add_rewards(self, *args):
         for (row, col), reward in args:
             self[row][col].reward = reward
-
+    
+    def reduce_pos(self, pos):
+        """ Transform full position into the reduced representation
+        so that each grid has a size of grid_size.
+        """
+        if isinstance(pos, (list, tuple)):
+            return [self.reduce_pos(p) for p in pos]
+        
+        return int(float(pos) / float(self.grid_size))
+    
+    def expand_pos(self, pos):
+        """ Transform reduced position into the full representation """
+        if isinstance(pos, (list, tuple)):
+            return [self.expand_pos(p) for p in pos]
+        
+        return int(float(pos) * float(self.grid_size))
+    
     def __str__(self):
         s = ''
+        agent_state = self.reduce_pos(self.agent_state)
         for row, states in enumerate(self):
             for col, state in enumerate(states):
-                if self.agent_state == [row, col]:
+                if agent_state == [row, col]:
                     t = 'A'
                 elif state.start:
                     t = 'S'
@@ -83,6 +102,10 @@ class PuddleEnvironment(Environment):
 
     """ Gridworld size (y, x) """
     size = (12, 12)
+    
+    """ Size of grid """
+    #grid_size = 5000/12
+    grid_size = 10
 
     """ Valid actions and their resulting movement vectors (y, x) """
     valid_actions = {'N': (-1, 0),
@@ -134,14 +157,13 @@ class PuddleEnvironment(Environment):
     # () -> string
     def env_init(self):
         # Create gridworld
-        self.world = PuddleWorld(self.size)
+        self.world = PuddleWorld(self.size, self.grid_size)
 
         # Set up rewards
         for row in range(len(self.rewards)):
             for col in range(len(self.rewards[row])):
                 self.world[row][col].reward = self.rewards[row][col]
 
-        #return 'PuddleEnvironment initialized...'
         return ''
 
     # () -> Observation
@@ -157,7 +179,7 @@ class PuddleEnvironment(Environment):
 
         # Initialize state of the agent to one of start_states
         r = random.randrange(len(self.start_states))
-        self.world.agent_state = list(self.start_states[r])
+        self.world.agent_state = list(self.world.expand_pos(self.start_states[r]))
         
         # Initialize step counter
         self.steps = 0
@@ -174,17 +196,20 @@ class PuddleEnvironment(Environment):
 
     def enforce_world_bounds(self, state):
         """ Enforce world bounds """
+        ymax = self.world.expand_pos(len(self.world))
+        xmax = self.world.expand_pos(len(self.world[0]))
+        
         if state[0] < 0:
             state[0] = 0
 
-        if state[0] >= len(self.world):
-            state[0] = len(self.world) - 1
+        if state[0] >= ymax:
+            state[0] = ymax - 1
 
         if state[1] < 0:
             state[1] = 0
 
-        if state[1] >= len(self.world[0]):
-            state[1] = len(self.world[0]) - 1
+        if state[1] >= xmax:
+            state[1] = xmax - 1
 
     def move_agent(self, direction):
         """ Move agent in direction """
@@ -234,8 +259,9 @@ class PuddleEnvironment(Environment):
                     self.step_out('WIND IN %s!' % (dir))
                     self.move_agent(dir)
         
+        agent_state = self.world.reduce_pos(self.world.agent_state);
         
-        pstate = self.world[self.world.agent_state[0]][self.world.agent_state[1]]
+        pstate = self.world[agent_state[0]][agent_state[1]]
 
         # Return observation
         obs = Observation()
@@ -247,7 +273,7 @@ class PuddleEnvironment(Environment):
         self.step_out("REWARD:", pstate.reward)
         
         terminal = pstate.terminal
-        if self.steps > self.step_limit:
+        if self.steps > self.step_limit * self.world.grid_size:
             self.debug("STEP LIMIT REACHED!")
             terminal = True
 
