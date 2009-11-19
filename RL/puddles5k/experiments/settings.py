@@ -37,7 +37,7 @@ agent = dict(
     
     # Epsilon
     #epsilon = experiment['epsilon_high']
-    epsilon = 0.1
+    epsilon = 0.2
     
 )
 

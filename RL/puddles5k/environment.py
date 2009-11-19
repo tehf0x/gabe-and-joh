@@ -104,8 +104,8 @@ class PuddleEnvironment(Environment):
     size = (12, 12)
     
     """ Size of grid """
-    #grid_size = 5000/12
-    grid_size = 5
+    grid_size = 5000/12
+    #grid_size = 5
 
     """ Valid actions and their resulting movement vectors (y, x) """
     valid_actions = {'N': (-1, 0),
@@ -143,7 +143,7 @@ class PuddleEnvironment(Environment):
     enable_stochastic_actions = True
     
     """ Step limit - sends terminal signal if reached """
-    step_limit = 5000
+    step_limit = 20000
     
     """ Name of the environment """
     name = 'PuddleEnvironment'

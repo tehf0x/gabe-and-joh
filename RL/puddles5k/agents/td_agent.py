@@ -61,6 +61,9 @@ class TDAgent(BaseAgent):
         intobs = ts.getIntObservations()
         self.size = (intobs[0][1], intobs[1][1])
         
+        # Exploration setup
+        self.explore_steps = self.size[0] / 10
+        
         #self.debug("INIT:", self.size)
 
     def agent_start(self, state):
@@ -77,12 +80,15 @@ class TDAgent(BaseAgent):
     def agent_end(self, reward):
         """ Called when a game ends """
         self.update_Q(self.last_state, self.last_action, reward, None)
-        #self.debug("END", reward)
+        self.debug("END", reward)
 
     def agent_cleanup(self):
         """ Clean up for next run """
         #self.Q = {}
         self.Q = CmacTiler(self.size, [10, 20])
+        
+        self.explore_counter = 0
+        self.explore_action = None
         #self.debug("CLEANUP")
     
     def do_step(self, state, reward = None):
@@ -145,11 +151,20 @@ class TDAgent(BaseAgent):
         action = max(self.Q[state].items(), key=lambda x : x[1])[0]
         
         # Epsilon-greedy decision:
-        if(random.uniform(0, 1) <= self.epsilon):
+        if self.explore_counter > 0:
+            # Continue exploring the same action
+            self.explore_counter -= 1
+            
+            return self.explore_action
+            
+        if random.uniform(0, 1) <= self.epsilon:
             # Explore!
             tmp_actions = copy(self.actions)
             tmp_actions.remove(action)
-            return random.choice(tmp_actions)
+            
+            self.explore_action = random.choice(tmp_actions)
+            self.explore_counter = self.explore_steps
+            return self.explore_action
         else:
             # Greediness!
             return action
